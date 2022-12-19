@@ -17,7 +17,7 @@ import { schema } from '@/ts/base';
 import BaseInfo from './BaseInfo';
 import CardOrTable from '@/components/CardOrTableComp';
 import { XFlowDefine } from '@/ts/base/schema';
-import FlowCard from '@/components/FlowCardComp';
+import FlowCard from './FlowCardComp';
 import useWindowSize from '@/utils/windowsize';
 import BindModal from './BindModal';
 import Appbindlist from './Appnindlist';

@@ -5,8 +5,8 @@ import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 import detailStyle from './index.module.less';
 import chatCtrl from '@/ts/controller/chat';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
-import InviteMembers from '@/components/InviteMembers';
-import RemoveMember from '@/components/RemoveMember';
+import InviteMembers from '../components/InviteMembers';
+import RemoveMember from '../components/RemoveMember';
 import { parseAvatar, schema } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting/userCtrl';
 

@@ -1,12 +1,6 @@
-// const res = ;
 import React, { useEffect, useRef, useState } from 'react';
-import cls from './index.module.less';
-import CardOrTable from '@/components/CardOrTableComp';
-import AppCard from '@/components/AppCardOfBuy';
 import { common } from 'typings/common';
 import marketCtrl from '@/ts/controller/store/marketCtrl';
-import ProductDetailModal from '@/components/ProductDetailModal';
-import MarketClassify from '../components/Classify';
 import ReactDOM from 'react-dom';
 import { XMerchandise } from '@/ts/base/schema';
 import { message, Modal } from 'antd';
@@ -14,8 +8,13 @@ import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 import { IMarket } from '@/ts/core';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { marketColumns } from '../../App/Config';
+import CardOrTable from '@/components/CardOrTableComp';
+import ProductDetailModal from '../components/ProductDetailModal';
+import MarketClassify from '../components/Classify';
+import AppCard from '../components/AppCardOfBuy';
+import cls from './index.module.less';
 
-const AppShowComp: React.FC = () => {
+const ShopPage: React.FC = () => {
   const [isProduce, setIsProduce] = useState<boolean>(false); // 查看详情
   const [detail, setDetail] = useState<XMerchandise>(); // 查看详情
   const parentRef = useRef<any>(null); //父级容器Dom
@@ -163,4 +162,4 @@ const AppShowComp: React.FC = () => {
   );
 };
 
-export default AppShowComp;
+export default ShopPage;

@@ -58,7 +58,7 @@ const ShopPage: React.FC = () => {
 
   // 操作内容渲染函数
   const renderOperation = (item: XMerchandise): common.OperationType[] => {
-    return [
+    const normal = [
       {
         key: 'buy',
         label: '购买',
@@ -81,26 +81,31 @@ const ShopPage: React.FC = () => {
           setDetail(item);
         },
       },
-      {
-        key: 'downProduct',
-        label: '下架',
-        onClick: () => {
-          Modal.confirm({
-            title: '提示',
-            content: '是否确认下架 [' + item.caption + '] 商品？',
-            onOk: async () => {
-              if (await current?.unPublish(item.id)) {
-                message.success('下架 [' + item.caption + '] 商品成功.');
-              } else {
-                message.error('下架失败');
-              }
-              marketCtrl.changCallback();
-            },
-          });
-          setDetail(item);
-        },
-      },
     ];
+    return current?.market?.belongId
+      ? [
+          ...normal,
+          {
+            key: 'downProduct',
+            label: '下架',
+            onClick: () => {
+              Modal.confirm({
+                title: '提示',
+                content: '是否确认下架 [' + item.caption + '] 商品？',
+                onOk: async () => {
+                  if (await current?.unPublish(item.id)) {
+                    message.success('下架 [' + item.caption + '] 商品成功.');
+                  } else {
+                    message.error('下架失败');
+                  }
+                  marketCtrl.changCallback();
+                },
+              });
+              setDetail(item);
+            },
+          },
+        ]
+      : normal;
   };
 
   /**

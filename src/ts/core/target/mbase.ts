@@ -201,9 +201,7 @@ export default class MarketTarget extends FlowTarget implements IMTarget {
       return market;
     }
   }
-  public async createProduct(
-    data: Omit<model.ProductModel, 'id' | 'belongId'>,
-  ): Promise<IProduct | undefined> {
+  public createProduct = async (data: Omit<model.ProductModel, 'id' | 'belongId'>) => {
     const res = await kernel.createProduct({
       ...data,
       typeName: ProductType.WebApp,
@@ -219,7 +217,26 @@ export default class MarketTarget extends FlowTarget implements IMTarget {
       this.ownProducts.push(prod);
       return prod;
     }
-  }
+  };
+  // public async createProduct(
+  //   data: Omit<model.ProductModel, 'id' | 'belongId'>,
+  // ): Promise<IProduct | undefined> {
+  //   const res = await kernel.createProduct({
+  //     ...data,
+  //     typeName: ProductType.WebApp,
+  //     id: undefined,
+  //     belongId: this.target.id,
+  //   });
+  //   if (res.success && res.data) {
+  //     let prod: IProduct;
+  //     switch (<ProductType>data.typeName) {
+  //       default:
+  //         prod = new WebApp(res.data);
+  //     }
+  //     this.ownProducts.push(prod);
+  //     return prod;
+  //   }
+  // }
   public async deleteMarket(id: string): Promise<boolean> {
     const res = await kernel.deleteMarket({
       id,

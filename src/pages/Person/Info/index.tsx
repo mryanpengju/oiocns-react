@@ -4,6 +4,7 @@ import userCtrl from '@/ts/controller/setting/userCtrl';
 import PersonInfoCompany from './components/MyCompanySetting';
 import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 import UserInfoEditModal from './components/EditUserInfo';
+import SelectDefaultMes from './components/SelectDefaultMes';
 import cls from './index.module.less';
 
 /**
@@ -13,6 +14,7 @@ import cls from './index.module.less';
 const PersonInfo: React.FC = () => {
   const user = userCtrl.user;
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [openSetDefault, setOpenSetDefault] = useState<boolean>(false);
   // 信息内容
   const content = (
     <div className={cls['person-info-info']}>
@@ -28,9 +30,14 @@ const PersonInfo: React.FC = () => {
           }
           column={3}
           extra={
-            <Button type="link" onClick={() => setShowEditModal(true)}>
-              修改信息
-            </Button>
+            <div>
+              <Button type="link" onClick={() => setOpenSetDefault(true)}>
+                修改默认单位
+              </Button>
+              <Button type="link" onClick={() => setShowEditModal(true)}>
+                修改信息
+              </Button>
+            </div>
           }>
           <Descriptions.Item label="昵称">{user!.target.name}</Descriptions.Item>
           <Descriptions.Item label="账号" span={2}>
@@ -54,6 +61,16 @@ const PersonInfo: React.FC = () => {
       <Card bordered={false} className={cls['person-info-company']}>
         <PersonInfoCompany />
       </Card>
+      <SelectDefaultMes
+        isOpen={openSetDefault}
+        onCancel={() => {
+          setOpenSetDefault(false);
+        }}
+        onOk={(params: string) => {
+          userCtrl.setDefaultValue(params);
+          setOpenSetDefault(false);
+        }}
+      />
       <UserInfoEditModal
         open={showEditModal}
         handleCancel={() => setShowEditModal(false)}

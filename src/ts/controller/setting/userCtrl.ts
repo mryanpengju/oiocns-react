@@ -12,10 +12,13 @@ import {
 import { FileItemShare, RegisterType } from '@/ts/base/model';
 const sessionUserName = 'sessionUser';
 const sessionSpaceName = 'sessionSpace';
+const DefaultSpaceName = 'defaultSpaceName';
+const FirstLogin = 'firstLogin';
 /** 用户控制器 */
 class UserController extends Emitter {
   private _user: IPerson | undefined;
   private _curSpace: ICompany | undefined;
+  private _caches: { defaultSpaceId: string } = { defaultSpaceId: '' };
   /**构造方法 */
   constructor() {
     super();
@@ -24,6 +27,14 @@ class UserController extends Emitter {
       this._loadUser(JSON.parse(userJson));
       setTimeout(async () => {
         await this._user?.getJoinedCompanys();
+
+        if (sessionStorage.getItem(FirstLogin) === '1') {
+          setTimeout(async () => {
+            const getSpaceId: { data: { defaultSpaceId: '' } } =
+              await kernel.anystore.get(DefaultSpaceName, 'user');
+            this.setCurSpace(getSpaceId?.data.defaultSpaceId);
+          }, 200);
+        }
         this._curSpace = this._findCompany(
           sessionStorage.getItem(sessionSpaceName) || '',
         );
@@ -37,6 +48,10 @@ class UserController extends Emitter {
   /** 是否已登录 */
   get logined(): boolean {
     return !!this._user?.target.id;
+  }
+
+  get caches(): {} {
+    return this._caches;
   }
   /** 是否为单位空间 */
   get isCompanySpace(): boolean {
@@ -78,6 +93,10 @@ class UserController extends Emitter {
     }
     this.changCallbackPart(DomainTypes.Company);
     emitter.changCallbackPart(DomainTypes.Company);
+  }
+  public setDefaultValue(id: string) {
+    this._caches = { defaultSpaceId: id };
+    this._cacheSpacedata();
   }
   /** 组织树 */
   public async getTeamTree(isShare: boolean = true): Promise<ITarget[]> {
@@ -182,6 +201,17 @@ class UserController extends Emitter {
         }
       }
     }
+  }
+
+  private _cacheSpacedata(): void {
+    kernel.anystore.set(
+      DefaultSpaceName,
+      {
+        operation: 'replaceAll',
+        data: this._caches,
+      },
+      'user',
+    );
   }
 }
 

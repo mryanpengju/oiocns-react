@@ -36,7 +36,7 @@ export const buildTargetTree = async (targets: ITarget[]) => {
       label: item.teamName,
       itemType: parseGroupMenuType(item.typeName),
       menus: await loadTypeMenus(item),
-      icon: <TeamIcon share={item.shareInfo} size={18} fontSize={16} />,
+      icon: <TeamIcon share={item.shareInfo} size={18} fontSize={16} onlySvg={true} />,
       children: await buildTargetTree(item.subTeam),
     });
   }
@@ -72,7 +72,9 @@ export const getSpaceMenu = async () => {
     label: label,
     itemType: itemType,
     menus: await loadTypeMenus(userCtrl.space),
-    icon: <TeamIcon share={userCtrl.space.shareInfo} size={18} fontSize={16} />,
+    icon: (
+      <TeamIcon share={userCtrl.space.shareInfo} size={18} fontSize={16} onlySvg={true} />
+    ),
     children: [],
   };
 };
@@ -89,6 +91,7 @@ export const loadGroupMenus = async (param: groupMenuParams) => {
           name: param.key,
           typeName: param.typeName,
         }}
+        onlySvg={true}
         size={18}
         fontSize={16}
       />

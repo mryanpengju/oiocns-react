@@ -72,7 +72,7 @@ const CustomMenu = (props: CustomMenuType) => {
       for (const item of items) {
         result.push({
           key: item.key,
-          icon: item.icon,
+          icon: <span>{item.icon}</span>,
           label: renderLabel(item),
           children: loadMenus(item.children),
         });
@@ -101,7 +101,7 @@ const CustomMenu = (props: CustomMenuType) => {
   /** 渲染标题,支持更多操作 */
   const renderLabel = (item: MenuItemType) => {
     return (
-      <div
+      <span
         onClick={() => {
           if (item.key != props.selectMenu.key) {
             props.onSelect?.apply(this, [item]);
@@ -110,7 +110,12 @@ const CustomMenu = (props: CustomMenuType) => {
             setSelectedKeys([props.selectMenu.key, item.key]);
           }
         }}
-        style={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}
+        style={{
+          //   display: 'inline-flex',
+          flex: 1,
+          //   // paddingLeft: 16,
+          //   justifyContent: 'space-between',
+        }}
         onMouseOver={() => {
           setOverItem(item);
         }}
@@ -119,7 +124,7 @@ const CustomMenu = (props: CustomMenuType) => {
           setVisibleMenu(false);
         }}>
         <Typography.Text ellipsis>{item.label}</Typography.Text>
-        <div onClick={(e: any) => e.stopPropagation()}>
+        <span onClick={(e: any) => e.stopPropagation()} style={{ float: 'right' }}>
           {item.menus && overItem?.key === item.key && (
             <Dropdown
               menu={{
@@ -151,8 +156,8 @@ const CustomMenu = (props: CustomMenuType) => {
               <EllipsisOutlined style={{ fontSize: 18 }} rotate={90} />
             </Dropdown>
           )}
-        </div>
-      </div>
+        </span>
+      </span>
     );
   };
   return (

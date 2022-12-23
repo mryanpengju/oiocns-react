@@ -9,6 +9,7 @@ interface teamTypeInfo {
   size?: number;
   fontSize?: number;
   share: TargetShare;
+  onlySvg?: boolean;
 }
 
 /** 组织图标 */
@@ -45,46 +46,49 @@ const TeamIcon = (info: teamTypeInfo) => {
   switch (info.share.typeName) {
     case '平台':
     case TargetType.Group:
-      icon = <im.ImTree fontSize={fontSize} />;
+      icon = <im.ImTree fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Company:
-      icon = <im.ImOffice fontSize={fontSize} />;
+      icon = <im.ImOffice fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Section:
     case TargetType.Department:
-      return <im.ImLibrary fontSize={fontSize} />;
+      return <im.ImLibrary fontSize={size ? size - 4 : fontSize} />;
     case TargetType.College:
-      return <im.ImTrophy fontSize={fontSize} />;
+      return <im.ImTrophy fontSize={size ? size - 4 : fontSize} />;
     case TargetType.Laboratory:
-      icon = <im.ImJoomla fontSize={fontSize} />;
+      icon = <im.ImJoomla fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Office:
-      icon = <im.ImBriefcase fontSize={fontSize} />;
+      icon = <im.ImBriefcase fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Research:
-      icon = <im.ImFlickr4 fontSize={fontSize} />;
+      icon = <im.ImFlickr4 fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Working:
-      icon = <im.ImUsers fontSize={fontSize} />;
+      icon = <im.ImUsers fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Station:
-      icon = <im.ImAddressBook fontSize={fontSize} />;
+      icon = <im.ImAddressBook fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Cohort:
-      icon = <im.ImBubbles fontSize={fontSize} />;
+      icon = <im.ImBubbles fontSize={size ? size - 4 : fontSize} />;
       break;
     case TargetType.Person:
-      icon = <im.ImUserTie fontSize={fontSize} />;
+      icon = <im.ImUserTie fontSize={size ? size - 4 : fontSize} />;
       break;
     default:
-      icon = <im.ImSvg fontSize={fontSize} />;
+      icon = <im.ImSvg fontSize={size ? size - 4 : fontSize} />;
       break;
   }
-  return (
+  console.log(size);
+  return info.onlySvg ? (
+    icon
+  ) : (
     <Avatar
       size={size}
       icon={icon}
-      style={{ background: 'transparent', color: '#606060' }}
+      style={{ background: 'transparent', color: '#a6aec7' }}
     />
   );
 };

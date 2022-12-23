@@ -47,7 +47,7 @@ const OrganizationalUnits = () => {
   const loadItem = (data: SpaceType) => {
     return (
       <Space>
-        <TeamIcon typeName={data.typeName} avatar={data.avatar} size={26} />
+        <TeamIcon share={data.share} size={26} />
         <Typography.Text className={styles['space-list']}>{data?.name}</Typography.Text>
       </Space>
     );
@@ -120,13 +120,18 @@ const OrganizationalUnits = () => {
         destroyOnClose={true}
         open={showModal}
         bodyStyle={{ padding: 0 }}
-        okText="确定加入"
+        okText="确定"
         onOk={async () => {
           // 加入单位
           setShowModal(false);
           if (searchCallback && searchCallback.length > 0) {
-            searchCallback.forEach(async (user) => {
-              if (await userCtrl.user.applyJoinCompany(user.id, TargetType.Company)) {
+            searchCallback.forEach(async (company) => {
+              if (
+                await userCtrl.user.applyJoinCompany(
+                  company.id,
+                  company.typeName as TargetType,
+                )
+              ) {
                 message.success('已申请加入单位成功.');
               }
             });

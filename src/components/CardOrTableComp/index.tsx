@@ -131,7 +131,7 @@ const Index: <T extends unknown>(props: PageType<T>) => React.ReactElement = ({
           showSizeChanger: true,
           defaultCurrent: page,
           onChange: (current) => {
-            console.log(current);
+            // console.log(current);
           },
           showTotal: (total: number) => `共 ${total} 条`,
         }}

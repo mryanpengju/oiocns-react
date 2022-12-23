@@ -1,9 +1,4 @@
-import {
-  AttributeModel,
-  FileItemShare,
-  PageRequest,
-  SpeciesModel,
-} from '../../base/model';
+import { AttributeModel, PageRequest, SpeciesModel, TargetShare } from '../../base/model';
 import { XAttributeArray, XSpecies } from '../../base/schema';
 
 /** 可为空的标准分类 */
@@ -26,9 +21,9 @@ export interface ISpeciesItem {
   /** 下级标准分类项数组 */
   children: ISpeciesItem[];
   /** 归属信息 */
-  belongInfo: FileItemShare | undefined;
+  belongInfo: TargetShare;
   /** 加载信息 */
-  loadInfo(info: FileItemShare | undefined): Promise<ISpeciesItem>;
+  loadInfo(info: TargetShare): Promise<ISpeciesItem>;
   /** 加载分类特性 */
   loadAttrs(id: string, page: PageRequest): Promise<XAttributeArray>;
   /**
@@ -37,12 +32,22 @@ export interface ISpeciesItem {
    */
   create(data: Omit<SpeciesModel, 'id' | 'parentId'>): Promise<INullSpeciesItem>;
   /**
+   * 更新标准分类项
+   * @param data 创建参数
+   */
+  update(data: Omit<SpeciesModel, 'id' | 'parentId' | 'code'>): Promise<ISpeciesItem>;
+  /**
    * 创建分类特性项
    * @param data 创建参数
    */
   createAttr(
     data: Omit<AttributeModel, 'id' | 'speciesId' | 'speciesCode'>,
   ): Promise<boolean>;
+  /**
+   * 更新分类特性项
+   * @param data 创建参数
+   */
+  updateAttr(data: Omit<AttributeModel, 'speciesId' | 'speciesCode'>): Promise<boolean>;
   /**
    * 删除分类特性项
    * @param id 特性项id

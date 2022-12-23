@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import marketCtrl from '@/ts/controller/store/marketCtrl';
 import AppCard from '../components/AppCardShopCar';
-import { MarketCallBackTypes } from '@/ts/controller/store/marketCtrl';
+import { MarketTypes } from 'typings/marketType';
 import { Button, Col, Layout, message, Modal, PageHeader, Row, Space } from 'antd';
 import { CheckCircleOutlined, ClearOutlined } from '@ant-design/icons';
 import { CheckCard } from '@ant-design/pro-components';
 import cls from './index.module.less';
 import { XMerchandise } from '@/ts/base/schema';
+import { JOIN_SHOPING_CAR } from '@/constants/const';
 
 /**
  * @description: 购物车
@@ -22,8 +23,10 @@ const ShopingCar: React.FC = () => {
    * @return {*}
    */
   useEffect(() => {
-    const id = marketCtrl.subscribePart(MarketCallBackTypes.ApplyData, () => {
-      setShopList([...marketCtrl.shopinglist]);
+    const id = marketCtrl.subscribePart(JOIN_SHOPING_CAR, () => {
+      console.log('监听 购物车变化', marketCtrl.shopinglist || []);
+      const arr = marketCtrl.shopinglist || [];
+      setShopList([...arr]);
     });
     return () => {
       return marketCtrl.unsubscribe(id);
@@ -39,7 +42,8 @@ const ShopingCar: React.FC = () => {
       message.warning('请选择商品.');
       return;
     }
-    await marketCtrl.removeStaging(selectedRowKey);
+    await marketCtrl.deleteStaging(ids ? ids : selectedRowKey);
+    setSelectedRowKey([]);
   };
 
   /**

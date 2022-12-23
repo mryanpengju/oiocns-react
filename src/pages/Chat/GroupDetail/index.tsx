@@ -7,7 +7,7 @@ import chatCtrl from '@/ts/controller/chat';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 import InviteMembers from '../components/InviteMembers';
 import RemoveMember from '../components/RemoveMember';
-import { parseAvatar, schema } from '@/ts/base';
+import { schema } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting/userCtrl';
 
 /**
@@ -82,12 +82,8 @@ const Groupdetail = () => {
   const heads = (
     <Row style={{ paddingBottom: '12px' }}>
       <Col span={4}>
-        <div style={{ fontSize: 26, color: '#888', width: 42 }}>
-          <TeamIcon
-            typeName={chatCtrl.chat.target.typeName}
-            avatar={chatCtrl.chat.avatar}
-            size={32}
-          />
+        <div style={{ color: '#888', width: 42 }}>
+          <TeamIcon share={chatCtrl.chat.shareInfo} size={32} fontSize={28} />
         </div>
       </Col>
       <Col span={20}>
@@ -113,14 +109,12 @@ const Groupdetail = () => {
       {chatCtrl.chat.persons.map((item) => {
         return (
           <div key={item.id} title={item.name} className={detailStyle.show_persons}>
-            <div style={{ fontSize: 32 }}>
-              <TeamIcon
-                size={36}
-                preview
-                typeName={item.typeName}
-                avatar={parseAvatar(item.avatar)}
-              />
-            </div>
+            <TeamIcon
+              size={36}
+              preview
+              share={userCtrl.findTeamInfoById(item.id)}
+              fontSize={32}
+            />
             <Typography className={detailStyle.img_list_con_name}>{item.name}</Typography>
           </div>
         );

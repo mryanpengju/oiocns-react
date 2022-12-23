@@ -16,18 +16,22 @@ const UserAvatar: React.FC = () => {
    */
   const menuItems: MenuProps = {
     onClick: (info) => {
-      if (info.key) {
-        if (info.key === '/passport/login') {
+      switch (info.key) {
+        case '/passport/login':
           sessionStorage.clear();
-        }
-        history.push(info.key);
+          break;
+        case '/team':
+          userCtrl.currentKey = '个人设置';
+          userCtrl.setCurSpace(userCtrl.user.id);
+          break;
       }
+      history.push(info.key);
     },
     items: [
       {
-        key: '/person/info',
+        key: '/team',
         icon: <UserOutlined />,
-        label: '个人中心',
+        label: '个人设置',
       },
       {
         type: 'divider' as const,
@@ -47,9 +51,9 @@ const UserAvatar: React.FC = () => {
 
   return (
     <Dropdown menu={menuItems} placement="bottomLeft">
-      {userCtrl.user.avatar ? (
+      {userCtrl.user.shareInfo.avatar ? (
         <Avatar
-          src={userCtrl.user.avatar.thumbnail}
+          src={userCtrl.user.shareInfo.avatar.thumbnail}
           alt={userCtrl.user.name}
           size={28}></Avatar>
       ) : (

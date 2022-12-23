@@ -8,7 +8,7 @@ import cls from './index.module.less';
 import chatCtrl from '@/ts/controller/chat';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
-import userCtrl from '@/ts/controller/setting/userCtrl';
+// import { HeartFilled } from '@ant-design/icons';
 
 /**
  * 顶部导航
@@ -19,6 +19,14 @@ const HeaderNav: React.FC<RouteComponentProps> = () => {
   const [chatKey] = useCtrlUpdate(chatCtrl);
   const [taskNum, setTaskNum] = useState(0);
   const navs = [
+    // {
+    //   key: 'welfare',
+    //   path: '/welfare',
+    //   title: '公益仓',
+    //   icon: <HeartFilled />,
+    //   count: 0,
+    //   fath: '/welfare',
+    // },
     {
       key: chatKey,
       path: '/chat',
@@ -45,16 +53,16 @@ const HeaderNav: React.FC<RouteComponentProps> = () => {
     },
     {
       key: 'setting',
-      path: userCtrl.isCompanySpace ? '/setting/info' : '/setting/friend',
+      path: '/team',
       title: '设置',
       icon: 'icon-setting',
       count: 0,
-      fath: '/setting',
+      fath: '/team',
     },
   ];
   useEffect(() => {
     const id = todoCtrl.subscribe(async () => {
-      setTaskNum(await todoCtrl.TaskCount());
+      setTaskNum(await todoCtrl.getTaskCount());
     });
     return () => {
       return todoCtrl.unsubscribe(id);

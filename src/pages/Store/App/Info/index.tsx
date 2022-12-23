@@ -45,7 +45,7 @@ const StoreAppInfo: React.FC = () => {
     };
     return obj;
   });
-
+  onTabChange('组织');
   async function onTabChange(tabKey: any) {
     const res = await curProd.queryExtend(tabKey);
     const showData = res?.result?.map((v) => {

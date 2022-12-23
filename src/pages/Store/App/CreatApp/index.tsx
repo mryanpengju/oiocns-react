@@ -26,6 +26,7 @@ const CreatApp: React.FC<RouteComponentProps> = (props) => {
     const Fun = prod ? appCtrl.curProduct!.update : userCtrl.space.createProduct;
     const res = await Fun({
       ...values,
+      photo: '',
       resources: list,
     });
 

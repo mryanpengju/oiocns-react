@@ -51,7 +51,7 @@ const ShopPage: React.FC = () => {
         title: '确认订单',
         content: '此操作将生成交易订单。是否确认',
         icon: <CheckCircleOutlined className={cls['buy-icon']} />,
-        onOk: async () => await marketCtrl.createOrder([selectItem]),
+        onOk: async () => await marketCtrl.createOrder([selectItem.id]),
       });
     }
   };

@@ -10,6 +10,10 @@ export default class WebApp implements IProduct {
   resource: Resource[];
   merchandises: Merchandise[];
 
+  get id(): string {
+    return this.prod.id;
+  }
+
   constructor(prod: schema.XProduct) {
     this.prod = prod;
     this.merchandises = [];
@@ -94,7 +98,6 @@ export default class WebApp implements IProduct {
     days: string;
   }): Promise<boolean> {
     const res = await kernel.createMerchandise({
-      id: '0',
       caption: params.caption,
       marketId: params.marketId,
       sellAuth: params.sellAuth,
@@ -122,19 +125,21 @@ export default class WebApp implements IProduct {
     }
     return res.success;
   }
-  public update = async (params: {
-    name: string;
-    code: string;
-    typeName: string;
-    remark: string;
-    resources: model.ResourceModel[];
-  }): Promise<boolean> => {
+  public async update(
+    name: string,
+    code: string,
+    typeName: string,
+    remark: string,
+    photo: string,
+    resources: model.ResourceModel[],
+  ): Promise<boolean> {
     const res = await kernel.updateProduct({
       id: this.prod.id,
-      name: params.name,
-      code: params.code,
-      typeName: params.typeName,
-      remark: params.remark,
+      name,
+      code,
+      typeName,
+      remark,
+      photo,
       thingId: this.prod.thingId,
       belongId: this.prod.belongId,
       resources: params.resources,
@@ -150,5 +155,5 @@ export default class WebApp implements IProduct {
       });
     }
     return res.success;
-  };
+  }
 }

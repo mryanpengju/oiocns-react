@@ -34,3 +34,20 @@ interface IRouteConfig extends RouteConfig {
   // 子路由
   routes?: IRouteConfig[];
 }
+
+interface MenuItemType {
+  key: string;
+  label: string;
+  itemType: string;
+  icon: React.ReactNode;
+  item?: any;
+  menus?: OperateMenuType[];
+  children: MenuItemType[];
+}
+
+interface OperateMenuType {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  subMenu?: MenuItemType;
+}

@@ -1,11 +1,14 @@
-import { Col, Layout, Row, Space, Typography } from 'antd';
+import { Col, Divider, Dropdown, Layout, Row, Space, Typography } from 'antd';
 import React, { useState } from 'react';
 import cls from './index.module.less';
 import CustomMenu from '@/components/CustomMenu';
 import CustomBreadcrumb from '@/components/CustomBreadcrumb';
 import { MenuItemType } from 'typings/globelType';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-
+import {
+  EllipsisOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from '@ant-design/icons';
 const { Content, Sider } = Layout;
 
 /**
@@ -34,10 +37,8 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
     <Layout className={`${className}`} style={{ height: '100%', position: 'relative' }}>
       <Sider className={cls.sider} width={250} collapsed={collapsed}>
         <div className={cls.title}>
-          <Space>
-            {props.selectMenu.icon}
-            {!collapsed && <strong>{props.selectMenu.label}</strong>}
-          </Space>
+          <span style={{ fontSize: 16, margin: 6 }}>{props.selectMenu.icon}</span>
+          {!collapsed && <strong>{props.selectMenu.label}</strong>}
         </div>
         <div className={cls.container} id="templateMenu">
           <CustomMenu
@@ -59,6 +60,7 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
               <CustomBreadcrumb
                 leftBar={
                   <Typography.Link
+                    style={{ fontSize: 16 }}
                     onClick={() => {
                       setCollapsed(!collapsed);
                     }}>
@@ -74,7 +76,26 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
             }
           </Col>
           <Col className={cls.rightstyle}>
-            <Space>{props.rightBar}</Space>
+            <Space wrap split={<Divider type="vertical" />} size={2}>
+              {props.rightBar}
+              {props.selectMenu.menus && (
+                <Dropdown
+                  menu={{
+                    items: props.selectMenu.menus,
+                    onClick: ({ key }) => {
+                      props.onMenuClick?.apply(this, [props.selectMenu, key]);
+                    },
+                  }}
+                  placement="bottom"
+                  trigger={['click', 'contextMenu']}>
+                  <EllipsisOutlined
+                    title={'右键操作'}
+                    style={{ fontSize: 18 }}
+                    rotate={90}
+                  />
+                </Dropdown>
+              )}
+            </Space>
           </Col>
         </Row>
         <Content className={cls.content}>{children}</Content>

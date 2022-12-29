@@ -41,7 +41,11 @@ const CustomBreadcrumb = (props: CustomBreadcrumbType) => {
         items: item.children.map((i) => {
           return {
             key: i.key,
+<<<<<<< HEAD
             icon: <span>{i.icon}</span>,
+=======
+            icon: <span style={{ fontSize: 16, paddingTop: 2 }}>{i.icon}</span>,
+>>>>>>> main
             label: i.label,
           };
         }),
@@ -65,7 +69,7 @@ const CustomBreadcrumb = (props: CustomBreadcrumbType) => {
         onClick={() => {
           props.onSelect?.apply(this, [items[items.length - 2]]);
         }}>
-        <ImArrowLeft2 />
+        <ImArrowLeft2 fontSize={16} />
       </Typography.Link>
       <Breadcrumb separator={<CaretRightOutlined />} className={css.customBreadcrumb}>
         {items.map((item) => {
@@ -76,7 +80,8 @@ const CustomBreadcrumb = (props: CustomBreadcrumbType) => {
               onClick={() => {
                 props.onSelect?.apply(this, [item]);
               }}>
-              {item.icon} {item.label}
+              <span style={{ fontSize: 16, paddingTop: 2 }}>{item.icon}</span>{' '}
+              {item.label}
             </Breadcrumb.Item>
           );
         })}

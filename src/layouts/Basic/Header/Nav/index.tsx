@@ -37,7 +37,7 @@ const HeaderNav: React.FC<RouteComponentProps> = () => {
     },
     {
       key: 'task',
-      path: '/todo/friend',
+      path: '/todo',
       title: '待办',
       icon: 'icon-todo',
       count: taskNum,
@@ -45,7 +45,7 @@ const HeaderNav: React.FC<RouteComponentProps> = () => {
     },
     {
       key: 'store',
-      path: '/store/app',
+      path: '/store',
       title: '仓库',
       icon: 'icon-store',
       count: 0,
@@ -53,11 +53,11 @@ const HeaderNav: React.FC<RouteComponentProps> = () => {
     },
     {
       key: 'setting',
-      path: '/team',
+      path: '/setting',
       title: '设置',
       icon: 'icon-setting',
       count: 0,
-      fath: '/team',
+      fath: '/setting',
     },
   ];
   useEffect(() => {

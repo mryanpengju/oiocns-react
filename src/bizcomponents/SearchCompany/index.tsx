@@ -6,7 +6,7 @@ import { CheckCard } from '@ant-design/pro-components';
 import SearchInput from '@/components/SearchInput';
 import styles from './index.module.less';
 import { XTarget } from '@/ts/base/schema';
-import userCtrl from '@/ts/controller/setting/userCtrl';
+import userCtrl from '@/ts/controller/setting';
 import { TargetType } from '@/ts/core';
 import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 import Person from '@/ts/core/target/person';
@@ -65,9 +65,7 @@ const CompanySearchList: React.FC<CompanySearchTableProps> = (props) => {
         }}>
         <Row gutter={16} style={{ width: '100%' }}>
           {dataSource.map((item) => (
-            <Col
-              span={tableProps.searchType === TargetType.Person ? 12 : 24}
-              key={item.id}>
+            <Col span={24} key={item.id}>
               {tableProps.searchType === TargetType.Person ? (
                 <PersonInfoCard key={item.id} person={item}></PersonInfoCard>
               ) : (

@@ -9,7 +9,11 @@ interface teamTypeInfo {
   size?: number;
   fontSize?: number;
   share: TargetShare;
+<<<<<<< HEAD
   onlySvg?: boolean;
+=======
+  notAvatar?: boolean;
+>>>>>>> main
 }
 
 /** 组织图标 */
@@ -81,10 +85,17 @@ const TeamIcon = (info: teamTypeInfo) => {
       icon = <im.ImSvg fontSize={size ? size - 4 : fontSize} />;
       break;
   }
+<<<<<<< HEAD
   console.log(size);
   return info.onlySvg ? (
     icon
   ) : (
+=======
+  if (info.notAvatar) {
+    return icon;
+  }
+  return (
+>>>>>>> main
     <Avatar
       size={size}
       icon={icon}

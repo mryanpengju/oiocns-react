@@ -41,11 +41,7 @@ const CustomBreadcrumb = (props: CustomBreadcrumbType) => {
         items: item.children.map((i) => {
           return {
             key: i.key,
-<<<<<<< HEAD
-            icon: <span>{i.icon}</span>,
-=======
             icon: <span style={{ fontSize: 16, paddingTop: 2 }}>{i.icon}</span>,
->>>>>>> main
             label: i.label,
           };
         }),

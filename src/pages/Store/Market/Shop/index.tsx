@@ -7,16 +7,7 @@ import { message, Modal } from 'antd';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 import { IMarket } from '@/ts/core';
 import { CheckCircleOutlined } from '@ant-design/icons';
-<<<<<<< HEAD
-import { marketColumns } from '../../App/Config';
-import CardOrTable from '@/components/CardOrTableComp';
-import ProductDetailModal from '../components/ProductDetailModal';
-import MarketClassify from '../components/Classify';
-import AppCard from '../components/AppCardOfBuy';
-import cls from './index.module.less';
-=======
 import { marketColumns } from '../../config/columns';
->>>>>>> main
 
 const ShopPage: React.FC = () => {
   const [isProduce, setIsProduce] = useState<boolean>(false); // 查看详情

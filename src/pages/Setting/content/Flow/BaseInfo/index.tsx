@@ -10,13 +10,8 @@ import {
 } from '@ant-design/pro-components';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Form } from 'antd';
-<<<<<<< HEAD:src/pages/Team/TypeSetting/Flow/BaseInfo/index.tsx
-import ProcessCtrl from '@/ts/controller/setting/processCtrl';
-import { optionType } from '@/ts/controller/setting/processType';
-=======
 import ProcessCtrl from '../Controller/processCtrl';
 import { optionType } from '../Controller/processType';
->>>>>>> main:src/pages/Setting/content/Flow/BaseInfo/index.tsx
 import cls from './index.module.less';
 type BaseInfoProps = {
   nextStep: (params: any) => void;

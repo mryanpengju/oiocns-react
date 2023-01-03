@@ -14,13 +14,8 @@ import {
   CC_PROPS,
   DELAY_PROPS,
   TRIGGER_PROPS,
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/ProcessTree/index.tsx
-} from '@/ts/controller/setting/processType';
-import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
 } from '../../Controller/processType';
 import processCtrl from '../../Controller/processCtrl';
->>>>>>> main:src/bizcomponents/Flow/Process/ProcessTree/index.tsx
 type ProcessTreeProps = {
   onSelectedNode: (params: any) => void;
   [key: string]: any;

@@ -9,11 +9,7 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import appCtrl from '@/ts/controller/store/appCtrl';
-<<<<<<< HEAD:src/pages/Team/TypeSetting/Flow/BindModal/index.tsx
-import userCtrl from '@/ts/controller/setting/userCtrl';
-=======
 import userCtrl from '@/ts/controller/setting';
->>>>>>> main:src/pages/Setting/content/Flow/BindModal/index.tsx
 import { schema } from '@/ts/base';
 import cls from './index.module.less';
 

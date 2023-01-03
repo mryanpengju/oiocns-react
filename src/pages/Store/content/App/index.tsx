@@ -31,21 +31,6 @@ const StoreApp: React.FC = () => {
   const [shareType, setShareType] = useState<'分配' | '共享'>('共享');
   const [appShowIdlimit, setAppShowIdlimit] = useState<string[]>([]);
 
-<<<<<<< HEAD:src/pages/Store/App/index.tsx
-  const handleBtnsClick = (item: { text: string }) => {
-    switch (item.text) {
-      case '购买':
-        history.push('/market/shop');
-        break;
-      case '创建':
-        appCtrl.setCurProduct();
-        history.push('/store/app/create');
-        break;
-      default:
-        console.log('点击事件未注册', item.text);
-        break;
-    }
-=======
   const extraBtns = () => {
     return (
       <BtnGroupDiv
@@ -65,7 +50,6 @@ const StoreApp: React.FC = () => {
         ]}
       />
     );
->>>>>>> main:src/pages/Store/content/App/index.tsx
   };
 
   const renderOperation = (item: IProduct): common.OperationType[] => {

@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Avatar, Space, Modal, message, Empty, Button } from 'antd';
 import appCtrl from '@/ts/controller/store/appCtrl';
-<<<<<<< HEAD:src/pages/Team/TypeSetting/Flow/Appnindlist/index.tsx
-import userCtrl from '@/ts/controller/setting/userCtrl';
-=======
 import userCtrl from '@/ts/controller/setting';
->>>>>>> main:src/pages/Setting/content/Flow/Appnindlist/index.tsx
 import AppLogo from '/img/appLogo.png';
 
 import cls from './index.module.less';

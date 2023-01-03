@@ -1,4 +1,4 @@
-import { Button, Card, Dropdown, Tag } from 'antd';
+import { Button, Card, Dropdown, Tag, Form } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import cls from './index.module.less';
 import { DataItem, sourceColumns } from './config';
@@ -16,41 +16,13 @@ import { useHistory } from 'react-router-dom';
 import { DestTypes } from '@/constants/const';
 import appCtrl from '@/ts/controller/store/appCtrl';
 import SchemaForm from '@/components/SchemaForm';
-<<<<<<< HEAD:src/pages/Store/App/Info/index.tsx
-import { ProFormInstance } from '@ant-design/pro-components';
-=======
 import { IProduct } from '@/ts/core';
->>>>>>> main:src/pages/Store/content/App/Info/index.tsx
 // 根据以获取数据 动态产生tab
 const items = DestTypes.map((k) => {
   return { tab: k.label, key: k.label };
 });
 
 const StoreAppInfo: React.FC = () => {
-<<<<<<< HEAD:src/pages/Store/App/Info/index.tsx
-  const formRef = useRef<ProFormInstance>();
-  const history = useHistory();
-  if (!appCtrl.curProduct) {
-    history.push('/store/app');
-    return <></>;
-  }
-  useEffect(() => {
-    onTabChange('组织');
-  }, []);
-  const curProd = appCtrl.curProduct;
-  const [list, setList] = useState<any>([]);
-  sourceColumn.initialValue = appCtrl.curProduct?.prod?.resource?.map((item: any) => {
-    let obj = {
-      name: item.name,
-      code: item.code,
-      link: item.link,
-      components: item.components && JSON.parse(item.components),
-      flows: item.flows && JSON.parse(item.flows),
-    };
-    return obj;
-  });
-  onTabChange('组织');
-=======
   const [list, setList] = useState<any>([]);
   const [current, setCurrent] = useState<IProduct>();
   const [createAppForm] = Form.useForm<Record<string, any>>();
@@ -77,7 +49,6 @@ const StoreAppInfo: React.FC = () => {
     }
   }, [appCtrl.curProduct]);
 
->>>>>>> main:src/pages/Store/content/App/Info/index.tsx
   async function onTabChange(tabKey: any) {
     const res = await current!.queryExtend(tabKey);
     const showData = res.result?.map((v) => {
@@ -103,20 +74,7 @@ const StoreAppInfo: React.FC = () => {
     });
     setList(showData || []);
   }
-<<<<<<< HEAD:src/pages/Store/App/Info/index.tsx
-
-  const menu = [
-    // { key: 'edit', label: '编辑基础信息' },
-    { key: '退订', label: '退订' },
-  ];
-  function handleEditApp() {
-    appCtrl.setCurProduct(curProd.prod.id);
-    history.push('/store/app/create');
-  }
-  return (
-=======
   return current ? (
->>>>>>> main:src/pages/Store/content/App/Info/index.tsx
     <div className={`pages-wrap flex flex-direction-col ${cls['pages-wrap']}`}>
       <Card
         title={
@@ -184,11 +142,7 @@ const StoreAppInfo: React.FC = () => {
           modalprops={{
             destroyOnClose: true,
           }}
-<<<<<<< HEAD:src/pages/Store/App/Info/index.tsx
-          columns={[sourceColumn as DataItem]}
-=======
           columns={[sourceColumns as DataItem]}
->>>>>>> main:src/pages/Store/content/App/Info/index.tsx
           submitter={{
             render: () => {
               return <></>;

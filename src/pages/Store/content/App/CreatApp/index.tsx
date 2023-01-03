@@ -4,12 +4,8 @@ import SchemaForm from '@/components/SchemaForm';
 import { columns, DataItem, Resources } from './config';
 import { Form, Card, Row, Col, Space, PageHeader, message } from 'antd';
 import { RouteComponentProps } from 'react-router-dom';
-<<<<<<< HEAD:src/pages/Store/App/CreatApp/index.tsx
 import userCtrl from '@/ts/controller/setting/userCtrl';
 import appCtrl from '@/ts/controller/store/appCtrl';
-=======
-import userCtrl from '@/ts/controller/setting';
->>>>>>> main:src/pages/Store/content/App/CreatApp/index.tsx
 
 const CreatApp: React.FC<RouteComponentProps> = (props) => {
   const { history } = props;

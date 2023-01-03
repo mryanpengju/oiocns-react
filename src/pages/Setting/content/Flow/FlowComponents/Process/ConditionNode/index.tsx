@@ -2,11 +2,7 @@ import React, { useState, useMemo } from 'react';
 import InsertButton from '../InsertButton';
 import cls from './index.module.less';
 import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/Process/ConditionNode/index.tsx
-import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
 import processCtrl from '../../../Controller/processCtrl';
->>>>>>> main:src/bizcomponents/Flow/Process/ConditionNode/index.tsx
 
 type ConditionNodeProps = {
   onInsertNode: Function;

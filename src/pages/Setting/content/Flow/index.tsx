@@ -10,13 +10,8 @@ import {
 } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-components';
 import NewProcessDesign from './FlowComponents';
-<<<<<<< HEAD:src/pages/Team/TypeSetting/Flow/index.tsx
-import userCtrl from '@/ts/controller/setting/userCtrl';
-import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
 import userCtrl from '@/ts/controller/setting';
 import processCtrl from './Controller/processCtrl';
->>>>>>> main:src/pages/Setting/content/Flow/index.tsx
 import { deepClone } from '@/ts/base/common';
 import { schema } from '@/ts/base';
 import BaseInfo from './BaseInfo';

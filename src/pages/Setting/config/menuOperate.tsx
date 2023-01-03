@@ -36,11 +36,7 @@ export const buildTargetTree = async (targets: ITarget[]) => {
       label: item.teamName,
       itemType: parseGroupMenuType(item.typeName),
       menus: await loadTypeMenus(item),
-<<<<<<< HEAD:src/pages/Team/config/menuOperate.tsx
-      icon: <TeamIcon share={item.shareInfo} size={18} fontSize={16} onlySvg={true} />,
-=======
       icon: <TeamIcon notAvatar={true} share={item.shareInfo} size={18} fontSize={16} />,
->>>>>>> main:src/pages/Setting/config/menuOperate.tsx
       children: await buildTargetTree(item.subTeam),
     });
   }

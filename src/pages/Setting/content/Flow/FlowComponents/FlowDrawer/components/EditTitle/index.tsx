@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { Typography } from 'antd';
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/FlowDrawer/components/EditTitle/index.tsx
-import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
 import processCtrl from '../../../../Controller/processCtrl';
->>>>>>> main:src/bizcomponents/Flow/FlowDrawer/components/EditTitle/index.tsx
 
 /**
  * @description: 编辑名称

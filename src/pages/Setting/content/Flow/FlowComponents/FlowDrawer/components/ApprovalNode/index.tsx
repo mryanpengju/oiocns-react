@@ -3,11 +3,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Row, Button, Divider, Col, Radio, Space, Form, InputNumber, Modal } from 'antd';
 import IndentityManage from '@/bizcomponents/IndentityManage';
 import cls from './index.module.less';
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/FlowDrawer/components/ApprovalNode/index.tsx
-import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
 import processCtrl from '../../../../Controller/processCtrl';
->>>>>>> main:src/bizcomponents/Flow/FlowDrawer/components/ApprovalNode/index.tsx
 
 /**
  * @description: 审批对象

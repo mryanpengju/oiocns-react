@@ -12,17 +12,10 @@ import {
 } from '@/ts/core';
 const sessionUserName = 'sessionUser';
 const sessionSpaceName = 'sessionSpace';
-<<<<<<< HEAD:src/ts/controller/setting/userCtrl.ts
-const DefaultSpaceName = 'defaultSpaceName';
-const FirstLogin = 'firstLogin';
-/** 用户控制器 */
-class UserController extends Emitter {
-=======
 /**
  * 设置控制器
  */
 class SettingController extends Emitter {
->>>>>>> main:src/ts/controller/setting/index.ts
   public currentKey: string = '';
   private _user: IPerson | undefined;
   private _curSpace: ICompany | undefined;
@@ -34,19 +27,7 @@ class SettingController extends Emitter {
     if (userJson && userJson.length > 0) {
       this._user = createPerson(JSON.parse(userJson));
       setTimeout(async () => {
-<<<<<<< HEAD:src/ts/controller/setting/userCtrl.ts
-        await this._user?.getJoinedCompanys();
-
-        if (sessionStorage.getItem(FirstLogin) === '1') {
-          setTimeout(async () => {
-            const getSpaceId: { data: { defaultSpaceId: '' } } =
-              await kernel.anystore.get(DefaultSpaceName, 'user');
-            this.setCurSpace(getSpaceId?.data.defaultSpaceId);
-          }, 200);
-        }
-=======
         await this._loadUser(JSON.parse(userJson));
->>>>>>> main:src/ts/controller/setting/index.ts
         this._curSpace = this._findCompany(
           sessionStorage.getItem(sessionSpaceName) || '',
         );
@@ -212,7 +193,7 @@ class SettingController extends Emitter {
 
   private _cacheSpacedata(): void {
     kernel.anystore.set(
-      DefaultSpaceName,
+      sessionSpaceName,
       {
         operation: 'replaceAll',
         data: this._caches,

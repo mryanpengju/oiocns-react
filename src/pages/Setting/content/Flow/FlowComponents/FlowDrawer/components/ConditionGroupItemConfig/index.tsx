@@ -1,24 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Select, InputNumber, Input, Form } from 'antd';
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/FlowDrawer/components/ConditionGroupItemConfig/index.tsx
-import processCtrl from '@/ts/controller/setting/processCtrl';
-import { ConditionCallBackTypes } from '@/ts/controller/setting/processCtrl';
-=======
 import processCtrl from '../../../../Controller/processCtrl';
 import { ConditionCallBackTypes } from '../../../../Controller/processCtrl';
->>>>>>> main:src/bizcomponents/Flow/FlowDrawer/components/ConditionGroupItemConfig/index.tsx
 import {
   nodeType,
   conditionDataType,
   conditiondType,
   getConditionKeys,
   dataType,
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/FlowDrawer/components/ConditionGroupItemConfig/index.tsx
-} from '@/ts/controller/setting/processType';
-=======
 } from '../../../../Controller/processType';
->>>>>>> main:src/bizcomponents/Flow/FlowDrawer/components/ConditionGroupItemConfig/index.tsx
 import cls from './index.module.less';
 
 type ConditionGroupItemConfigProps = {};

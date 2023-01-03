@@ -83,16 +83,12 @@ const CustomMenu = (props: CustomMenuType) => {
       for (const item of items) {
         result.push({
           key: item.key,
-<<<<<<< HEAD
-          icon: <span>{item.icon}</span>,
-=======
           icon: (
             <span style={{ fontSize: 16, paddingTop: 2 }}>
               {item.expIcon && expKeys.includes(item.key) ? item.expIcon : item.icon}
             </span>
           ),
           title: item.label,
->>>>>>> main
           label: renderLabel(item),
           children: loadMenus(item.children, expKeys),
         });
@@ -130,16 +126,7 @@ const CustomMenu = (props: CustomMenuType) => {
             setSelectedKeys([props.selectMenu.key, item.key]);
           }
         }}
-<<<<<<< HEAD
-        style={{
-          //   display: 'inline-flex',
-          flex: 1,
-          //   // paddingLeft: 16,
-          //   justifyContent: 'space-between',
-        }}
-=======
         style={{ flex: 1 }}
->>>>>>> main
         onMouseOver={() => {
           setOverItem(item);
         }}
@@ -148,8 +135,6 @@ const CustomMenu = (props: CustomMenuType) => {
           setVisibleMenu(false);
         }}>
         <Typography.Text ellipsis>{item.label}</Typography.Text>
-<<<<<<< HEAD
-=======
         {item.count && item.count > 0 ? (
           <span style={{ float: 'right' }}>
             <Badge key={item.key} count={item.count} size="small" />
@@ -157,7 +142,6 @@ const CustomMenu = (props: CustomMenuType) => {
         ) : (
           <></>
         )}
->>>>>>> main
         <span onClick={(e: any) => e.stopPropagation()} style={{ float: 'right' }}>
           {item.menus && overItem?.key === item.key && (
             <Dropdown

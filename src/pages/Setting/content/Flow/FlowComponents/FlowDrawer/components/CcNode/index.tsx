@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'antd';
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/FlowDrawer/components/CcNode/index.tsx
-import processCtrl from '@/ts/controller/setting/processCtrl';
-=======
 import processCtrl from '../../../../Controller/processCtrl';
->>>>>>> main:src/bizcomponents/Flow/FlowDrawer/components/CcNode/index.tsx
 import IndentityManage from '@/bizcomponents/IndentityManage';
 import cls from './index.module.less';
 

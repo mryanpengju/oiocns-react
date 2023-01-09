@@ -3,6 +3,7 @@ import { IFileSystemItem } from '@/ts/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { Input, message, Modal, Upload, UploadProps } from 'antd';
 import CopyOrMoveModal from './CopyOrMove';
+import ReleaseVersionModal from './ReleaseVersion';
 import FilePreview from './FilePreview';
 import { FileItemShare } from '@/ts/base/model';
 
@@ -47,6 +48,11 @@ const FileSysOperate: React.FC<IProps> = (props: IProps) => {
       case '上传':
         setTarget(target);
         uploadRef.current.upload.uploader.onClick();
+        return;
+      case '发布版本':
+        console.log('target', target);
+        setTarget(target);
+        setModalType(key);
         return;
       case '新建':
         setNewName('');
@@ -127,6 +133,16 @@ const FileSysOperate: React.FC<IProps> = (props: IProps) => {
               }
             }}
           />
+          <ReleaseVersionModal
+            title={modalType + '-[' + target.name + ']'}
+            open={['发布版本'].includes(modalType)}
+            currentTaget={target}
+            onChange={(success) => {
+              setModalType('');
+              if (success) {
+                storeCtrl.changCallback();
+              }
+            }}></ReleaseVersionModal>
         </>
       )}
       {preview && (

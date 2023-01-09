@@ -47,6 +47,11 @@ export const loadFileSysItemMenus = (
       label: '上传文件',
       icon: <im.ImUpload />,
     },
+    {
+      key: '发布版本',
+      label: '发布版本',
+      icon: <im.ImUpload />,
+    },
   ];
   if (rightClick) return menus;
   if (item != storeCtrl.root && item != storeCtrl.home) {

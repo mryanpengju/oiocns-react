@@ -1,156 +1,141 @@
-import storeCtrl from '@/ts/controller/store';
-import { IFileSystemItem } from '@/ts/core';
-import React, { useEffect, useRef, useState } from 'react';
-import { Input, message, Modal, Upload, UploadProps } from 'antd';
-import CopyOrMoveModal from './CopyOrMove';
-import ReleaseVersionModal from './ReleaseVersion';
-import FilePreview from './FilePreview';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Input, Select, message } from 'antd';
+import { kernel } from '@/ts/base';
+import userCtrl from '@/ts/controller/setting';
 import { FileItemShare } from '@/ts/base/model';
+import { XTarget } from '@/ts/base/schema';
+import { IFileSystemItem } from '@/ts/core';
 
-interface IProps {
-  operateKey?: string;
-  operateTarget?: IFileSystemItem;
-  operateDone: () => void;
-}
+const { TextArea } = Input;
 
-/** 文件系统操作 */
-const FileSysOperate: React.FC<IProps> = (props: IProps) => {
-  const [newName, setNewName] = useState<string>('');
-  const [modalType, setModalType] = useState<string>('');
-  const [target, setTarget] = useState<IFileSystemItem>();
-  const [preview, setPreview] = useState<FileItemShare>();
-  const uploadRef = useRef<any>();
+export type AppInformation = {
+  id: 'snowId()';
+  appName: string;
+  platform: string;
+  pubTime: 'sysdate()';
+  version: string;
+  pubTeam: XTarget;
+  pubAuthor: XTarget;
+  remark: string;
+} & FileItemShare;
+
+/** 移动或复制复选框 */
+const CopyOrMoveModal = (props: {
+  open: boolean;
+  title: string; // 弹出框名称
+  currentTaget: IFileSystemItem; // 需要操作的文件
+  onChange: (val: boolean) => void;
+}) => {
+  const { open, title, onChange, currentTaget } = props;
+  const [form] = Form.useForm();
+  const [currentSelect, setCurrentSelect] = useState<AppInformation>();
+  const [currentOriMes, setCurrentOriMes] = useState<{ label: string; value: string }[]>(
+    [],
+  );
+
+  const getinitData = async () => {
+    const getValue = await kernel.anystore.get('version', 'all');
+    console.log('getValue', getValue);
+  };
   useEffect(() => {
-    if (props.operateTarget && props.operateKey) {
-      executeOperate(props.operateKey, props.operateTarget);
-      props.operateDone();
-    }
-  }, [props]);
+    getinitData();
+    const all =
+      userCtrl.user?.joinedCompany?.map((item) => {
+        return item.target;
+      }) || [];
 
-  const executeOperate = async (key: string, target: IFileSystemItem) => {
-    switch (key) {
-      case '刷新':
-        if (await target.loadChildren(true)) {
-          message.success('刷新成功!');
-        }
-        break;
-      case '删除':
-        Modal.confirm({
-          content: '确定删除吗?',
-          onOk: async () => {
-            if (await target.delete()) {
-              message.success('删除成功!');
-              storeCtrl.changCallback();
-            }
-          },
-        });
-        return;
-      case '上传':
-        setTarget(target);
-        uploadRef.current.upload.uploader.onClick();
-        return;
-      case '发布版本':
-        console.log('target', target);
-        setTarget(target);
-        setModalType(key);
-        return;
-      case '新建':
-        setNewName('');
-        setModalType(key);
-        setTarget(target);
-        return;
-      case '重命名':
-        setModalType(key);
-        setTarget(target);
-        setNewName(target.name);
-        return;
-      case '复制':
-      case '移动':
-        setModalType(key);
-        setTarget(target);
-        return;
-      case '|新建':
-        await target.create(newName);
-        break;
-      case '|重命名':
-        await target.rename(newName);
-        break;
-      case '双击':
-        if (target.target.isDirectory) {
-          storeCtrl.currentKey = target.key;
-          await target.loadChildren();
-          storeCtrl.changCallback();
-        } else {
-          setPreview(target.shareInfo());
-        }
-        return;
-    }
-    storeCtrl.changCallback();
-  };
-  const uploadProps: UploadProps = {
-    multiple: true,
-    showUploadList: false,
-    async customRequest(options) {
-      const file = options.file as File;
-      if (file && target) {
-        if (await target.upload(file.name, file)) {
-          storeCtrl.changCallback();
-        }
-      }
-    },
-  };
+    const currentOri = all.map((item) => {
+      return {
+        value: item.id,
+        label: item.name,
+        ...item,
+      };
+    });
+    setCurrentOriMes(currentOri);
+    form.setFieldsValue({
+      publisher: userCtrl.user.name,
+    });
+  }, []);
   return (
-    <>
-      {target && (
-        <>
-          <Modal
-            title={modalType + '-[' + target.name + ']'}
-            open={['新建', '重命名'].includes(modalType)}
-            onCancel={() => setModalType('')}
-            onOk={async () => {
-              if (newName.length > 0) {
-                await executeOperate('|' + modalType, target);
-                setModalType('');
-              }
-            }}>
-            <Input
-              placeholder="新建文件夹"
-              size="large"
-              value={newName}
-              onChange={(e) => {
-                setNewName(e.target.value);
+    <Modal
+      destroyOnClose
+      title={title}
+      open={open}
+      onOk={async () => {
+        const currentValue: AppInformation = await form.validateFields();
+        delete currentValue?.publishOrganize;
+        currentValue.id = 'snowId()';
+        currentValue.pubTeam = currentSelect || {};
+        currentValue.pubAuthor = currentSelect || {};
+        currentValue.platform = 'Android';
+        currentValue.pubTime = 'sysdate()';
+        const currentData = {
+          ...currentValue,
+          ...currentTaget.shareInfo(),
+        };
+        console.log('currentData', currentData);
+        const result = await kernel.anystore.set(
+          'version',
+          {
+            operation: 'replaceAll',
+            data: { versionMes: [currentData] },
+          },
+          'all',
+        );
+        if (result.success) {
+          message.success('发布成功');
+          onChange(false);
+          return;
+        }
+      }}
+      onCancel={() => {
+        onChange(false);
+      }}>
+      {open && (
+        <Form layout="vertical" form={form}>
+          <Form.Item
+            label="应用名称"
+            name="appName"
+            required
+            rules={[{ required: true, message: ' 请输入应用名称' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="发布者"
+            name="publisher"
+            required
+            rules={[{ required: true, message: ' 请输入发布者' }]}>
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            label="发布组织"
+            name="publishOrganize"
+            required
+            rules={[{ required: true, message: ' 请选择发布组织' }]}>
+            <Select
+              options={currentOriMes}
+              onSelect={(e, value) => {
+                setCurrentSelect(value);
               }}
             />
-          </Modal>
-          <CopyOrMoveModal
-            title={modalType + '-[' + target.name + ']'}
-            open={['复制', '移动'].includes(modalType)}
-            currentTaget={target}
-            onChange={(success) => {
-              setModalType('');
-              if (success) {
-                storeCtrl.changCallback();
-              }
-            }}
-          />
-          <ReleaseVersionModal
-            title={modalType + '-[' + target.name + ']'}
-            open={['发布版本'].includes(modalType)}
-            currentTaget={target}
-            onChange={(success) => {
-              setModalType('');
-              if (success) {
-                storeCtrl.changCallback();
-              }
-            }}></ReleaseVersionModal>
-        </>
+          </Form.Item>
+          <Form.Item
+            label="版本号"
+            name="version"
+            required
+            rules={[{ required: true, message: ' 请输入版本号' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="版本信息"
+            name="remark"
+            required
+            rules={[{ required: true, message: ' 请输入版本信息' }]}>
+            <TextArea />
+          </Form.Item>
+        </Form>
       )}
-      {preview && (
-        <FilePreview share={preview} previewDone={() => setPreview(undefined)} />
-      )}
-      <Upload {...uploadProps} ref={uploadRef}></Upload>
-    </>
+    </Modal>
   );
 };
-
-export default FileSysOperate;
+export default CopyOrMoveModal;

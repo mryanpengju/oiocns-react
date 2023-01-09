@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, message } from 'antd';
+import { kernel } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting';
 import { FileItemShare } from '@/ts/base/model';
 import { XTarget } from '@/ts/base/schema';
@@ -31,7 +32,13 @@ const CopyOrMoveModal = (props: {
   const [currentOriMes, setCurrentOriMes] = useState<{ label: string; value: string }[]>(
     [],
   );
+
+  const getinitData = async () => {
+    const getValue = await kernel.anystore.get('version', 'all');
+    console.log('getValue', getValue);
+  };
   useEffect(() => {
+    getinitData();
     const all =
       userCtrl.user?.joinedCompany?.map((item) => {
         return item.target;
@@ -66,7 +73,20 @@ const CopyOrMoveModal = (props: {
           ...currentValue,
           ...currentTaget.shareInfo(),
         };
-        console.log(currentData);
+        console.log('currentData', currentData);
+        const result = await kernel.anystore.set(
+          'version',
+          {
+            operation: 'replaceAll',
+            data: { versionMes: [currentData] },
+          },
+          'all',
+        );
+        if (result.success) {
+          message.success('发布成功');
+          onChange(false);
+          return;
+        }
       }}
       onCancel={() => {
         onChange(false);

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Select, message } from 'antd';
 import { kernel } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting';
@@ -28,14 +28,20 @@ const CopyOrMoveModal = (props: {
 }) => {
   const { open, title, onChange, currentTaget } = props;
   const [form] = Form.useForm();
-  const [currentSelect, setCurrentSelect] = useState<AppInformation>();
+  const [currentSelect, setCurrentSelect] = useState();
+  const [allVersionData, setAllVersionData] = useState<[]>([]);
   const [currentOriMes, setCurrentOriMes] = useState<{ label: string; value: string }[]>(
     [],
   );
 
   const getinitData = async () => {
     const getValue = await kernel.anystore.get('version', 'all');
-    console.log('getValue', getValue);
+    console.log('eeee', getValue.data);
+    if (getValue.data && getValue.data?.versionMes) {
+      setAllVersionData(getValue.data?.versionMes);
+    } else {
+      setAllVersionData([]);
+    }
   };
   useEffect(() => {
     getinitData();
@@ -62,7 +68,7 @@ const CopyOrMoveModal = (props: {
       title={title}
       open={open}
       onOk={async () => {
-        const currentValue: AppInformation = await form.validateFields();
+        const currentValue = await form.validateFields();
         delete currentValue?.publishOrganize;
         currentValue.id = 'snowId()';
         currentValue.pubTeam = currentSelect || {};
@@ -73,12 +79,12 @@ const CopyOrMoveModal = (props: {
           ...currentValue,
           ...currentTaget.shareInfo(),
         };
-        console.log('currentData', currentData);
+        allVersionData.push(currentData);
         const result = await kernel.anystore.set(
           'version',
           {
             operation: 'replaceAll',
-            data: { versionMes: [currentData] },
+            data: { versionMes: allVersionData },
           },
           'all',
         );

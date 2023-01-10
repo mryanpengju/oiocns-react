@@ -7,39 +7,47 @@ export const VersionColumns: ProColumns[] = [
     width: 50,
   },
   {
-    title: '特性编号',
-    dataIndex: 'code',
-    key: 'code',
+    title: '应用名称',
+    dataIndex: 'appName',
+    key: 'appName',
     width: 150,
   },
   {
-    title: '特性名称',
+    title: '平台',
+    dataIndex: 'platform',
+    key: 'platform',
+    width: 200,
+  },
+  {
+    title: '发布者',
+    dataIndex: 'publisher',
+    key: 'publisher',
+    width: 150,
+  },
+  {
+    title: '发布时间',
+    dataIndex: 'pubTime',
+    key: 'pubTime',
+    width: 150,
+  },
+  {
+    title: '发布组织',
+    width: 150,
+    render: (item, record) => {
+      return record.pubTeam.name;
+    },
+  },
+  {
+    title: '版本号',
+    width: 150,
+    render: (item, record) => {
+      return record.pubTeam.version;
+    },
+  },
+  {
+    title: '文件名',
     dataIndex: 'name',
     key: 'name',
     width: 200,
-  },
-  {
-    title: '特性类型',
-    dataIndex: 'valueType',
-    key: 'valueType',
-    width: 150,
-  },
-  {
-    title: '特性分类',
-    dataIndex: 'speciesId',
-    key: 'speciesId',
-    width: 150,
-  },
-  {
-    title: '共享组织',
-    dataIndex: 'belongId',
-    key: 'belongId',
-    width: 200,
-  },
-  {
-    title: '特性定义',
-    dataIndex: 'remark',
-    ellipsis: true,
-    key: 'remark',
   },
 ];

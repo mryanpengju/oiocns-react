@@ -31,8 +31,8 @@ export const loadFileSysItemMenus = (
   item: IFileSystemItem,
   rightClick: boolean = false,
 ) => {
-  console.log('item-----', item);
-  console.log('storeCtrl', item == storeCtrl.root);
+  // console.log('item-----', item);
+  // console.log('storeCtrl', item == storeCtrl.root);
   const menus: OperateMenuType[] = [
     {
       key: '新建',

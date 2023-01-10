@@ -6,7 +6,7 @@ import userCtrl from '@/ts/controller/setting';
 import { FileItemShare } from '@/ts/base/model';
 import { XTarget } from '@/ts/base/schema';
 import { IFileSystemItem } from '@/ts/core';
-import VersionColumns from './config';
+import { VersionColumns } from './config';
 
 const { TextArea } = Input;
 
@@ -41,28 +41,13 @@ const CopyOrMoveModal = (props: {
   };
   useEffect(() => {
     getinitData();
-    const all =
-      userCtrl.user?.joinedCompany?.map((item) => {
-        return item.target;
-      }) || [];
-
-    const currentOri = all.map((item) => {
-      return {
-        value: item.id,
-        label: item.name,
-        ...item,
-      };
-    });
-    setCurrentOriMes(currentOri);
-    form.setFieldsValue({
-      publisher: userCtrl.user.name,
-    });
   }, []);
   return (
     <Modal
       destroyOnClose
       title={title}
       open={open}
+      width="1400px"
       onOk={() => {}}
       onCancel={() => {
         onChange(false);
@@ -72,7 +57,17 @@ const CopyOrMoveModal = (props: {
           rowKey={'id'}
           // params={tkey}
           request={async (page) => {
-            return await kernel.anystore.get('version', 'all');
+            const currentData: { data: { versionMes: [] } } = await kernel.anystore.get(
+              'version',
+              'all',
+            );
+            console.log('currentData', currentData?.data.versionMes);
+            return {
+              result: currentData?.data.versionMes || [],
+              limit: 10,
+              offset: 10,
+              total: currentData?.data.versionMes.length,
+            };
           }}
           // operation={renderAttrItemOperate}
           columns={VersionColumns}

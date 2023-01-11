@@ -95,7 +95,9 @@ const CopyOrMoveModal = (props: {
       if (docDir && file) {
         const result = await docDir.upload(file.name, file);
         if (result) {
-          setImageUrl(result.shareInfo());
+          const dataMes = result.shareInfo();
+          dataMes.thumbnail = '';
+          setImageUrl(dataMes);
         }
       }
     },
@@ -121,7 +123,6 @@ const CopyOrMoveModal = (props: {
         const getMes = await form.getFieldsValue();
         console.log('getMes', getMes);
         const currentValue = await form.validateFields();
-
         delete currentValue?.publishOrganize;
         currentValue.id = 'snowId()';
         currentValue.pubTeam = currentSelect || {};
@@ -165,7 +166,7 @@ const CopyOrMoveModal = (props: {
             <Upload className="avatar-uploader" {...uploadProps}>
               {imageUrl ? (
                 <div>
-                  <img src={imageUrl.thumbnail} alt="avatar" style={{ width: '100%' }} />
+                  <img src={imageUrl.shareLink} alt="avatar" style={{ width: '140px' }} />
                 </div>
               ) : (
                 uploadButton

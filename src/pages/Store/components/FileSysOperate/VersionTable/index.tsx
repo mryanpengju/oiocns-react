@@ -36,7 +36,9 @@ const CopyOrMoveModal = (props: {
       title: '应用图标',
       width: 150,
       render: (item, record) => {
-        return record.uploadName && <Image src={record.uploadName.thumbnail} />;
+        return (
+          record.uploadName && <Image width="120px" src={record.uploadName.shareLink} />
+        );
       },
     },
     {

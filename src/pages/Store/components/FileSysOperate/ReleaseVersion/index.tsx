@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Select, message } from 'antd';
+import { Modal, Form, Input, Select, message, UploadProps, Upload, Button } from 'antd';
 import { kernel } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting';
 import { FileItemShare } from '@/ts/base/model';
+import storeCtrl from '@/ts/controller/store';
 import { XTarget } from '@/ts/base/schema';
 import { IFileSystemItem } from '@/ts/core';
 
@@ -33,10 +34,18 @@ const CopyOrMoveModal = (props: {
   const [currentOriMes, setCurrentOriMes] = useState<{ label: string; value: string }[]>(
     [],
   );
+  const [imageUrl, setImageUrl] = useState<FileItemShare>();
+
+  const uploadButton = (
+    <div>
+      <Button>上传应用图标</Button>
+    </div>
+  );
 
   const getinitData = async () => {
     const getValue: { data: { versionMes: AppInformation[] } } =
       await kernel.anystore.get('version', 'all');
+    console.log('getValue', getValue);
     const originData: { publisher: string; version?: number } = {
       publisher: userCtrl.user.name,
     };
@@ -68,6 +77,30 @@ const CopyOrMoveModal = (props: {
     setCurrentOriMes(currentOri);
   }, [open]);
 
+  /** 文件上传参数 */
+  const uploadProps: UploadProps = {
+    multiple: false,
+    showUploadList: false,
+    maxCount: 1,
+    beforeUpload: (file) => {
+      const isImage = file.type.startsWith('image');
+      if (!isImage) {
+        message.error(`${file.name} 不是一个图片文件`);
+      }
+      return isImage;
+    },
+    async customRequest(options) {
+      const file = options.file as File;
+      const docDir = await storeCtrl.home?.create('图片');
+      if (docDir && file) {
+        const result = await docDir.upload(file.name, file);
+        if (result) {
+          setImageUrl(result.shareInfo());
+        }
+      }
+    },
+  };
+
   const originForm = () => {
     form.setFieldsValue({
       appName: '',
@@ -76,6 +109,7 @@ const CopyOrMoveModal = (props: {
       version: '',
       remark: '',
     });
+    setImageUrl(undefined);
   };
 
   return (
@@ -84,11 +118,15 @@ const CopyOrMoveModal = (props: {
       title={title}
       open={open}
       onOk={async () => {
+        const getMes = await form.getFieldsValue();
+        console.log('getMes', getMes);
         const currentValue = await form.validateFields();
+
         delete currentValue?.publishOrganize;
         currentValue.id = 'snowId()';
         currentValue.pubTeam = currentSelect || {};
         currentValue.pubAuthor = userCtrl.user.target || {};
+        currentValue.uploadName = imageUrl;
         currentValue.platform =
           currentTaget.target.extension === '.apk' ? 'Android' : 'IOS';
         currentValue.pubTime = 'sysdate()';
@@ -119,6 +157,32 @@ const CopyOrMoveModal = (props: {
       }}>
       {open && (
         <Form layout="vertical" form={form}>
+          <Form.Item
+            name="uploadName"
+            label="应用图标"
+            required
+            rules={[{ required: true, message: ' 请上传应用图标' }]}>
+            <Upload className="avatar-uploader" {...uploadProps}>
+              {imageUrl ? (
+                <div>
+                  <img src={imageUrl.thumbnail} alt="avatar" style={{ width: '100%' }} />
+                </div>
+              ) : (
+                uploadButton
+              )}
+            </Upload>
+          </Form.Item>
+          {imageUrl ? (
+            <a
+              onClick={() => {
+                setImageUrl(undefined);
+                form.setFieldValue('uploadName', '');
+              }}>
+              删除图标
+            </a>
+          ) : (
+            ''
+          )}
           <Form.Item
             label="应用名称"
             name="appName"
@@ -163,11 +227,7 @@ const CopyOrMoveModal = (props: {
               }}
             />
           </Form.Item>
-          <Form.Item
-            label="版本号"
-            name="version"
-            required
-            rules={[{ required: true, message: ' 请输入版本号' }]}>
+          <Form.Item label="版本号" name="version" required>
             <Input disabled />
           </Form.Item>
           <Form.Item

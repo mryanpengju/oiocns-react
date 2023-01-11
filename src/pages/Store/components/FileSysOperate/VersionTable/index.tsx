@@ -70,7 +70,7 @@ const CopyOrMoveModal = (props: {
       'version',
       'all',
     );
-    console.log(result);
+
     if (result) {
       const getData = result?.data.versionMes || [];
       const currentData = getData.slice((page - 1) * 1, 10);

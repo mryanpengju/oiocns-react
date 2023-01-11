@@ -37,7 +37,6 @@ const CopyOrMoveModal = (props: {
   const getinitData = async () => {
     const getValue: { data: { versionMes: AppInformation[] } } =
       await kernel.anystore.get('version', 'all');
-    console.log('getValue', getValue);
     const originData: { publisher: string; version?: number } = {
       publisher: userCtrl.user.name,
     };
@@ -53,9 +52,7 @@ const CopyOrMoveModal = (props: {
     }
   };
   useEffect(() => {
-    console.log(111);
     getinitData();
-
     const all =
       userCtrl.user?.joinedCompany?.map((item) => {
         return item.target;
@@ -70,6 +67,17 @@ const CopyOrMoveModal = (props: {
     });
     setCurrentOriMes(currentOri);
   }, [open]);
+
+  const originForm = () => {
+    form.setFieldsValue({
+      appName: '',
+      publisher: '',
+      publishOrganize: '',
+      version: '',
+      remark: '',
+    });
+  };
+
   return (
     <Modal
       destroyOnClose
@@ -100,19 +108,13 @@ const CopyOrMoveModal = (props: {
         if (result.success) {
           message.success('发布成功');
           onChange(false);
-          form.setFieldsValue({ appName: '' });
+          originForm();
           return;
         }
       }}
       onCancel={() => {
         onChange(false);
-        form.setFieldsValue({
-          appName: '',
-          publisher: '',
-          publishOrganize: '',
-          version: '',
-          remark: '',
-        });
+        originForm();
       }}>
       {open && (
         <Form layout="vertical" form={form}>
@@ -125,13 +127,21 @@ const CopyOrMoveModal = (props: {
               onBlur={async () => {
                 const curentData = await form.getFieldsValue();
                 const findData = allVersionData.find((item) => {
-                  return item.appName === curentData.appName;
+                  return (
+                    item.appName === curentData.appName &&
+                    item.extension === currentTaget.target.extension
+                  );
                 });
 
                 if (findData) {
                   form.setFieldsValue({
                     ...curentData,
                     version: Number(findData.version) + 1,
+                  });
+                } else {
+                  form.setFieldsValue({
+                    ...curentData,
+                    version: 1,
                   });
                 }
               }}

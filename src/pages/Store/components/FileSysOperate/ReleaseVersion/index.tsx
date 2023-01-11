@@ -89,7 +89,8 @@ const CopyOrMoveModal = (props: {
         currentValue.id = 'snowId()';
         currentValue.pubTeam = currentSelect || {};
         currentValue.pubAuthor = userCtrl.user.target || {};
-        currentValue.platform = currentTaget.extension === '.apk' ? 'Android' : 'IOS';
+        currentValue.platform =
+          currentTaget.target.extension === '.apk' ? 'Android' : 'IOS';
         currentValue.pubTime = 'sysdate()';
         const currentData = {
           ...currentValue,

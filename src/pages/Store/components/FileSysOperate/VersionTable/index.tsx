@@ -1,14 +1,12 @@
 import CardOrTable from '@/components/CardOrTableComp';
-import React, { useMemo, useState, useEffect } from 'react';
-import { Modal, Form, Input, Select, message } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import type { ProFormInstance } from '@ant-design/pro-components';
+import { message, Modal } from 'antd';
 import { kernel } from '@/ts/base';
-import userCtrl from '@/ts/controller/setting';
 import { FileItemShare } from '@/ts/base/model';
 import { XTarget } from '@/ts/base/schema';
 import { IFileSystemItem } from '@/ts/core';
 import { VersionColumns } from './config';
-
-const { TextArea } = Input;
 
 export type AppInformation = {
   id: 'snowId()';
@@ -28,19 +26,62 @@ const CopyOrMoveModal = (props: {
   currentTaget: IFileSystemItem; // 需要操作的文件
   onChange: (val: boolean) => void;
 }) => {
-  const { open, title, onChange, currentTaget } = props;
-  const [form] = Form.useForm();
-  const [currentSelect, setCurrentSelect] = useState<AppInformation>();
-  const [currentOriMes, setCurrentOriMes] = useState<{ label: string; value: string }[]>(
-    [],
-  );
-
-  const getinitData = async () => {
-    const getValue = await kernel.anystore.get('version', 'all');
-    console.log('getValue', getValue);
+  const { open, title, onChange } = props;
+  const [curerntData, setCurrentData] = useState([]);
+  const [page, setPage] = useState<number>(1);
+  const ref = useRef<ProFormInstance>();
+  // 操作内容渲染函数
+  const renderOperation = (item) => {
+    return [
+      {
+        key: 'remove',
+        label: <span style={{ color: 'red' }}>删除</span>,
+        onClick: async () => {
+          Modal.confirm({
+            title: '提示',
+            content: '是否确认删除当前数据',
+            okText: '确认',
+            cancelText: '取消',
+            onOk: async () => {
+              const returnData = curerntData.filter((innerItem) => {
+                return item.id !== innerItem.id;
+              });
+              const result = await kernel.anystore.set(
+                'version',
+                {
+                  operation: 'replaceAll',
+                  data: { versionMes: returnData },
+                },
+                'all',
+              );
+              if (result.success) {
+                message.success('删除成功');
+                initData();
+              }
+            },
+          });
+        },
+      },
+    ];
   };
+
+  const initData = async () => {
+    const result = await kernel.anystore.get('version', 'all');
+    console.log(result);
+    if (result) {
+      const getData = result?.data.versionMes || [];
+      const currentData = getData.slice((page - 1) * 1, 10);
+      setCurrentData([...currentData]);
+    }
+  };
+
+  const handlePageChange = (page: number, pageSize: number) => {
+    setPage(page);
+    setCurrentData(currentData.slice((page - 1) * pageSize, page * pageSize));
+  };
+
   useEffect(() => {
-    getinitData();
+    initData();
   }, []);
   return (
     <Modal
@@ -55,24 +96,13 @@ const CopyOrMoveModal = (props: {
       {open && (
         <CardOrTable
           rowKey={'id'}
-          // params={tkey}
-          request={async (page) => {
-            const currentData: { data: { versionMes: [] } } = await kernel.anystore.get(
-              'version',
-              'all',
-            );
-            console.log('currentData', currentData?.data.versionMes);
-            return {
-              result: currentData?.data.versionMes || [],
-              limit: 10,
-              offset: 10,
-              total: currentData?.data.versionMes.length,
-            };
-          }}
-          // operation={renderAttrItemOperate}
+          params={{ id: curerntData.length }}
+          operation={renderOperation}
+          onChange={handlePageChange}
           columns={VersionColumns}
           showChangeBtn={false}
-          dataSource={[]}
+          dataSource={curerntData}
+          formRef={ref}
         />
       )}
     </Modal>

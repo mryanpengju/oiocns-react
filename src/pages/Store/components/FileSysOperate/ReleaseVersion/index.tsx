@@ -36,15 +36,25 @@ const CopyOrMoveModal = (props: {
 
   const getinitData = async () => {
     const getValue = await kernel.anystore.get('version', 'all');
-    console.log('eeee', getValue.data);
+    console.log('getValue', getValue);
+    const originData = {
+      publisher: userCtrl.user.name,
+    };
     if (getValue.data && getValue.data?.versionMes) {
+      if (getValue.data?.versionMes.length === 0) {
+        originData.version = 1;
+      }
       setAllVersionData(getValue.data?.versionMes);
+      form.setFieldsValue(originData);
     } else {
       setAllVersionData([]);
+      form.setFieldsValue(originData);
     }
   };
   useEffect(() => {
+    console.log(111);
     getinitData();
+
     const all =
       userCtrl.user?.joinedCompany?.map((item) => {
         return item.target;
@@ -58,10 +68,7 @@ const CopyOrMoveModal = (props: {
       };
     });
     setCurrentOriMes(currentOri);
-    form.setFieldsValue({
-      publisher: userCtrl.user.name,
-    });
-  }, []);
+  }, [open]);
   return (
     <Modal
       destroyOnClose
@@ -69,17 +76,19 @@ const CopyOrMoveModal = (props: {
       open={open}
       onOk={async () => {
         const currentValue = await form.validateFields();
+        console.log('currentValue', currentValue, currentTaget);
         delete currentValue?.publishOrganize;
         currentValue.id = 'snowId()';
         currentValue.pubTeam = currentSelect || {};
-        currentValue.pubAuthor = currentSelect || {};
-        currentValue.platform = 'Android';
+        currentValue.pubAuthor = userCtrl.user.target || {};
+        currentValue.platform = currentTaget.extension === '.apk' ? 'Android' : 'IOS';
         currentValue.pubTime = 'sysdate()';
         const currentData = {
           ...currentValue,
           ...currentTaget.shareInfo(),
         };
-        allVersionData.push(currentData);
+        // 头部插入元素 方便查询
+        allVersionData.unshift(currentData);
         const result = await kernel.anystore.set(
           'version',
           {
@@ -91,11 +100,19 @@ const CopyOrMoveModal = (props: {
         if (result.success) {
           message.success('发布成功');
           onChange(false);
+          form.setFieldsValue({ appName: '' });
           return;
         }
       }}
       onCancel={() => {
         onChange(false);
+        form.setFieldsValue({
+          appName: '',
+          publisher: '',
+          publishOrganize: '',
+          version: '',
+          remark: '',
+        });
       }}>
       {open && (
         <Form layout="vertical" form={form}>
@@ -104,7 +121,21 @@ const CopyOrMoveModal = (props: {
             name="appName"
             required
             rules={[{ required: true, message: ' 请输入应用名称' }]}>
-            <Input />
+            <Input
+              onBlur={async () => {
+                const curentData = await form.getFieldsValue();
+                const findData = allVersionData.find((item) => {
+                  return item.appName === curentData.appName;
+                });
+                console.log('findData', findData);
+                if (findData) {
+                  form.setFieldsValue({
+                    ...curentData,
+                    version: Number(findData.version) + 1,
+                  });
+                }
+              }}
+            />
           </Form.Item>
           <Form.Item
             label="发布者"
@@ -113,11 +144,7 @@ const CopyOrMoveModal = (props: {
             rules={[{ required: true, message: ' 请输入发布者' }]}>
             <Input disabled />
           </Form.Item>
-          <Form.Item
-            label="发布组织"
-            name="publishOrganize"
-            required
-            rules={[{ required: true, message: ' 请选择发布组织' }]}>
+          <Form.Item label="发布组织" name="publishOrganize">
             <Select
               options={currentOriMes}
               onSelect={(e, value) => {
@@ -130,7 +157,7 @@ const CopyOrMoveModal = (props: {
             name="version"
             required
             rules={[{ required: true, message: ' 请输入版本号' }]}>
-            <Input />
+            <Input disabled />
           </Form.Item>
           <Form.Item
             label="版本信息"

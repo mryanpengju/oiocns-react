@@ -51,20 +51,21 @@ export const loadFileSysItemMenus = (
     },
   ];
   if (rightClick) return menus;
-  if (item.target.extension === '.apk') {
+  if (item.target.extension === '.apk' || item.target.extension === '.ipa') {
     menus.push({
       key: '发布版本',
       label: '发布版本',
-      icon: <im.ImUpload />,
+      icon: <im.ImMobile />,
+    });
+  } else {
+    menus.push({
+      key: '版本列表',
+      label: '版本列表',
+      icon: <im.ImMenu />,
     });
   }
   if (item != storeCtrl.root && item != storeCtrl.home) {
     menus.push(
-      {
-        key: '版本列表',
-        label: '版本列表',
-        icon: <im.ImUpload />,
-      },
       {
         key: '重命名',
         label: '重命名',

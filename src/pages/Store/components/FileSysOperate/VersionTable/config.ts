@@ -20,9 +20,10 @@ export const VersionColumns: ProColumns[] = [
   },
   {
     title: '发布者',
-    dataIndex: 'publisher',
-    key: 'publisher',
     width: 150,
+    render: (item, record) => {
+      return record.pubAuthor.name;
+    },
   },
   {
     title: '发布时间',
@@ -41,7 +42,7 @@ export const VersionColumns: ProColumns[] = [
     title: '版本号',
     width: 150,
     render: (item, record) => {
-      return record.pubTeam.version;
+      return record.version;
     },
   },
   {

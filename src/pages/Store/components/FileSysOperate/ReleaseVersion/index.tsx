@@ -23,7 +23,7 @@ export type AppInformation = {
 const CopyOrMoveModal = (props: {
   open: boolean;
   title: string; // 弹出框名称
-  currentTaget: { extension: string } & IFileSystemItem; // 需要操作的文件
+  currentTaget: IFileSystemItem; // 需要操作的文件
   onChange: (val: boolean) => void;
 }) => {
   const { open, title, onChange, currentTaget } = props;

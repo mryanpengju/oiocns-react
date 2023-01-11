@@ -4,9 +4,7 @@ import { IFileSystemItem } from '@/ts/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { Input, message, Modal, Upload, UploadProps } from 'antd';
 import CopyOrMoveModal from './CopyOrMove';
-import { kernel } from '@/ts/base';
 import ReleaseVersionModal from './ReleaseVersion';
-import type { AppInformation } from './ReleaseVersion';
 import FilePreview from './FilePreview';
 import VersionTable from './VersionTable';
 import { FileItemShare } from '@/ts/base/model';
@@ -23,7 +21,7 @@ const FileSysOperate: React.FC<IProps> = (props: IProps) => {
   const [modalType, setModalType] = useState<string>('');
   const [target, setTarget] = useState<IFileSystemItem>();
   const [preview, setPreview] = useState<FileItemShare>();
-  const [allVersionData, setAllVersionData] = useState<AppInformation[]>([]);
+
   const uploadRef = useRef<any>();
   useEffect(() => {
     if (props.operateTarget && props.operateKey) {

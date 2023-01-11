@@ -23,21 +23,22 @@ export type AppInformation = {
 const CopyOrMoveModal = (props: {
   open: boolean;
   title: string; // 弹出框名称
-  currentTaget: IFileSystemItem; // 需要操作的文件
+  currentTaget: { extension: string } & IFileSystemItem; // 需要操作的文件
   onChange: (val: boolean) => void;
 }) => {
   const { open, title, onChange, currentTaget } = props;
   const [form] = Form.useForm();
-  const [currentSelect, setCurrentSelect] = useState();
-  const [allVersionData, setAllVersionData] = useState<[]>([]);
+  const [currentSelect, setCurrentSelect] = useState<XTarget>();
+  const [allVersionData, setAllVersionData] = useState<AppInformation[]>([]);
   const [currentOriMes, setCurrentOriMes] = useState<{ label: string; value: string }[]>(
     [],
   );
 
   const getinitData = async () => {
-    const getValue = await kernel.anystore.get('version', 'all');
+    const getValue: { data: { versionMes: AppInformation[] } } =
+      await kernel.anystore.get('version', 'all');
     console.log('getValue', getValue);
-    const originData = {
+    const originData: { publisher: string; version?: number } = {
       publisher: userCtrl.user.name,
     };
     if (getValue.data && getValue.data?.versionMes) {
@@ -76,7 +77,6 @@ const CopyOrMoveModal = (props: {
       open={open}
       onOk={async () => {
         const currentValue = await form.validateFields();
-        console.log('currentValue', currentValue, currentTaget);
         delete currentValue?.publishOrganize;
         currentValue.id = 'snowId()';
         currentValue.pubTeam = currentSelect || {};
@@ -127,7 +127,7 @@ const CopyOrMoveModal = (props: {
                 const findData = allVersionData.find((item) => {
                   return item.appName === curentData.appName;
                 });
-                console.log('findData', findData);
+
                 if (findData) {
                   form.setFieldsValue({
                     ...curentData,
@@ -147,7 +147,7 @@ const CopyOrMoveModal = (props: {
           <Form.Item label="发布组织" name="publishOrganize">
             <Select
               options={currentOriMes}
-              onSelect={(e, value) => {
+              onSelect={(e, value: any) => {
                 setCurrentSelect(value);
               }}
             />

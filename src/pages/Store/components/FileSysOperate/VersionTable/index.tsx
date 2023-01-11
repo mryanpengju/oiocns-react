@@ -27,11 +27,11 @@ const CopyOrMoveModal = (props: {
   onChange: (val: boolean) => void;
 }) => {
   const { open, title, onChange } = props;
-  const [curerntData, setCurrentData] = useState([]);
+  const [currentMesData, setCurrentData] = useState<AppInformation[]>([]);
   const [page, setPage] = useState<number>(1);
   const ref = useRef<ProFormInstance>();
   // 操作内容渲染函数
-  const renderOperation = (item) => {
+  const renderOperation = (item: AppInformation) => {
     return [
       {
         key: 'remove',
@@ -43,7 +43,7 @@ const CopyOrMoveModal = (props: {
             okText: '确认',
             cancelText: '取消',
             onOk: async () => {
-              const returnData = curerntData.filter((innerItem) => {
+              const returnData = currentMesData.filter((innerItem) => {
                 return item.id !== innerItem.id;
               });
               const result = await kernel.anystore.set(
@@ -66,7 +66,10 @@ const CopyOrMoveModal = (props: {
   };
 
   const initData = async () => {
-    const result = await kernel.anystore.get('version', 'all');
+    const result: { data: { versionMes: AppInformation[] } } = await kernel.anystore.get(
+      'version',
+      'all',
+    );
     console.log(result);
     if (result) {
       const getData = result?.data.versionMes || [];
@@ -77,7 +80,7 @@ const CopyOrMoveModal = (props: {
 
   const handlePageChange = (page: number, pageSize: number) => {
     setPage(page);
-    setCurrentData(currentData.slice((page - 1) * pageSize, page * pageSize));
+    setCurrentData(currentMesData.slice((page - 1) * pageSize, page * pageSize));
   };
 
   useEffect(() => {
@@ -96,12 +99,12 @@ const CopyOrMoveModal = (props: {
       {open && (
         <CardOrTable
           rowKey={'id'}
-          params={{ id: curerntData.length }}
+          params={{ id: currentMesData.length }}
           operation={renderOperation}
           onChange={handlePageChange}
           columns={VersionColumns}
           showChangeBtn={false}
-          dataSource={curerntData}
+          dataSource={currentMesData}
           formRef={ref}
         />
       )}

@@ -45,7 +45,6 @@ const CopyOrMoveModal = (props: {
   const getinitData = async () => {
     const getValue: { data: { versionMes: AppInformation[] } } =
       await kernel.anystore.get('version', 'all');
-    console.log('getValue', getValue);
     const originData: { publisher: string; version?: number } = {
       publisher: userCtrl.user.name,
     };
@@ -120,8 +119,6 @@ const CopyOrMoveModal = (props: {
       title={title}
       open={open}
       onOk={async () => {
-        const getMes = await form.getFieldsValue();
-        console.log('getMes', getMes);
         const currentValue = await form.validateFields();
         delete currentValue?.publishOrganize;
         currentValue.id = 'snowId()';

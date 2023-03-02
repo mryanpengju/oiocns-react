@@ -19,6 +19,7 @@ type MainLayoutType = {
   children?: React.ReactNode; // 子组件
   siderMenuData: MenuItemType;
   rightBar?: React.ReactNode;
+  headerMenu?: MenuItemType;
   selectMenu: MenuItemType;
   tabs?: TabItemType[];
   checkedList: any[];
@@ -58,10 +59,18 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
   return (
     <Layout className={`${className}`} style={{ height: '100%', position: 'relative' }}>
       <Sider className={cls.sider} width={250} collapsed={collapsed}>
-        <div className={cls.title}>
-          <span style={{ fontSize: 16, margin: 6 }}>{props.selectMenu.icon}</span>
-          {!collapsed && <strong>{props.selectMenu.label}</strong>}
-        </div>
+        {props.headerMenu && (
+          <div className={cls.title}>
+            <span style={{ fontSize: 16, margin: 6 }}>{props.headerMenu.icon}</span>
+            {!collapsed && <strong>{props.headerMenu.label}</strong>}
+          </div>
+        )}
+        {!props.headerMenu && (
+          <div className={cls.title}>
+            <span style={{ fontSize: 16, margin: 6 }}>{props.selectMenu.icon}</span>
+            {!collapsed && <strong>{props.selectMenu.label}</strong>}
+          </div>
+        )}
 
         <div className={cls.container} id="templateMenu">
           {!tabs && (

@@ -10,6 +10,7 @@ import SpeciesModal from './components/speciesModal';
 import { GroupMenuType } from './config/menuType';
 import { Modal } from 'antd';
 import { TopBarExtra } from '../Store/content';
+import { SettingOutlined } from '@ant-design/icons';
 
 const TeamSetting: React.FC = () => {
   const [species, setSpecies] = useState<ISpeciesItem>();
@@ -18,6 +19,13 @@ const TeamSetting: React.FC = () => {
   const [operateKeys, setOperateKeys] = useState<string[]>(['']);
   return (
     <MainLayout
+      headerMenu={{
+        key: 'setting',
+        label: '设置',
+        itemType: 'setting',
+        icon: <SettingOutlined />,
+        children: [],
+      }}
       selectMenu={selectMenu}
       tabKey={'1'}
       rightBar={<TopBarExtra key={key} selectMenu={selectMenu} />}

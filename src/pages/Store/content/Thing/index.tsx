@@ -7,6 +7,7 @@ import userCtrl from '@/ts/controller/setting';
 import { XAttribute } from '@/ts/base/schema';
 import 'devextreme/dist/css/dx.light.css';
 import DataGrid, {
+  Button,
   Column,
   ColumnChooser,
   ColumnFixing,
@@ -31,6 +32,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
   const allowedPageSizes = [10, 20];
+
   const getSortedList = (
     speciesArray: ISpeciesItem[],
     array: any[],
@@ -99,74 +101,76 @@ const Thing: React.FC<IProps> = (props: IProps) => {
   const getComponent = () => {
     return (
       <>
-        {thingAttrs && thingAttrs.length > 0 && (
-          <DataGrid
-            dataSource={[]}
-            keyExpr="key"
-            columnMinWidth={80}
-            // focusedRowEnabled={true}
-            allowColumnReordering={true}
-            allowColumnResizing={true}
-            columnAutoWidth={true}
-            showColumnLines={true}
-            showRowLines={true}
-            rowAlternationEnabled={true}
-            hoverStateEnabled={true}
-            height={'calc(100vh - 175px)'}
-            width={'calc(100vw - 300px)'}
-            showBorders={true}>
-            <ColumnChooser
-              enabled={true}
-              title={'列选择器'}
-              height={'500px'}
-              allowSearch={true}
-              mode={'select'}
-              sortOrder={'asc'}
-            />
-            <ColumnFixing enabled={true} />
-            <Editing
-              allowUpdating={true}
-              allowDeleting={true}
-              selectTextOnEditStart={true}
-              useIcons={true}
-            />
-            <HeaderFilter visible={true} />
-            <FilterRow visible={true} />
-            <Pager
-              visible={true}
-              allowedPageSizes={allowedPageSizes}
-              showPageSizeSelector={true}
-              showNavigationButtons={true}
-              showInfo={true}
-              infoText={'共{2}条'}
-              displayMode={'full'}
-            />
-            <Paging defaultPageSize={10} />
-            {thingAttrs.map((parentHeader: any) => (
-              <Column key={parentHeader.caption} caption={parentHeader.caption}>
-                {parentHeader.children.map((attr: any) => (
-                  <Column key={attr.id} dataField={attr.id} caption={attr.name}>
-                    {attr.valueType == '选择型' && (
-                      <Lookup
-                        dataSource={attr.dictItems || []}
-                        displayExpr="name"
-                        valueExpr="value"
-                      />
-                    )}
-                  </Column>
-                ))}
-              </Column>
-            ))}
-          </DataGrid>
-        )}
+        <DataGrid
+          dataSource={[]}
+          keyExpr="key"
+          columnMinWidth={80}
+          remoteOperations={true}
+          focusedRowEnabled={true}
+          allowColumnReordering={true}
+          allowColumnResizing={true}
+          columnAutoWidth={true}
+          showColumnLines={true}
+          showRowLines={true}
+          rowAlternationEnabled={true}
+          hoverStateEnabled={true}
+          height={'calc(100vh - 175px)'}
+          width={'calc(100vw - 300px)'}
+          showBorders={true}>
+          <ColumnChooser
+            enabled={true}
+            title={'列选择器'}
+            height={'500px'}
+            allowSearch={true}
+            mode={'select'}
+            sortOrder={'asc'}
+          />
+          <ColumnFixing enabled={true} />
+          <Editing
+            allowUpdating={true}
+            allowDeleting={true}
+            selectTextOnEditStart={true}
+            useIcons={true}
+          />
+          <HeaderFilter visible={true} />
+          <FilterRow visible={true} />
+          <Pager
+            visible={true}
+            allowedPageSizes={allowedPageSizes}
+            showPageSizeSelector={true}
+            showNavigationButtons={true}
+            showInfo={true}
+            infoText={'共{2}条'}
+            displayMode={'full'}
+          />
+          <Paging defaultPageSize={10} />
+          {thingAttrs.map((parentHeader: any) => (
+            <Column key={parentHeader.caption} caption={parentHeader.caption}>
+              {parentHeader.children.map((attr: any) => (
+                <Column key={attr.id} dataField={attr.id} caption={attr.name}>
+                  {attr.valueType == '选择型' && (
+                    <Lookup
+                      dataSource={attr.dictItems || []}
+                      displayExpr="name"
+                      valueExpr="value"
+                    />
+                  )}
+                </Column>
+              ))}
+            </Column>
+          ))}
+          <Column type="buttons" width={150} caption={'操作'}>
+            <Button name="edit" />
+            <Button name="delete" />
+          </Column>
+        </DataGrid>
       </>
     );
   };
 
   return (
     <Card id={key} bordered={false}>
-      {props.checkedList && props.checkedList.length > 0 && getComponent()}
-      {(!props.checkedList || props.checkedList.length == 0) && getComponent()}
+      {thingAttrs && thingAttrs.length > 0 && getComponent()}
     </Card>
   );
 };

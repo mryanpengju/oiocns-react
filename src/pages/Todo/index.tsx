@@ -2,6 +2,7 @@ import React from 'react';
 import Content from './content';
 import MainLayout from '@/components/MainLayout';
 import useMenuUpdate from './hooks/useMenuUpdate';
+import { SettingOutlined } from '@ant-design/icons';
 const Setting: React.FC<any> = () => {
   const [
     key,
@@ -15,6 +16,13 @@ const Setting: React.FC<any> = () => {
   ] = useMenuUpdate();
   return (
     <MainLayout
+      headerMenu={{
+        key: 'todo',
+        label: '办事',
+        itemType: 'todo',
+        icon: <SettingOutlined />,
+        children: [],
+      }}
       selectMenu={selectMenu}
       onSelect={async (data) => {
         setSelectMenu(data);

@@ -28,7 +28,7 @@ const TeamSetting: React.FC = () => {
           setSpecies(undefined);
           userCtrl.currentKey = data.key;
           const item = data.item as ITarget;
-          if (item && !item.speciesTree) {
+          if (item && !item.speciesTree && item.loadSpeciesTree) {
             await item.loadSpeciesTree();
             refreshMenu();
           }

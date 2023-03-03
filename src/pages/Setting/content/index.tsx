@@ -4,6 +4,7 @@ import AgencySetting from './Agency';
 import CohortSetting from './Cohort';
 import PersonSetting from './Person';
 import StandardSetting from './Standard';
+import AuthoritySetting from './Authority';
 import { MenuItemType } from 'typings/globelType';
 import { GroupMenuType } from '../config/menuType';
 import React from 'react';
@@ -18,6 +19,7 @@ const ContentIndex = ({ selectMenu, species }: IProps) => {
   if (species) {
     return <StandardSetting current={species} target={selectMenu.item as ITarget} />;
   }
+  console.log('selectMenu', selectMenu);
   /** 加载内容区 */
   switch (selectMenu.itemType) {
     case GroupMenuType.User:
@@ -30,6 +32,8 @@ const ContentIndex = ({ selectMenu, species }: IProps) => {
       return <StationSetting current={selectMenu.item} />;
     case GroupMenuType.Cohort:
       return <CohortSetting current={selectMenu.item} />;
+    case GroupMenuType.Authority:
+      return <AuthoritySetting current={selectMenu.item} />;
     default:
       return <></>;
   }

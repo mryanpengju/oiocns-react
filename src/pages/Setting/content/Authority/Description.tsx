@@ -9,6 +9,7 @@ import userCtrl from '@/ts/controller/setting';
  */
 const Description = (props: { title: any; current: ITarget; extra: any }) => {
   const { title, current, extra } = props;
+  console.log('current', current);
   const deptInfo = current.target;
   return (
     <Card bordered={false} className={cls['company-dept-content']}>
@@ -24,17 +25,8 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
           width: 120,
         }}
         contentStyle={{ textAlign: 'left', color: '#606266' }}>
-        <Descriptions.Item label={current.typeName + '名称'}>
-          <Space>
-            {current.shareInfo?.avatar && (
-              <Avatar src={current.shareInfo.avatar.thumbnail} />
-            )}
-            <strong>{current.teamName}</strong>
-          </Space>
-        </Descriptions.Item>
-        <Descriptions.Item label={current.typeName + '代码'}>
-          {deptInfo?.code || ''}
-        </Descriptions.Item>
+        <Descriptions.Item label="职权名称">{current.teamName}</Descriptions.Item>
+        <Descriptions.Item label="职权编码">{deptInfo?.code || ''}</Descriptions.Item>
         <Descriptions.Item label={'团队简称'}>{deptInfo?.name || ''}</Descriptions.Item>
         <Descriptions.Item label={'团队标识'}>
           {deptInfo?.team?.code || ''}
@@ -45,7 +37,7 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
         <Descriptions.Item label="创建时间">
           {deptInfo?.createTime || ''}
         </Descriptions.Item>
-        <Descriptions.Item label="简介" span={3}>
+        <Descriptions.Item label="备注" span={3}>
           {deptInfo?.team?.remark}
         </Descriptions.Item>
       </Descriptions>

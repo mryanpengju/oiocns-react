@@ -15,11 +15,7 @@ const SpeciesTabs: React.FC<SpeciesTabsProps> = ({ operationItems }) => {
   const items = operationItems.map((item) => {
     return {
       key: item.id,
-      label: (
-        <div style={{ paddingTop: '4px', paddingLeft: '12px', paddingRight: '4px' }}>
-          {item.name}
-        </div>
-      ),
+      label: <div style={{ paddingLeft: '12px', paddingRight: '4px' }}>{item.name}</div>,
       closable: item.belongId == userCtrl.space.id,
       children: (
         <SpeciesDataGrid
@@ -35,11 +31,7 @@ const SpeciesTabs: React.FC<SpeciesTabsProps> = ({ operationItems }) => {
     setActiveKey(newActiveKey);
   };
 
-  return (
-    <div style={{ padding: '6px' }}>
-      <Tabs onChange={onChange} activeKey={activeKey} items={items} />
-    </div>
-  );
+  return <Tabs onChange={onChange} activeKey={activeKey} items={items} />;
 };
 
 export default SpeciesTabs;

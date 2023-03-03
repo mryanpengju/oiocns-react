@@ -29,7 +29,7 @@ export default class Person extends MarketTarget implements IPerson {
 
     this.extendTargetType = [TargetType.Cohort, TargetType.Person];
   }
-  async loadSpaceAuthorityTree(reload: boolean): Promise<IAuthority | undefined> {
+  async loadSpaceAuthorityTree(reload: boolean = false): Promise<IAuthority | undefined> {
     if (!reload && this.spaceAuthorityTree != undefined) {
       return this.spaceAuthorityTree;
     }

@@ -358,7 +358,7 @@ export interface ISpace extends IFlow, IMTarget, ITarget {
    * 加载空间职权树
    * @param reload 重新加载
    */
-  loadSpaceAuthorityTree(reload: boolean): Promise<IAuthority | undefined>;
+  loadSpaceAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
 }
 /** 群组操作 */
 export interface ICohort extends ITarget {

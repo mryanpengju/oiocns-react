@@ -11,12 +11,12 @@ class ThingController extends Emitter {
     super();
     emitter.subscribePart([DomainTypes.Company], () => {
       setTimeout(async () => {
-        await this.loadTeamSpecies(true);
+        await this.loadSpeciesTree(true);
       }, 100);
     });
   }
   /** 加载组织分类 */
-  public async loadTeamSpecies(_reload: boolean = false): Promise<INullSpeciesItem> {
+  public async loadSpeciesTree(_reload: boolean = false): Promise<INullSpeciesItem> {
     if (this.species == undefined || _reload) {
       this.species = await loadSpeciesTree(userCtrl.space.id);
     }

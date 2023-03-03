@@ -19,7 +19,6 @@ const ContentIndex = ({ selectMenu, species }: IProps) => {
   if (species) {
     return <StandardSetting current={species} target={selectMenu.item as ITarget} />;
   }
-  console.log('selectMenu', selectMenu);
   /** 加载内容区 */
   switch (selectMenu.itemType) {
     case GroupMenuType.User:

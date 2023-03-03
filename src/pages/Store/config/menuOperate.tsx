@@ -1,12 +1,11 @@
 import storeCtrl from '@/ts/controller/store';
-import { IFileSystemItem } from '@/ts/core';
+import { IFileSystemItem, ISpeciesItem } from '@/ts/core';
 import React from 'react';
 import * as im from 'react-icons/im';
 import * as fa from 'react-icons/fa';
 import { MenuItemType, OperateMenuType } from 'typings/globelType';
 import { GroupMenuType } from './menuType';
-import userCtrl from '@/ts/controller/setting';
-import { ISpeciesItem } from '@/ts/core/target/species/ispecies';
+import thingCtrl from '@/ts/controller/thing';
 
 /** 编译文件系统树 */
 const buildFileSysTree = (targets: IFileSystemItem[]) => {
@@ -140,7 +139,7 @@ export const getFileSystemMenus = () => {
 };
 
 export const loadAnythingMenus = async () => {
-  const root = await userCtrl.space.loadSpeciesTree();
+  const root = await thingCtrl.loadSpeciesTree();
   return root
     ? {
         children: buildSpeciesChildrenTree(

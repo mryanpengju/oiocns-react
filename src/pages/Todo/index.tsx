@@ -2,6 +2,7 @@ import React from 'react';
 import Content from './content';
 import MainLayout from '@/components/MainLayout';
 import useMenuUpdate from './hooks/useMenuUpdate';
+import { IconFont } from '@/components/IconFont';
 const Setting: React.FC<any> = () => {
   const [
     key,
@@ -15,6 +16,7 @@ const Setting: React.FC<any> = () => {
   ] = useMenuUpdate();
   return (
     <MainLayout
+      title={{ label: '办事', icon: <IconFont type={'icon-todo'} /> }}
       selectMenu={selectMenu}
       onSelect={async (data) => {
         setSelectMenu(data);

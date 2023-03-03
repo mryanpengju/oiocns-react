@@ -142,7 +142,7 @@ export const loadStandardSetting = async () => {
       icon: <im.ImNewspaper />,
     });
   }
-  const species = await thingCtrl.loadTeamSpecies();
+  const species = await thingCtrl.loadSpeciesTree();
   if (species) {
     result.push({
       children: [buildSpeciesTree(species)],

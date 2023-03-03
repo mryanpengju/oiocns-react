@@ -13,7 +13,6 @@ interface IProps {
  * @returns
  */
 const AuthorityStandrad: React.FC<IProps> = ({ current }: IProps) => {
-  console.log('current===', current);
   const [tabKey, setTabKey] = useState('基本信息');
   const parentRef = useRef<any>(null); //父级容器Dom
 
@@ -27,11 +26,11 @@ const AuthorityStandrad: React.FC<IProps> = ({ current }: IProps) => {
       key: '基本信息',
       children: <Description current={current} title={'职权'} extra={undefined} />,
     },
-    {
-      label: `身份管理`,
-      key: '身份管理',
-      children: <div>身份</div>,
-    },
+    // {
+    //   label: `身份管理`,
+    //   key: '身份管理',
+    //   children: <div>身份</div>,
+    // },
   ];
 
   return (

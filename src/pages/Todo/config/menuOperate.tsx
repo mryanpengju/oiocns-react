@@ -5,6 +5,7 @@ import { ISpeciesItem, ITodoGroup } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting/';
 import { GroupMenuType } from './menuType';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
+import thingCtrl from '@/ts/controller/thing';
 import { FileSyncOutlined, ToTopOutlined } from '@ant-design/icons';
 import { MenuItemType } from 'typings/globelType';
 
@@ -56,7 +57,7 @@ export const loadPlatformMenu = async () => {
 
 /** 获取事菜单 */
 export const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
-  const root = await userCtrl.space.loadSpeciesTree();
+  const root = await thingCtrl.loadSpeciesTree();
   if (root) {
     return await buildSpeciesTree(root?.children, prefix + '事', isWork);
   }

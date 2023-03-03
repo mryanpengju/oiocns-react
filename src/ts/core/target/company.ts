@@ -51,7 +51,7 @@ export default class Company extends MarketTarget implements ICompany {
     ];
     this.searchTargetType = [TargetType.Person, TargetType.Group];
   }
-  async loadSpaceAuthorityTree(reload: boolean): Promise<IAuthority | undefined> {
+  async loadSpaceAuthorityTree(reload: boolean = false): Promise<IAuthority | undefined> {
     if (!reload && this.spaceAuthorityTree != undefined) {
       return this.spaceAuthorityTree;
     }

@@ -498,8 +498,7 @@ export default class KernelApi {
   /**
    * 查询分类树
    * @param {string} id 根分类ID
-   * @param {string} targetId 组织ID
-   * @param {string} filter 过滤内容
+   * @param {model.PageRequest} page 分页参数
    * @returns {model.ResultType<schema.XSpecies>} 请求结果
    */
   public async querySpeciesTree(
@@ -1170,34 +1169,6 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询职权子职权
-   * @param {model.IDBelongReq} params 请求参数
-   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
-   */
-  public async querySubAuthoritys(
-    params: model.IDBelongReq,
-  ): Promise<model.ResultType<schema.XAuthorityArray>> {
-    return await this.request({
-      module: 'target',
-      action: 'QuerySubAuthoritys',
-      params: params,
-    });
-  }
-  /**
-   * 查询组织职权
-   * @param {model.IDBelongReq} params 请求参数
-   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
-   */
-  public async queryTargetAuthoritys(
-    params: model.IDBelongReq,
-  ): Promise<model.ResultType<schema.XAuthorityArray>> {
-    return await this.request({
-      module: 'target',
-      action: 'QueryTargetAuthoritys',
-      params: params,
-    });
-  }
-  /**
    * 查询组织身份
    * @param {model.IDBelongReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果
@@ -1227,11 +1198,11 @@ export default class KernelApi {
   }
   /**
    * 查询职权身份
-   * @param {model.IDBelongReq} params 请求参数
+   * @param {model.IdSpaceReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果
    */
   public async queryAuthorityIdentitys(
-    params: model.IDBelongReq,
+    params: model.IdSpaceReq,
   ): Promise<model.ResultType<schema.XIdentityArray>> {
     return await this.request({
       module: 'target',

@@ -7,7 +7,7 @@ import {
   PageRequest,
   SpeciesModel,
   TargetShare,
-} from '../../../base/model';
+} from '../../base/model';
 import {
   XAttributeArray,
   XFlowDefine,
@@ -16,7 +16,7 @@ import {
   XOperationArray,
   XSpecies,
   XAttribute,
-} from '../../../base/schema';
+} from '../../base/schema';
 import { IDict, INullDict } from './idict';
 
 /** 可为空的标准分类 */

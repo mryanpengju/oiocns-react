@@ -11,7 +11,7 @@ class ThingController extends Emitter {
     super();
     emitter.subscribePart([DomainTypes.Company], () => {
       setTimeout(async () => {
-        await this.loadTeamSpecies();
+        await this.loadTeamSpecies(true);
       }, 100);
     });
   }

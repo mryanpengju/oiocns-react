@@ -56,10 +56,4 @@ export interface IAuthority {
    * @returns
    */
   queryAuthorityIdentity(reload: boolean): Promise<IIdentity[]>;
-  /**
-   * 查询职权子职权
-   *  @param reload 是否强制刷新
-   * @returns
-   */
-  getSubAuthoritys(reload: boolean): Promise<IAuthority[]>;
 }

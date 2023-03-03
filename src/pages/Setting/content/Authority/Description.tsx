@@ -1,16 +1,17 @@
 import React from 'react';
-import { Avatar, Card, Descriptions, Space } from 'antd';
+import { Card, Descriptions } from 'antd';
 import { ITarget } from '@/ts/core';
 import cls from '../Agency/index.module.less';
 import userCtrl from '@/ts/controller/setting';
+
 /**
- * @description: 机构信息内容
+ * @description: 职权信息内容
  * @return {*}
  */
 const Description = (props: { title: any; current: ITarget; extra: any }) => {
   const { title, current, extra } = props;
   console.log('current', current);
-  const deptInfo = current.target;
+  const authority: any = current['_authority'];
   return (
     <Card bordered={false} className={cls['company-dept-content']}>
       <Descriptions
@@ -25,20 +26,16 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
           width: 120,
         }}
         contentStyle={{ textAlign: 'left', color: '#606266' }}>
-        <Descriptions.Item label="职权名称">{current.teamName}</Descriptions.Item>
-        <Descriptions.Item label="职权编码">{deptInfo?.code || ''}</Descriptions.Item>
-        <Descriptions.Item label={'团队简称'}>{deptInfo?.name || ''}</Descriptions.Item>
-        <Descriptions.Item label={'团队标识'}>
-          {deptInfo?.team?.code || ''}
-        </Descriptions.Item>
+        <Descriptions.Item label="职权名称">{authority.name}</Descriptions.Item>
+        <Descriptions.Item label="职权编码">{authority.code || ''}</Descriptions.Item>
         <Descriptions.Item label="创建人">
-          {deptInfo && userCtrl.findTeamInfoById(deptInfo.createUser).name}
+          {userCtrl.findTeamInfoById(authority.createUser).name}
         </Descriptions.Item>
         <Descriptions.Item label="创建时间">
-          {deptInfo?.createTime || ''}
+          {authority?.createTime || ''}
         </Descriptions.Item>
         <Descriptions.Item label="备注" span={3}>
-          {deptInfo?.team?.remark}
+          {authority?.remark}
         </Descriptions.Item>
       </Descriptions>
     </Card>

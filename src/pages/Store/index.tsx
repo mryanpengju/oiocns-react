@@ -8,6 +8,7 @@ import Content, { TopBarExtra } from './content';
 import { MenuItemType } from 'typings/globelType';
 import FileSysOperate from './components/FileSysOperate';
 import userCtrl from '@/ts/controller/setting';
+import { IconFont } from '@/components/IconFont';
 /** 仓库模块 */
 const Package: React.FC = () => {
   const [operateTarget, setOperateTarget] = useState<MenuItemType>();
@@ -19,6 +20,7 @@ const Package: React.FC = () => {
   }, [userCtrl.space.id]);
   return (
     <MainLayout
+      title={{ label: '仓库', icon: <IconFont type={'icon-store'} /> }}
       selectMenu={selectMenu}
       onSelect={async (data) => {
         storeCtrl.currentKey = data.key;

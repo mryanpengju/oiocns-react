@@ -10,6 +10,7 @@ import SpeciesModal from './components/speciesModal';
 import { GroupMenuType } from './config/menuType';
 import { Modal } from 'antd';
 import { TopBarExtra } from '../Store/content';
+import { IconFont } from '@/components/IconFont';
 
 const TeamSetting: React.FC = () => {
   const [species, setSpecies] = useState<ISpeciesItem>();
@@ -28,10 +29,6 @@ const TeamSetting: React.FC = () => {
           setSpecies(undefined);
           userCtrl.currentKey = data.key;
           const item = data.item as ITarget;
-          if (item && !item.speciesTree) {
-            await item.loadSpeciesTree();
-            refreshMenu();
-          }
           if (data.itemType === GroupMenuType.Agency) {
             if (item.subTeam.length === 0) {
               const subs = await item.loadSubTeam();
@@ -88,6 +85,7 @@ const TeamSetting: React.FC = () => {
             break;
         }
       }}
+      title={{ label: '设置', icon: <IconFont type={'icon-setting'} /> }}
       tabs={menus}
       siderMenuData={menus[0]?.menu}
       onCheckedChange={(_: string[]) => {

@@ -21,7 +21,6 @@ import IndentityManage from '@/bizcomponents/Indentity';
 import cls from './index.module.less';
 import SearchCompany from '@/bizcomponents/SearchCompany';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
-import AddPostModal from '@/bizcomponents/AddPositionModal';
 import { IsRelationAdmin, IsSuperAdmin } from '@/utils/authority';
 
 type ShowmodelType =
@@ -148,9 +147,6 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
           column={2}
           labelStyle={{ textAlign: 'center', width: '200px' }}
           extra={[
-            <Button type="link" key="qx" onClick={() => setActiveModal('post')}>
-              职权设置
-            </Button>,
             <Dropdown menu={{ items: menu }} placement="bottom" key="more">
               <EllipsisOutlined
                 style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer' }}
@@ -290,14 +286,6 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
           }}>
           <SearchCompany searchCallback={setSelectPerson} searchType={TargetType.Group} />
         </Modal>
-        {/* 对象设置 */}
-        <AddPostModal
-          title={'职权设置'}
-          IsAdmin={isSuperAdmin}
-          open={activeModal === 'post'}
-          handleOk={() => setActiveModal('')}
-          current={current}
-        />
       </div>
     </div>
   );

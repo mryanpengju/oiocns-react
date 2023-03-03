@@ -21,6 +21,8 @@ import Working from './working';
 import Station from './station';
 import { logger } from '@/ts/base/common';
 import Cohort from './cohort';
+import { IAuthority } from './authority/iauthority';
+import Authority from './authority/authority';
 /**
  * 公司的元操作
  */
@@ -32,6 +34,7 @@ export default class Company extends MarketTarget implements ICompany {
   cohorts: ICohort[] = [];
   workings: IWorking[] = [];
   departmentTypes: TargetType[] = [];
+  spaceAuthorityTree: IAuthority | undefined;
 
   constructor(target: schema.XTarget, userId: string) {
     super(target);
@@ -47,6 +50,24 @@ export default class Company extends MarketTarget implements ICompany {
       TargetType.Cohort,
     ];
     this.searchTargetType = [TargetType.Person, TargetType.Group];
+  }
+  async loadSpaceAuthorityTree(reload: boolean = false): Promise<IAuthority | undefined> {
+    if (!reload && this.spaceAuthorityTree != undefined) {
+      return this.spaceAuthorityTree;
+    }
+    const res = await kernel.queryAuthorityTree({
+      id: '0',
+      spaceId: this.id,
+      page: {
+        offset: 0,
+        filter: '',
+        limit: common.Constants.MAX_UINT_16,
+      },
+    });
+    if (res.success) {
+      this.authorityTree = new Authority(res.data, this.id);
+    }
+    return this.authorityTree;
   }
   public get subTeam(): ITarget[] {
     return [...this.departments, ...this.workings];

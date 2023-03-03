@@ -1,6 +1,7 @@
 import React from 'react';
 import * as im from 'react-icons/im';
 import userCtrl from '@/ts/controller/setting';
+import thingCtrl from '@/ts/controller/thing';
 import { ISpeciesItem, ITarget, TargetType } from '@/ts/core';
 import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 import { MenuItemType, OperateMenuType } from 'typings/globelType';
@@ -80,7 +81,6 @@ export const getSpaceMenu = async () => {
     label = userCtrl.company.teamName;
     itemType = GroupMenuType.Company;
   }
-  await userCtrl.space.loadSpeciesTree();
   return {
     key: userCtrl.space.key,
     item: userCtrl.space,
@@ -131,7 +131,7 @@ export const loadGroupMenus = async (param: groupMenuParams) => {
 
 export const loadStandardSetting = async () => {
   const result: MenuItemType[] = [];
-  const authors = await userCtrl.space.loadAuthorityTree();
+  const authors = await userCtrl.space.loadSpaceAuthorityTree();
   if (authors) {
     result.push({
       children: [buildAuthorityTree(authors)],
@@ -142,7 +142,7 @@ export const loadStandardSetting = async () => {
       icon: <im.ImNewspaper />,
     });
   }
-  const species = await userCtrl.space.loadSpeciesTree();
+  const species = await thingCtrl.loadTeamSpecies();
   if (species) {
     result.push({
       children: [buildSpeciesTree(species)],
@@ -311,14 +311,6 @@ export const loadTypeMenus = async (item: ITarget) => {
       icon: <im.ImPencil />,
       label: '编辑信息',
     });
-    if (item.speciesTree) {
-      menus.push({
-        key: '制定标准',
-        label: '制定标准',
-        icon: <im.ImNewspaper />,
-        subMenu: buildSpeciesTree(item.speciesTree),
-      });
-    }
     if (item != userCtrl.user && item != userCtrl.company) {
       menus.push({
         key: '删除',

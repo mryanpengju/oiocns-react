@@ -7,7 +7,6 @@ import { ITarget, TargetType } from '@/ts/core';
 import CardOrTable from '@/components/CardOrTableComp';
 import PageCard from '@/components/PageCard';
 import IndentityManage from '@/bizcomponents/Indentity';
-import AddPostModal from '@/bizcomponents/AddPositionModal';
 import TransferAgency from './TransferAgency';
 import Description from '../Description';
 import cls from './index.module.less';
@@ -128,11 +127,7 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
           <Typography.Title level={5}>{current.target.typeName}信息</Typography.Title>
         }
         current={current}
-        extra={[
-          <Button type="link" key="qx" onClick={() => setActiveModal('post')}>
-            职权设置
-          </Button>,
-        ]}
+        extra={[]}
       />
       <div className={cls['pages-wrap']}>
         <PageCard
@@ -194,14 +189,6 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
         onCancel={() => setActiveModal('')}
         current={current}
         needTransferUser={selectMember[0]}
-      />
-      {/* 对象设置 */}
-      <AddPostModal
-        title={'职权设置'}
-        open={activeModal === 'post'}
-        handleOk={() => setActiveModal('')}
-        current={current}
-        IsAdmin={isSuperAdmin}
       />
     </div>
   );

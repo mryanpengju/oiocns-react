@@ -148,11 +148,11 @@ export const loadAnythingMenus = async () => {
           GroupMenuType.Thing,
           'checkbox',
         ),
-        key: '清单',
-        label: '清单',
+        key: '资产',
+        label: '资产',
         itemType: GroupMenuType.Thing,
         item: root,
-        icon: <im.ImNewspaper />,
+        icon: <im.ImCalculator />,
       }
     : undefined;
 };

@@ -6,7 +6,6 @@ import { IMarket, Market } from '../market';
 import IProduct from '../market/iproduct';
 import { IAuthority } from './authority/iauthority';
 import { IIdentity } from './authority/iidentity';
-import { ISpeciesItem } from './species/ispecies';
 export type TargetParam = Omit<TargetModel, 'id' | 'belongId'>;
 
 /** 空间类型数据 */
@@ -35,8 +34,6 @@ export interface ITarget {
   typeName: TargetType;
   /** 职权树 */
   authorityTree: IAuthority | undefined;
-  /** 分类标准树 */
-  speciesTree: ISpeciesItem | undefined;
   /** 拥有的身份 */
   ownIdentitys: schema.XIdentity[];
   /** 组织的身份 */
@@ -70,11 +67,6 @@ export interface ITarget {
    * @param reload 是否强制刷新
    */
   loadAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
-  /**
-   * 获取分类标准树
-   * @param reload 是否强制刷新
-   */
-  loadSpeciesTree(reload?: boolean): Promise<ISpeciesItem | undefined>;
   /**
    * 判断是否拥有该身份
    * @param id 身份id
@@ -347,7 +339,8 @@ export interface ISpace extends IFlow, IMTarget, ITarget {
   cohorts: ICohort[];
   /** 空间类型数据 */
   spaceData: SpaceType;
-
+  /** 空间职权树 */
+  spaceAuthorityTree: IAuthority | undefined;
   /**
    * @description: 查询群
    * @param reload 是否强制刷新
@@ -361,6 +354,11 @@ export interface ISpace extends IFlow, IMTarget, ITarget {
    * @returns
    */
   deleteCohort(id: string): Promise<boolean>;
+  /**
+   * 加载空间职权树
+   * @param reload 重新加载
+   */
+  loadSpaceAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
 }
 /** 群组操作 */
 export interface ICohort extends ITarget {

@@ -1239,6 +1239,34 @@ export default class KernelApi {
     });
   }
   /**
+   * 查询拥有的职权
+   * @param {model.PageRequest} params 请求参数
+   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
+   */
+  public async queryOwnAuthoritys(
+    params: model.PageRequest,
+  ): Promise<model.ResultType<schema.XAuthorityArray>> {
+    return await this.request({
+      module: 'target',
+      action: 'QueryOwnAuthoritys',
+      params: params,
+    });
+  }
+  /**
+   * 查询职权下的所有人员
+   * @param {model.PageRequest} params 请求参数
+   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
+   */
+  public async QueryAuthorityPerson(
+    params: model.IDBelongReq,
+  ): Promise<model.ResultType<schema.XTargetArray>> {
+    return await this.request({
+      module: 'target',
+      action: 'QueryAuthorityPerson',
+      params: params,
+    });
+  }
+  /**
    * 查询在当前空间拥有的身份
    * @param {model.IdReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果

@@ -503,20 +503,12 @@ export default class KernelApi {
    * @returns {model.ResultType<schema.XSpecies>} 请求结果
    */
   public async querySpeciesTree(
-    id: string,
-    targetId: string,
-    filter: string,
+    params: model.IDBelongReq,
   ): Promise<model.ResultType<schema.XSpecies>> {
     return await this.request({
       module: 'thing',
       action: 'QuerySpeciesTree',
-      params: {
-        id: id,
-        spaceId: targetId,
-        page: {
-          filter: filter,
-        },
-      },
+      params: params,
     });
   }
   /**
@@ -1169,7 +1161,7 @@ export default class KernelApi {
    * @returns {model.ResultType<schema.XAuthority>} 请求结果
    */
   public async queryAuthorityTree(
-    params: model.IDBelongReq,
+    params: model.IdSpaceReq,
   ): Promise<model.ResultType<schema.XAuthority>> {
     return await this.request({
       module: 'target',

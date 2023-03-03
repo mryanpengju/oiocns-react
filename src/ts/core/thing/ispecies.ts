@@ -1,4 +1,4 @@
-import { IDict, INullDict } from '../target/species/idict';
+import { model, schema } from '@/ts/base';
 import {
   AttributeModel,
   CreateDefineReq,
@@ -7,7 +7,7 @@ import {
   PageRequest,
   SpeciesModel,
   TargetShare,
-} from '../../base/model';
+} from '../../../base/model';
 import {
   XAttributeArray,
   XFlowDefine,
@@ -15,8 +15,9 @@ import {
   XDictArray,
   XOperationArray,
   XSpecies,
-} from '../../base/schema';
-import { model, schema } from '@/ts/base';
+  XAttribute,
+} from '../../../base/schema';
+import { IDict, INullDict } from './idict';
 
 /** 可为空的标准分类 */
 export type INullSpeciesItem = ISpeciesItem | undefined;
@@ -39,6 +40,8 @@ export interface ISpeciesItem {
   children: ISpeciesItem[];
   /** 归属信息 */
   belongInfo: TargetShare;
+  /** 属性 */
+  attrs?: XAttribute[];
   /** 加载信息 */
   loadInfo(info: TargetShare): Promise<ISpeciesItem>;
   /** 加载分类特性 */
@@ -78,36 +81,6 @@ export interface ISpeciesItem {
    */
   create(data: Omit<SpeciesModel, 'id' | 'parentId'>): Promise<INullSpeciesItem>;
   /**
-   * 创建字典
-   * @param data 创建参数
-   */
-  createDict(data: Omit<DictModel, 'id' | 'parentId'>): Promise<INullDict>;
-  /**
-   * 更新分类特性项
-   * @param data 创建参数
-   */
-  updateDict(data: Omit<DictModel, 'speciesId' | 'speciesCode'>): Promise<boolean>;
-  /**
-   * 删除字典
-   * @param id 特性项id
-   */
-  deleteDict(id: string): Promise<boolean>;
-  /**
-   * 创建流程设计
-   * @param data 创建参数
-   */
-  createFlowDefine(data: Omit<CreateDefineReq, 'id' | 'speciesId'>): Promise<XFlowDefine>;
-  /**
-   * 更新流程设计
-   * @param data 创建参数
-   */
-  updateFlowDefine(data: CreateDefineReq): Promise<boolean>;
-  /**
-   * 删除流程设计
-   * @param id 流程设计id
-   */
-  deleteFlowDefine(id: string): Promise<boolean>;
-  /**
    * 更新标准分类项
    * @param data 创建参数
    */
@@ -129,6 +102,37 @@ export interface ISpeciesItem {
    * @param id 特性项id
    */
   deleteAttr(id: string): Promise<boolean>;
+  /**
+   * 创建字典
+   * @param data 创建参数
+   */
+  createDict(data: Omit<DictModel, 'id' | 'parentId'>): Promise<INullDict>;
+  /**
+   * 更新字典
+   * @param data 创建参数
+   */
+  updateDict(data: DictModel): Promise<boolean>;
+  /**
+   * 删除字典
+   * @param id 特性项id
+   */
+  deleteDict(id: string): Promise<boolean>;
+  /**
+   * 创建流程设计
+   * @param data 创建参数
+   */
+  createFlowDefine(data: Omit<CreateDefineReq, 'id' | 'speciesId'>): Promise<XFlowDefine>;
+  /**
+   * 更新流程设计
+   * @param data 创建参数
+   */
+  updateFlowDefine(data: CreateDefineReq): Promise<boolean>;
+  /**
+   * 删除流程设计
+   * @param id 流程设计id
+   */
+  deleteFlowDefine(id: string): Promise<boolean>;
+
   /**
    * 创建业务标准
    * @param data 创建参数

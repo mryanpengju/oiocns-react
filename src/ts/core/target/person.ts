@@ -12,11 +12,14 @@ import { schema, model, kernel, common } from '@/ts/base';
 import { PageRequest, TargetModel } from '@/ts/base/model';
 import { logger, sleep } from '@/ts/base/common';
 import { IProduct } from '../market';
+import { IAuthority } from './authority/iauthority';
+import Authority from './authority/authority';
 
 export default class Person extends MarketTarget implements IPerson {
   joinedFriend: schema.XTarget[] = [];
   cohorts: ICohort[] = [];
   joinedCompany: ICompany[] = [];
+  spaceAuthorityTree: IAuthority | undefined;
   constructor(target: schema.XTarget) {
     super(target);
     this.searchTargetType = [TargetType.Cohort, TargetType.Person, ...companyTypes];
@@ -25,6 +28,24 @@ export default class Person extends MarketTarget implements IPerson {
     this.createTargetType = [TargetType.Cohort, ...companyTypes];
 
     this.extendTargetType = [TargetType.Cohort, TargetType.Person];
+  }
+  async loadSpaceAuthorityTree(reload: boolean): Promise<IAuthority | undefined> {
+    if (!reload && this.spaceAuthorityTree != undefined) {
+      return this.spaceAuthorityTree;
+    }
+    const res = await kernel.queryAuthorityTree({
+      id: '0',
+      spaceId: this.id,
+      page: {
+        offset: 0,
+        filter: '',
+        limit: common.Constants.MAX_UINT_16,
+      },
+    });
+    if (res.success) {
+      this.authorityTree = new Authority(res.data, this.id);
+    }
+    return this.authorityTree;
   }
   async loadSubTeam(_: boolean): Promise<ITarget[]> {
     await sleep(0);
@@ -38,6 +59,7 @@ export default class Person extends MarketTarget implements IPerson {
       typeName: this.target.typeName as TargetType,
     };
   }
+
   public async create(data: TargetModel): Promise<ITarget | undefined> {
     switch (data.typeName as TargetType) {
       case TargetType.University:

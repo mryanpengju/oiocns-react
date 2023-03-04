@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Descriptions } from 'antd';
+import { Card, Descriptions, Space } from 'antd';
 import { ITarget } from '@/ts/core';
 import cls from '../Agency/index.module.less';
 import userCtrl from '@/ts/controller/setting';
@@ -26,6 +26,15 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
         }}
         contentStyle={{ textAlign: 'left', color: '#606266' }}>
         <Descriptions.Item label="职权名称">{authority.name}</Descriptions.Item>
+        <Descriptions.Item label="共享组织">
+          <Space>
+            {authority.belongId ? (
+              <strong>{userCtrl.findTeamInfoById(authority.belongId).name}</strong>
+            ) : (
+              <strong>奥集能平台</strong>
+            )}
+          </Space>
+        </Descriptions.Item>
         <Descriptions.Item label="职权编码">{authority.code || ''}</Descriptions.Item>
         <Descriptions.Item label="创建人">
           {userCtrl.findTeamInfoById(authority.createUser).name}

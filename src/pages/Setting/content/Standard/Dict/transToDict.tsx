@@ -4,10 +4,11 @@ import { Input, message, Modal, TreeProps } from 'antd';
 import React, { useState, useEffect, Key } from 'react';
 import cls from './index.module.less';
 import userCtrl from '@/ts/controller/setting';
-import { ISpeciesItem } from '@/ts/core';
+import { ISpeciesItem, loadSpeciesTree } from '@/ts/core';
 import CustomTree from '@/components/CustomTreeComp';
 import { ImTree } from 'react-icons/im';
-import { INullDict } from '@/ts/core/target/species/idict';
+import { INullDict } from '@/ts/core/thing/idict';
+
 interface Iprops {
   open: boolean;
   setOpen: Function;
@@ -111,7 +112,7 @@ const TransToDict = (props: Iprops) => {
   };
 
   const onLoadSpeciesData = async () => {
-    const species = await userCtrl.space.loadSpeciesTree();
+    const species = await loadSpeciesTree(userCtrl.space.id);
     if (species) {
       setLeftTreeData([buildSpeciesTree(species)]);
     }

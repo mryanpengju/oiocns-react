@@ -105,6 +105,14 @@ export default class Authority implements IAuthority {
     }
     return res;
   }
+  public async delete(): Promise<model.ResultType<any>> {
+    const res = await kernel.deleteAuthority({
+      id: this.id,
+      belongId: this._belongId,
+      typeName: '',
+    });
+    return res;
+  }
   public async deleteSubAuthority(id: string): Promise<model.ResultType<any>> {
     const index = this.children.findIndex((auth) => {
       return auth.id == id;

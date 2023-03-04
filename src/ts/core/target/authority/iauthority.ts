@@ -31,6 +31,11 @@ export interface IAuthority {
     remark: string,
   ): Promise<model.ResultType<schema.XAuthority>>;
   /**
+   * 删除职权
+   * @returns
+   */
+  delete(): Promise<model.ResultType<any>>;
+  /**
    * 删除子职权
    * @param id 子职权Id
    * @returns

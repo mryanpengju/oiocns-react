@@ -33,7 +33,7 @@ const TeamSetting: React.FC = () => {
       tabKey={'1'}
       rightBar={<TopBarExtra key={key} selectMenu={selectMenu} />}
       onSelect={async (data) => {
-        if (data.itemType === GroupMenuType.Species) {
+        if (data.itemType === GroupMenuType.Species && data.item) {
           setSpecies(data.item);
         } else {
           setSpecies(undefined);
@@ -102,8 +102,8 @@ const TeamSetting: React.FC = () => {
         refreshMenu();
       }}
       checkedList={[]}
-      onTabChanged={() => {
-        refreshMenu();
+      onTabChanged={(tabKey) => {
+        refreshMenu(tabKey);
       }}>
       {/** 组织模态框 */}
       <TeamModal

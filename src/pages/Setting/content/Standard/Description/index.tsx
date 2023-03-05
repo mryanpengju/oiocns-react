@@ -12,11 +12,13 @@ import userCtrl from '@/ts/controller/setting';
 const Description = (info: { current: ISpeciesItem }) => {
   const [data, setData] = useState(info.current);
   useEffect(() => {
-    info.current
-      .loadInfo(userCtrl.findTeamInfoById(data.target.belongId))
-      .then((item) => {
-        setData(item);
-      });
+    if (info.current) {
+      info.current
+        .loadInfo(userCtrl.findTeamInfoById(data.target.belongId))
+        .then((item) => {
+          setData(item);
+        });
+    }
   }, [info.current]);
   return (
     <Card bordered={false} className={cls['company-dept-content']}>

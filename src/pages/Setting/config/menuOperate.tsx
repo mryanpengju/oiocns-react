@@ -148,8 +148,8 @@ export const loadStandardSetting = async () => {
       children: [buildSpeciesTree(species)],
       key: '分类标准',
       label: '分类标准',
-      itemType: '分类标准',
-      item: userCtrl.space,
+      itemType: GroupMenuType.Species,
+      item: undefined,
       icon: <im.ImNewspaper />,
     });
   }

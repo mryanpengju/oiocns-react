@@ -16,9 +16,6 @@ interface IProps {
 }
 
 const ContentIndex = ({ selectMenu, species }: IProps) => {
-  if (species) {
-    return <StandardSetting current={species} target={selectMenu.item as ITarget} />;
-  }
   /** 加载内容区 */
   switch (selectMenu.itemType) {
     case GroupMenuType.User:
@@ -33,6 +30,12 @@ const ContentIndex = ({ selectMenu, species }: IProps) => {
       return <CohortSetting current={selectMenu.item} />;
     case GroupMenuType.Authority:
       return <AuthoritySetting current={selectMenu.item} />;
+    case GroupMenuType.Species:
+      if (species) {
+        return <StandardSetting current={species} target={selectMenu.item as ITarget} />;
+      } else {
+        return <></>;
+      }
     default:
       return <></>;
   }

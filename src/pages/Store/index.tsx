@@ -8,7 +8,7 @@ import Content, { TopBarExtra } from './content';
 import { MenuItemType } from 'typings/globelType';
 import FileSysOperate from './components/FileSysOperate';
 import userCtrl from '@/ts/controller/setting';
-import { ImHome } from 'react-icons/im';
+import { IconFont } from '@/components/IconFont';
 /** 仓库模块 */
 const Package: React.FC = () => {
   const [operateTarget, setOperateTarget] = useState<MenuItemType>();
@@ -17,13 +17,7 @@ const Package: React.FC = () => {
   const [checkedList, setCheckedList] = useState<any[]>([]);
   return (
     <MainLayout
-      headerMenu={{
-        key: 'store',
-        label: '仓库',
-        itemType: 'store',
-        icon: <ImHome />,
-        children: [],
-      }}
+      title={{ label: '仓库', icon: <IconFont type={'icon-store'} /> }}
       selectMenu={selectMenu}
       onSelect={async (data) => {
         storeCtrl.currentKey = data.key;

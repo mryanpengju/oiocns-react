@@ -10,6 +10,8 @@ import SpeciesModal from './components/speciesModal';
 import { GroupMenuType } from './config/menuType';
 import { Modal } from 'antd';
 import { TopBarExtra } from '../Store/content';
+import { IconFont } from '@/components/IconFont';
+import AuthorityModal from './content/Authority/AuthorityModal';
 import { SettingOutlined } from '@ant-design/icons';
 
 const TeamSetting: React.FC = () => {
@@ -17,6 +19,7 @@ const TeamSetting: React.FC = () => {
   const [key, menus, refreshMenu, selectMenu, setSelectMenu] = useMenuUpdate();
   const [editTarget, setEditTarget] = useState<ITarget>();
   const [operateKeys, setOperateKeys] = useState<string[]>(['']);
+  console.log('selectMenu====', selectMenu);
   return (
     <MainLayout
       headerMenu={{
@@ -36,10 +39,6 @@ const TeamSetting: React.FC = () => {
           setSpecies(undefined);
           userCtrl.currentKey = data.key;
           const item = data.item as ITarget;
-          if (item && !item.speciesTree) {
-            await item.loadSpeciesTree();
-            refreshMenu();
-          }
           if (data.itemType === GroupMenuType.Agency) {
             if (item.subTeam.length === 0) {
               const subs = await item.loadSubTeam();
@@ -96,6 +95,7 @@ const TeamSetting: React.FC = () => {
             break;
         }
       }}
+      title={{ label: '设置', icon: <IconFont type={'icon-setting'} /> }}
       tabs={menus}
       siderMenuData={menus[0]?.menu}
       onCheckedChange={(_: string[]) => {
@@ -122,21 +122,40 @@ const TeamSetting: React.FC = () => {
         typeNames={operateKeys.slice(1)}
       />
       {/** 分类模态框 */}
-      <SpeciesModal
-        title={operateKeys[0]}
-        open={['新增', '修改'].includes(operateKeys[0])}
-        handleCancel={function (): void {
-          setOperateKeys(['']);
-        }}
-        handleOk={(newItem) => {
-          if (newItem) {
-            refreshMenu();
+      {selectMenu.itemType !== '职权' && (
+        <SpeciesModal
+          title={operateKeys[0]}
+          open={['新增', '修改'].includes(operateKeys[0])}
+          handleCancel={function (): void {
             setOperateKeys(['']);
-          }
-        }}
-        targetId={(selectMenu.item as ITarget)?.id}
-        current={species}
-      />
+          }}
+          handleOk={(newItem) => {
+            if (newItem) {
+              refreshMenu();
+              setOperateKeys(['']);
+            }
+          }}
+          targetId={(selectMenu.item as ITarget)?.id}
+          current={species}
+        />
+      )}
+      {/** 职权模态框 */}
+      {selectMenu.itemType == '职权' && (
+        <AuthorityModal
+          title={operateKeys[0] + selectMenu.itemType}
+          open={['新增', '修改'].includes(operateKeys[0])}
+          handleCancel={function (): void {
+            setOperateKeys(['']);
+          }}
+          handleOk={(newItem) => {
+            if (newItem) {
+              refreshMenu();
+              setOperateKeys(['']);
+            }
+          }}
+          current={selectMenu.item}
+        />
+      )}
       {/* 分类转字典 */}
       {species && (
         <TransToDict

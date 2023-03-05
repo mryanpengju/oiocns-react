@@ -7,6 +7,7 @@ import { XAttribute } from '@/ts/base/schema';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import DataGrid, {
+  Button,
   Column,
   ColumnChooser,
   ColumnFixing,
@@ -215,8 +216,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
 
   return (
     <Card id={key} bordered={false}>
-      {props.checkedList && props.checkedList.length > 0 && getComponent()}
-      {(!props.checkedList || props.checkedList.length == 0) && getComponent()}
+      {thingAttrs && thingAttrs.length > 0 && getComponent()}
     </Card>
   );
 };

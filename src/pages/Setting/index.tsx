@@ -12,6 +12,7 @@ import { Modal } from 'antd';
 import { TopBarExtra } from '../Store/content';
 import { IconFont } from '@/components/IconFont';
 import AuthorityModal from './content/Authority/AuthorityModal';
+import { SettingOutlined } from '@ant-design/icons';
 
 const TeamSetting: React.FC = () => {
   const [species, setSpecies] = useState<ISpeciesItem>();
@@ -21,11 +22,18 @@ const TeamSetting: React.FC = () => {
   console.log('selectMenu====', selectMenu);
   return (
     <MainLayout
+      headerMenu={{
+        key: 'setting',
+        label: '设置',
+        itemType: 'setting',
+        icon: <SettingOutlined />,
+        children: [],
+      }}
       selectMenu={selectMenu}
       tabKey={'1'}
       rightBar={<TopBarExtra key={key} selectMenu={selectMenu} />}
       onSelect={async (data) => {
-        if (data.itemType === GroupMenuType.Species) {
+        if (data.itemType === GroupMenuType.Species && data.item) {
           setSpecies(data.item);
         } else {
           setSpecies(undefined);
@@ -94,8 +102,8 @@ const TeamSetting: React.FC = () => {
         refreshMenu();
       }}
       checkedList={[]}
-      onTabChanged={() => {
-        refreshMenu();
+      onTabChanged={(tabKey) => {
+        refreshMenu(tabKey);
       }}>
       {/** 组织模态框 */}
       <TeamModal

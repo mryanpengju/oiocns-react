@@ -19,7 +19,7 @@ const TeamSetting: React.FC = () => {
   const [key, menus, refreshMenu, selectMenu, setSelectMenu] = useMenuUpdate();
   const [editTarget, setEditTarget] = useState<ITarget>();
   const [operateKeys, setOperateKeys] = useState<string[]>(['']);
-  console.log('selectMenu====', selectMenu);
+
   return (
     <MainLayout
       headerMenu={{

@@ -199,16 +199,13 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
         }}
         onOk={async () => {
           selectMember.forEach(async (group) => {
-            const success = await (current as IGroup).applyJoinGroup(group.id);
-            if (success) {
+            if (await (current as IGroup).applyJoinGroup(group.id)) {
               message.success('添加成功');
               userCtrl.changCallback();
+              setSelectMember([]);
               setActiveModal('');
-            } else {
-              message.error('添加失败');
             }
           });
-          setSelectMember([]);
         }}>
         <SearchCompany searchCallback={setSelectMember} searchType={TargetType.Group} />
       </Modal>

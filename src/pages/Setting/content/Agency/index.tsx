@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Modal, Typography } from 'antd';
+import { Button, message, Modal, Typography } from 'antd';
 import { common } from 'typings/common';
 import { XTarget } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
-import { ITarget, TargetType } from '@/ts/core';
+import { IGroup, ITarget, TargetType } from '@/ts/core';
 import CardOrTable from '@/components/CardOrTableComp';
 import PageCard from '@/components/PageCard';
 import IndentityManage from '@/bizcomponents/Indentity';
@@ -83,6 +83,11 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
             <Button type="link" onClick={() => setActiveModal('addOne')}>
               添加成员
             </Button>
+            {current.typeName == TargetType.Group && (
+              <Button type="link" onClick={() => setActiveModal('joinGroup')}>
+                加入集团
+              </Button>
+            )}
             {/* <Button type="link" onClick={() => history.push('/todo/org')}>
               查看申请
             </Button> */}
@@ -164,7 +169,10 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
         width={900}
         destroyOnClose
         open={activeModal === 'addOne'}
-        onCancel={() => setActiveModal('')}
+        onCancel={() => {
+          setActiveModal('');
+          setSelectMember([]);
+        }}
         onOk={async () => {
           if (selectMember && selectMember.length > 0) {
             const ids = selectMember.map((e) => {
@@ -175,8 +183,34 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
               setActiveModal('');
             }
           }
+          setSelectMember([]);
         }}>
         {getFindMember()}
+      </Modal>
+      {/* 申请加入集团*/}
+      <Modal
+        title="申请加入集团"
+        destroyOnClose
+        open={activeModal === 'joinGroup'}
+        width={600}
+        onCancel={() => {
+          setActiveModal('');
+          setSelectMember([]);
+        }}
+        onOk={async () => {
+          selectMember.forEach(async (group) => {
+            const success = await (current as IGroup).applyJoinGroup(group.id);
+            if (success) {
+              message.success('添加成功');
+              userCtrl.changCallback();
+              setActiveModal('');
+            } else {
+              message.error('添加失败');
+            }
+          });
+          setSelectMember([]);
+        }}>
+        <SearchCompany searchCallback={setSelectMember} searchType={TargetType.Group} />
       </Modal>
       {/* 变更机构 */}
       <TransferAgency

@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'antd';
 import storeCtrl from '@/ts/controller/store';
-import { ISpeciesItem } from '@/ts/core/target/species/ispecies';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 import userCtrl from '@/ts/controller/setting';
 import { XAttribute } from '@/ts/base/schema';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import DataGrid, {
+  Button,
   Column,
   ColumnChooser,
   ColumnFixing,
   Editing,
-  HeaderFilter,
-  FilterRow,
   Pager,
   Paging,
   Lookup,
+  SearchPanel,
+  Sorting,
+  FilterRow,
 } from 'devextreme-react/data-grid';
 import config from 'devextreme/core/config';
 import { loadMessages, locale } from 'devextreme/localization';
 import zhMessage from 'devextreme/localization/messages/zh.json';
+import { ISpeciesItem } from '@/ts/core';
 interface IProps {
   current: ISpeciesItem;
   checkedList?: any[];
@@ -31,7 +33,7 @@ interface IProps {
 const Thing: React.FC<IProps> = (props: IProps) => {
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
-  const allowedPageSizes = [10, 20];
+  const allowedPageSizes = [10, 20, 50];
   const getSortedList = (
     speciesArray: ISpeciesItem[],
     array: any[],
@@ -97,6 +99,63 @@ const Thing: React.FC<IProps> = (props: IProps) => {
     }
   }, [props.current, props.checkedList, storeCtrl.checkedSpeciesList]);
 
+  const getColumn = (attr: XAttribute) => {
+    switch (attr.valueType) {
+      case '时间型':
+        return (
+          <Column
+            key={attr.id}
+            dataField={attr.id}
+            caption={attr.name}
+            dataType="datetime"
+            width={250}
+            format="yyyy年MM月dd日 HH:mm:ss"
+          />
+        );
+      case '日期型':
+        return (
+          <Column
+            key={attr.id}
+            dataField={attr.id}
+            caption={attr.name}
+            dataType="date"
+            width={180}
+            format="yyyy年MM月dd日"
+          />
+        );
+      case '选择型':
+        return (
+          <Column key={attr.id} dataField={attr.id} caption={attr.name} width={150}>
+            <Lookup
+              dataSource={attr.dict?.dictItems || []}
+              displayExpr="name"
+              valueExpr="value"
+            />
+          </Column>
+        );
+      case '数值型':
+        return (
+          <Column
+            key={attr.id}
+            dataField={attr.id}
+            caption={attr.name}
+            dataType="number"
+            format="current"
+          />
+        );
+      default:
+        return (
+          <Column
+            key={attr.id}
+            dataField={attr.id}
+            caption={attr.name}
+            dataType="string"
+            width={150}
+          />
+        );
+    }
+  };
+
   const getComponent = () => {
     return (
       <>
@@ -105,7 +164,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             dataSource={[]}
             keyExpr="key"
             columnMinWidth={80}
-            // focusedRowEnabled={true}
+            focusedRowEnabled={true}
             allowColumnReordering={true}
             allowColumnResizing={true}
             columnAutoWidth={true}
@@ -131,8 +190,6 @@ const Thing: React.FC<IProps> = (props: IProps) => {
               selectTextOnEditStart={true}
               useIcons={true}
             />
-            <HeaderFilter visible={true} />
-            <FilterRow visible={true} />
             <Pager
               visible={true}
               allowedPageSizes={allowedPageSizes}
@@ -142,20 +199,13 @@ const Thing: React.FC<IProps> = (props: IProps) => {
               infoText={'共{2}条'}
               displayMode={'full'}
             />
+            <Sorting mode="multiple" />
             <Paging defaultPageSize={10} />
+            <FilterRow visible={true} />
+            <SearchPanel visible={true} highlightCaseSensitive={true} />
             {thingAttrs.map((parentHeader: any) => (
               <Column key={parentHeader.caption} caption={parentHeader.caption}>
-                {parentHeader.children.map((attr: any) => (
-                  <Column key={attr.id} dataField={attr.id} caption={attr.name}>
-                    {attr.valueType == '选择型' && (
-                      <Lookup
-                        dataSource={attr.dictItems || []}
-                        displayExpr="name"
-                        valueExpr="value"
-                      />
-                    )}
-                  </Column>
-                ))}
+                {parentHeader.children.map((attr: XAttribute) => getColumn(attr))}
               </Column>
             ))}
           </DataGrid>
@@ -166,8 +216,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
 
   return (
     <Card id={key} bordered={false}>
-      {props.checkedList && props.checkedList.length > 0 && getComponent()}
-      {(!props.checkedList || props.checkedList.length == 0) && getComponent()}
+      {thingAttrs && thingAttrs.length > 0 && getComponent()}
     </Card>
   );
 };

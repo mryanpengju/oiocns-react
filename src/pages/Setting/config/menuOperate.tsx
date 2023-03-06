@@ -148,8 +148,8 @@ export const loadStandardSetting = async () => {
       children: [buildSpeciesTree(species)],
       key: '分类标准',
       label: '分类标准',
-      itemType: '分类标准',
-      item: userCtrl.space,
+      itemType: GroupMenuType.Species,
+      item: undefined,
       icon: <im.ImNewspaper />,
     });
   }
@@ -248,11 +248,6 @@ export const loadSpeciesMenus = (item: ISpeciesItem) => {
       key: '转为字典',
       icon: <im.ImBoxAdd />,
       label: '转为字典',
-    },
-    {
-      key: '分类匹配',
-      icon: <im.ImMagicWand />,
-      label: '分类匹配',
     },
   ];
   if (item.target.belongId) {

@@ -192,19 +192,25 @@ export const AttributeColumns: ProColumns<schema.XAttribute>[] = [
     width: 200,
   },
   {
+    title: '特性分类',
+    dataIndex: 'speciesId',
+    key: 'speciesId',
+    width: 150,
+    render: (_, record) => {
+      return findSpecesName([thingCtrl.species], record.speciesId);
+    },
+  },
+  {
     title: '特性类型',
     dataIndex: 'valueType',
     key: 'valueType',
     width: 150,
   },
   {
-    title: '特性分类',
-    dataIndex: 'speciesId',
-    key: 'speciesId',
+    title: '选择字典',
+    dataIndex: ['dict', 'name'],
+    key: 'dictId',
     width: 150,
-    render: (_, record) => {
-      return findSpecesName([thingCtrl.teamSpecies], record.speciesId);
-    },
   },
   {
     title: '共享组织',
@@ -283,7 +289,7 @@ export const OperationColumns: ProColumns<schema.XOperation>[] = [
     key: 'speciesId',
     width: 150,
     render: (_, record) => {
-      return findSpecesName([thingCtrl.teamSpecies], record.speciesId);
+      return findSpecesName([thingCtrl.species], record.speciesId);
     },
   },
   {

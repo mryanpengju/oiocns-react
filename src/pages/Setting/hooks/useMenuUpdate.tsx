@@ -18,7 +18,7 @@ import { GroupMenuType } from '../config/menuType';
 const useMenuUpdate = (): [
   string,
   TabItemType[],
-  () => void,
+  (tabkey?: string) => void,
   MenuItemType,
   (item: MenuItemType) => void,
 ] => {
@@ -47,7 +47,7 @@ const useMenuUpdate = (): [
     return undefined;
   };
   /** 刷新菜单 */
-  const refreshMenu = async () => {
+  const refreshMenu = async (tabkey?: string) => {
     const children: MenuItemType[] = [];
     children.push(await operate.getSpaceMenu());
     if (userCtrl.isCompanySpace) {
@@ -116,12 +116,18 @@ const useMenuUpdate = (): [
         },
       },
     ]);
-    const item = findMenuItemByKey(children, userCtrl.currentKey);
+    let children_ = children;
+    if (tabkey == '1') {
+      children_ = children;
+    } else if (tabkey == '2') {
+      children_ = standrads;
+    }
+    const item = findMenuItemByKey(children_, userCtrl.currentKey);
     if (item) {
       setSelectMenu(item);
     } else {
-      userCtrl.currentKey = children[0].key;
-      setSelectMenu(children[0]);
+      userCtrl.currentKey = children_[0].key;
+      setSelectMenu(children_[0]);
     }
   };
 

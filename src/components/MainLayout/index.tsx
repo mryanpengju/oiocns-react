@@ -19,6 +19,7 @@ type MainLayoutType = {
   children?: React.ReactNode; // 子组件
   siderMenuData: MenuItemType;
   rightBar?: React.ReactNode;
+  headerMenu?: MenuItemType;
   selectMenu: MenuItemType;
   tabs?: TabItemType[];
   checkedList: any[];

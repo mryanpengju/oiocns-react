@@ -98,8 +98,12 @@ const useMenuUpdate = (): [
       setKey(key);
       refreshMenu();
     });
+    const id2 = userCtrl.subscribe((key) => {
+      refreshMenu();
+    });
     return () => {
       storeCtrl.unsubscribe(id);
+      userCtrl.unsubscribe(id2);
     };
   }, []);
 

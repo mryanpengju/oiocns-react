@@ -4,7 +4,7 @@ import SchemaForm from '@/components/SchemaForm';
 import { DictModel } from '@/ts/base/model';
 import { IDict } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting';
-import { ISpeciesItem } from '@/ts/core/target/species/ispecies';
+import { ISpeciesItem } from '@/ts/core/thing/ispecies';
 import { XDict } from '@/ts/base/schema';
 import { targetsToTreeData } from '@/pages/Setting';
 

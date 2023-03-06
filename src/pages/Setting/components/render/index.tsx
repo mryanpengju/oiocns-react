@@ -18,7 +18,7 @@ type OioFormProps = {
 const OioForm: React.FC<OioFormProps> = ({ operation, onValuesChange }) => {
   const [items, setItems] = useState<XOperationItem[]>([]);
   let config: any = { col: 12, layout: 'horizontal' };
-  if (operation.remark) {
+  if (operation?.remark) {
     config = JSON.parse(operation.remark);
   }
   useEffect(() => {
@@ -33,7 +33,7 @@ const OioForm: React.FC<OioFormProps> = ({ operation, onValuesChange }) => {
       setItems(operateItems);
     };
     queryItems();
-  }, [operation.id]);
+  }, [operation?.id]);
 
   return (
     <ProForm

@@ -1,5 +1,5 @@
 import { common } from '../../base';
-import { CommonStatus, TodoType } from '../enum';
+import { CommonStatus, WorkType } from '../enum';
 import {
   ITodoGroup,
   IApprovalItem,
@@ -13,7 +13,7 @@ import { XMarket } from '@/ts/base/schema';
 class MarketJoinTodo implements ITodoGroup {
   private _todoList: ApprovalItem[];
   private _doList: ApprovalItem[];
-  type: TodoType = TodoType.MarketTodo;
+  type: WorkType = WorkType.StoreTodo;
 
   public id: string;
   public name: string;
@@ -169,7 +169,7 @@ export const loadMarketTodo = async () => {
   const res = await kernel.queryManageMarket({
     page: { offset: 0, limit: common.Constants.MAX_UINT_16, filter: '' },
   });
-  let todoGroups: ITodoGroup[] = [new MarketJoinTodo({ name: '我的申请' } as XMarket)];
+  let todoGroups: ITodoGroup[] = [];
   if (res.success && res.data.result) {
     for (const market of res.data.result) {
       const marketTodo = new MarketJoinTodo(market);

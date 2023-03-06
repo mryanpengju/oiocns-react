@@ -2,7 +2,7 @@ import React from 'react';
 import { message } from 'antd';
 import { OrderStatus } from '@/ts/core';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
-import { SaleColumns } from '../../../config/columns';
+import { SaleColumns } from '../../../../config/columns';
 import CardOrTableComp from '@/components/CardOrTableComp';
 import { IApprovalItem, ITodoGroup } from '@/ts/core/todo/itodo';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';

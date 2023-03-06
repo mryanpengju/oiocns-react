@@ -13,7 +13,7 @@ export {
   OrderStatus,
   ProductType,
   TargetType,
-  TodoType,
+  WorkType,
 } from './enum';
 export type { IMarket, IMerchandise, IProduct, IResource } from './market';
 export { getFileSysItemRoot } from './store/filesys';
@@ -30,8 +30,8 @@ export type {
   ITarget,
   IWorking,
 } from './target/itarget';
-export type { IDict } from '@/ts/core/target/species/idict';
-export type { Dict } from '@/ts/core/target/species/dict';
+export type { IDict } from '@/ts/core/thing/idict';
+export type { Dict } from '@/ts/core/thing/dict';
 export { findTargetShare } from './target/targetMap';
 export type { INullSpeciesItem, ISpeciesItem } from './thing';
 export { loadSpeciesTree } from './thing';

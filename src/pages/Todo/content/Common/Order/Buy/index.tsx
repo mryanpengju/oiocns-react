@@ -4,7 +4,7 @@ import { OrderStatus } from '@/ts/core';
 import { XOrderDetail } from '@/ts/base/schema';
 import CardOrTableComp from '@/components/CardOrTableComp';
 import { IOrderApplyItem, ITodoGroup } from '@/ts/core/todo/itodo';
-import { BuyOrderColumns, BuyOrderItemColumns } from '../../../config/columns';
+import { BuyOrderColumns, BuyOrderItemColumns } from '../../../../config/columns';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
 
 // 卡片渲染

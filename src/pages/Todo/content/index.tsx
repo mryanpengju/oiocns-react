@@ -1,13 +1,14 @@
 import { MenuItemType } from 'typings/globelType';
-import { GroupMenuType } from '../config/menuType';
 import React from 'react';
-import { ITodoGroup } from '@/ts/core';
+import { IApplyItem, IApprovalItem, ITodoGroup, WorkType } from '@/ts/core';
 import { MarketColumns, MerchandiseColumns, OrgColumns } from '../config/columns';
-import CommonTodo from './Common';
-import OrderTodo from './Order';
-import AppTodo from './App';
+import CommonTodo from './Common/Todo';
+import CommonApply from './Common/Apply';
+import SellOrder from './Common/Order/Sell';
 import Work from './Work';
 import { XOperation } from '@/ts/base/schema';
+import { ProColumns } from '@ant-design/pro-components';
+import BuyOrder from './Common/Order/Buy';
 
 interface IProps {
   reflashMenu: () => void;
@@ -18,79 +19,77 @@ interface IProps {
 const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
   if (operations.length <= 0) {
     let todoGroup = selectMenu.item as ITodoGroup;
-    if (todoGroup) {
-      switch (selectMenu.itemType) {
-        case GroupMenuType.Friend:
-        case GroupMenuType.Organization:
-          return (
-            <CommonTodo
-              todoGroup={todoGroup}
-              columns={OrgColumns}
-              reflashMenu={reflashMenu}
-              tabList={[
-                { key: 'todo', tab: '我的待办' },
-                { key: 'complete', tab: '我的已办' },
-                { key: 'apply', tab: '我的申请' },
-              ]}
-            />
-          );
-        case GroupMenuType.JoinStore:
-          // eslint-disable-next-line no-case-declarations
-          let tabList = [];
-          if (todoGroup.id) {
-            tabList = [
+    switch (selectMenu.itemType) {
+      case WorkType.FriendTodo:
+      case WorkType.CompanyTodo:
+      case WorkType.GroupTodo:
+        return (
+          <CommonTodo
+            todoGroup={todoGroup}
+            columns={OrgColumns as ProColumns<IApprovalItem>[]}
+            reflashMenu={reflashMenu}
+            tabList={[
               { key: 'todo', tab: '我的待办' },
               { key: 'complete', tab: '我的已办' },
-            ];
-          } else {
-            tabList = [{ key: 'apply', tab: '我的申请' }];
-          }
-          return (
-            <CommonTodo
-              todoGroup={todoGroup}
-              tabList={tabList}
-              columns={MarketColumns}
-              reflashMenu={reflashMenu}
-            />
-          );
-        case GroupMenuType.Publish:
-          // eslint-disable-next-line no-case-declarations
-          let publishTabList = [];
-          if (todoGroup.id) {
-            publishTabList = [
+            ]}
+          />
+        );
+      case WorkType.JoinStoreTodo:
+        return (
+          <CommonTodo
+            todoGroup={todoGroup}
+            tabList={[
               { key: 'todo', tab: '我的待办' },
               { key: 'complete', tab: '我的已办' },
-            ];
-          } else {
-            publishTabList = [{ key: 'apply', tab: '我的申请' }];
-          }
-          return (
-            <CommonTodo
-              todoGroup={todoGroup}
-              tabList={publishTabList}
-              columns={MerchandiseColumns}
-              reflashMenu={reflashMenu}
-            />
-          );
-        case GroupMenuType.Order:
-          return (
-            <OrderTodo
-              typeName={selectMenu.key}
-              todoGroup={todoGroup}
-              reflashMenu={reflashMenu}
-            />
-          );
-        case GroupMenuType.Application:
-          return (
-            <AppTodo
-              typeName={selectMenu.key}
-              todoGroup={todoGroup}
-              reflashMenu={reflashMenu}
-            />
-          );
-        default:
-          return <></>;
-      }
+            ]}
+            columns={MarketColumns as ProColumns<IApprovalItem>[]}
+            reflashMenu={reflashMenu}
+          />
+        );
+      case WorkType.PublishTodo:
+        return (
+          <CommonTodo
+            todoGroup={todoGroup}
+            tabList={[
+              { key: 'todo', tab: '我的待办' },
+              { key: 'complete', tab: '我的已办' },
+            ]}
+            columns={MerchandiseColumns as ProColumns<IApprovalItem>[]}
+            reflashMenu={reflashMenu}
+          />
+        );
+      case WorkType.OrderTodo:
+        return <SellOrder typeName={selectMenu.key} todoGroup={todoGroup} />;
+      case WorkType.FriendApply:
+      case WorkType.CompanyApply:
+      case WorkType.GroupApply:
+        return (
+          <CommonApply
+            type={selectMenu.itemType}
+            columns={OrgColumns as ProColumns<IApplyItem>[]}
+            reflashMenu={reflashMenu}
+          />
+        );
+      case WorkType.JoinStoreApply:
+        return (
+          <CommonApply
+            type={selectMenu.itemType}
+            columns={MarketColumns as ProColumns<IApplyItem>[]}
+            reflashMenu={reflashMenu}
+          />
+        );
+      case WorkType.PublishApply:
+        return (
+          <CommonApply
+            type={selectMenu.itemType}
+            columns={MerchandiseColumns as ProColumns<IApplyItem>[]}
+            reflashMenu={reflashMenu}
+          />
+        );
+      case WorkType.OrderApply:
+        return <BuyOrder typeName={selectMenu.key} todoGroup={todoGroup} />;
+      default:
+        return <></>;
     }
   } else {
     return <Work key={'work'} operations={operations}></Work>;

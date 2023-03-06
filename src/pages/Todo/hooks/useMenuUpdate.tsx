@@ -38,7 +38,6 @@ const useMenuUpdate = (): [
 
   /** 刷新菜单 */
   const refreshMenu = async () => {
-    const todoMenus: MenuItemType[] = await operate.loadPlatformMenu();
     setMenu([
       {
         key: '1',
@@ -49,7 +48,7 @@ const useMenuUpdate = (): [
           itemType: 'group',
           icon: <SettingOutlined />,
           children: [
-            ...todoMenus,
+            ...(await operate.loadPlatformTodoMenu()),
             {
               key: '事项',
               label: '事项',
@@ -69,27 +68,7 @@ const useMenuUpdate = (): [
           itemType: 'group',
           icon: <SettingOutlined />,
           children: [
-            {
-              key: '加好友',
-              label: '加好友',
-              itemType: 'group',
-              icon: <SettingOutlined />,
-              children: [],
-            },
-            {
-              key: '加单位',
-              label: '加单位',
-              itemType: 'group',
-              icon: <SettingOutlined />,
-              children: [],
-            },
-            {
-              key: '加商店',
-              label: '加商店',
-              itemType: 'group',
-              icon: <SettingOutlined />,
-              children: [],
-            },
+            ...(await operate.loadPlatformApplyMenu()),
             {
               key: '办事项',
               label: '办事项',

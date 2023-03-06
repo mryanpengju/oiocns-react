@@ -1,5 +1,5 @@
 import { common } from '../../base';
-import { CommonStatus, TodoType } from '../enum';
+import { CommonStatus, WorkType } from '../enum';
 import {
   ITodoGroup,
   IApprovalItem,
@@ -13,12 +13,13 @@ class OrgTodo implements ITodoGroup {
   readonly id: string;
   icon?: string;
   name: string = '组织审批';
+  type: WorkType;
   private _todoList: ApprovalItem[] = [];
   private _doList: ApprovalItem[] = [];
   private _applyList: ApplyItem[] = [];
-  type: TodoType = TodoType.OrgTodo;
-  constructor(id: string, name: string, avatar?: string) {
+  constructor(id: string, name: string, type: WorkType, avatar?: string) {
     this.id = id;
+    this.type = type;
     if (avatar) {
       this.icon = JSON.parse(avatar).thumbnail;
     }
@@ -174,10 +175,11 @@ class ApplyItem implements IApplyItem {
 /** 加载组织任务 */
 export const loadOrgTodo = async (
   targets: { id: string; name: string; avatar?: string }[],
+  type: WorkType,
 ) => {
   let todoGroups = [];
   for (const target of targets) {
-    const companyTodo = new OrgTodo(target.id, target.name, target.avatar);
+    const companyTodo = new OrgTodo(target.id, target.name, type, target.avatar);
     await companyTodo.getTodoList();
     todoGroups.push(companyTodo);
   }

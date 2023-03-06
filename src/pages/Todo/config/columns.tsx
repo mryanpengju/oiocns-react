@@ -35,7 +35,7 @@ export const WorkColumns: ProColumns<{ Data: any }>[] = [
   },
 ];
 
-export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
+export const OrgColumns = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -45,7 +45,7 @@ export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '说明',
     dataIndex: ['Data', 'remark'],
-    render: (_, row) => {
+    render: (_: any, row: any) => {
       if (row as IApplyItem) {
         return '请求添加' + row.Data?.team?.name + '为好友';
       } else {
@@ -65,7 +65,7 @@ export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '状态',
     dataIndex: 'status',
-    render: (_, record: IApplyItem | IApprovalItem) => {
+    render: (_: any, record: IApplyItem | IApprovalItem) => {
       const status = statusMap[record.Data.status];
       return <Tag color={status.color}>{status.text}</Tag>;
     },
@@ -77,7 +77,7 @@ export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   },
 ];
 
-export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
+export const MarketColumns = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -88,7 +88,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '市场',
     dataIndex: ['Data', 'market', 'name'],
     width: 300,
-    render: (name, record) => {
+    render: (name: any, record: any) => {
       return (
         <Space>
           {name}
@@ -102,7 +102,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     dataIndex: '',
     key: 'rule',
     width: 180,
-    render: (_, record) => {
+    render: (_: any, record: any) => {
       if (record.Data.target) {
         return record.Data.target.name;
       }
@@ -116,7 +116,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '状态 ',
     dataIndex: 'status',
     valueType: 'select',
-    render: (_, record) => {
+    render: (_: any, record: any) => {
       const status = statusMap[record.Data.status];
       return <Tag color={status.color}>{status.text}</Tag>;
     },
@@ -128,7 +128,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   },
 ];
 
-export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
+export const MerchandiseColumns = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -139,7 +139,7 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '市场',
     dataIndex: ['Data', 'market', 'name'],
     width: 300,
-    render: (name, record) => {
+    render: (name: any, record: any) => {
       return (
         <Space>
           {name}
@@ -159,7 +159,7 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '应用',
     dataIndex: ['Data', 'product', 'name'],
-    render: (name, record) => {
+    render: (name: any, record: any) => {
       return (
         <Space>
           {name}
@@ -172,12 +172,13 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '价格',
     dataIndex: ['Data', 'price'],
     valueType: 'money',
-    render: (_, record) => record.Data.price || '免费',
+    render: (_: any, record: any) => record.Data.price || '免费',
   },
   {
     title: '使用期限',
     dataIndex: ['Data', 'days'],
-    render: (_, record) => (record.Data.days ? record.Data.days + ' 天' : '永久'),
+    render: (_: any, record: any) =>
+      record.Data.days ? record.Data.days + ' 天' : '永久',
   },
   {
     title: '应用类型',
@@ -190,7 +191,7 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '状态 ',
     dataIndex: 'status',
-    render: (_, record) => {
+    render: (_: any, record: any) => {
       const status = statusMap[record.Data.status];
       return <Tag color={status.color}>{status.text}</Tag>;
     },

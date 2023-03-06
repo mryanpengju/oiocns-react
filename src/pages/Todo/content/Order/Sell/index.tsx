@@ -55,7 +55,7 @@ const TodoOrg: React.FC<IProps> = (props) => {
       columns={SaleColumns}
       dataSource={[]}
       request={async (page) => {
-        let data = await props.todoGroup.getTodoList(false);
+        let data = await props.todoGroup.getTodoList(true);
         return {
           result: data.splice(page.offset, page.limit),
           total: data.length,

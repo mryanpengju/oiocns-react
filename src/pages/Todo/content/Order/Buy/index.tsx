@@ -16,7 +16,7 @@ interface IProps {
  * 办事-订单
  * @returns
  */
-const BuyOrderTodo: React.FC<IProps> = (props) => {
+const BuyOrder: React.FC<IProps> = (props) => {
   const [key, forceUpdate] = useObjectUpdate(props);
   const orderOperation = (data: IOrderApplyItem, _record?: XOrderDetail) => {
     const item = data.Data;
@@ -98,4 +98,4 @@ const BuyOrderTodo: React.FC<IProps> = (props) => {
   );
 };
 
-export default BuyOrderTodo;
+export default BuyOrder;

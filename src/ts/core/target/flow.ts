@@ -4,7 +4,7 @@ import { model, schema } from '../../base';
 
 export default class FlowTarget extends BaseTarget {
   defines: schema.XFlowDefine[] = [];
-  defineRelations: schema.XFlowRelation[] = [];
+  defineRelations: schema.XOperation[] = [];
   async getDefines(reload: boolean = false): Promise<schema.XFlowDefine[]> {
     if (!reload && this.defines.length > 0) {
       return this.defines;
@@ -12,7 +12,6 @@ export default class FlowTarget extends BaseTarget {
     const res = await kernel.queryDefine({
       speciesId: this.target.id,
       spaceId: '',
-      isStrict: false,
       page: { offset: 0, limit: 1, filter: '' },
     });
 
@@ -21,7 +20,7 @@ export default class FlowTarget extends BaseTarget {
     }
     return this.defines;
   }
-  async queryFlowRelation(reload: boolean = false): Promise<schema.XFlowRelation[]> {
+  async queryFlowRelation(reload: boolean = false): Promise<schema.XOperation[]> {
     if (!reload && this.defineRelations.length > 0) {
       return this.defineRelations;
     }
@@ -59,25 +58,8 @@ export default class FlowTarget extends BaseTarget {
   async createInstance(data: model.FlowInstanceModel): Promise<schema.XFlowInstance> {
     return (await kernel.createInstance(data)).data;
   }
-  async bindingFlowRelation(
-    data: model.FlowRelationModel,
-  ): Promise<schema.XFlowRelation> {
+  async bindingFlowRelation(data: model.FlowRelationModel): Promise<boolean> {
     const res = await kernel.createFlowRelation(data);
-    if (res.success) {
-      this.defineRelations = this.defineRelations.filter(
-        (a) => a.productId != data.productId || a.functionCode != data.functionCode,
-      );
-      this.defineRelations.push(res.data);
-    }
     return res.data;
-  }
-  async unbindingFlowRelation(data: model.FlowRelationModel): Promise<boolean> {
-    const res = await kernel.deleteFlowRelation(data);
-    if (res.success) {
-      this.defineRelations = this.defineRelations.filter(
-        (a) => a.productId != data.productId || a.functionCode != data.functionCode,
-      );
-    }
-    return res.success;
   }
 }

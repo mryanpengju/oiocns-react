@@ -305,7 +305,7 @@ export interface IFlow {
    * 查询流程定义绑定项
    * @param reload 是否强制刷新
    */
-  queryFlowRelation(reload: boolean): Promise<schema.XFlowRelation[]>;
+  queryFlowRelation(reload: boolean): Promise<schema.XOperation[]>;
   /**
    * 发布流程定义（包含创建、更新）
    * @param data
@@ -327,12 +327,7 @@ export interface IFlow {
    * 绑定应用业务与流程定义
    * @param params
    */
-  bindingFlowRelation(params: model.FlowRelationModel): Promise<schema.XFlowRelation>;
-  /**
-   * 解绑应用业务与流程定义
-   * @param params
-   */
-  unbindingFlowRelation(params: model.FlowRelationModel): Promise<boolean>;
+  bindingFlowRelation(params: model.FlowRelationModel): Promise<boolean>;
 }
 export interface ISpace extends IFlow, IMTarget, ITarget {
   /** 我的群组 */

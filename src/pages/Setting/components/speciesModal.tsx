@@ -4,6 +4,7 @@ import SchemaForm from '@/components/SchemaForm';
 import { SpeciesModel } from '@/ts/base/model';
 import { ISpeciesItem } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting';
+import { targetsToTreeData } from '..';
 
 interface Iprops {
   title: string;
@@ -38,16 +39,15 @@ const SpeciesModal = (props: Iprops) => {
       title: '选择制定组织',
       dataIndex: 'belongId',
       valueType: 'treeSelect',
+      initialValue: userCtrl.space.id,
       formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
       request: async () => {
-        return await userCtrl.getTeamTree();
+        const res = await userCtrl.getTeamTree();
+        return targetsToTreeData(res);
       },
       fieldProps: {
-        disabled: title === '修改',
-        fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
+        disabled: title === '修改' || title === '编辑',
         showSearch: true,
-        filterTreeNode: true,
-        treeNodeFilterProp: 'teamName',
       },
     },
     {

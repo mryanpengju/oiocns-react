@@ -404,7 +404,7 @@ const Design: React.FC<IProps> = ({
     let hasEmptyChildren = false;
     if (type == 'flowNode') {
       let branches = undefined;
-      if (['条件分支', '并行分支', '组织分支'].includes(resource.name)) {
+      if (['条件分支', '并行分支', '组织分支'].includes(resource?.name)) {
         branches = resource.branches
           ? resource.branches.map((item: any) => {
               return loadResource(

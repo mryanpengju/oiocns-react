@@ -61,13 +61,14 @@ const BuyOrder: React.FC<IProps> = (props) => {
   const expandedRowRender = (item: IOrderApplyItem) => {
     return (
       <CardOrTableComp<XOrderDetail>
+        showChangeBtn={false}
         columns={BuyOrderItemColumns}
         rowKey={(record) => record.id}
         headerTitle={false}
         search={false}
         options={false}
         dataSource={item?.Data?.details || []}
-        pagination={false}
+        pagination={true}
         operation={(_record: XOrderDetail) => orderOperation(item, _record)}
       />
     );

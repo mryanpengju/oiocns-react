@@ -18,7 +18,7 @@ interface IProps {
   columns: ProColumns<IApprovalItem>[];
 }
 /**
- * 办事-好友申请
+ * 办事-通用待办
  * @returns
  */
 const CommonTodo: React.FC<IProps> = (props) => {

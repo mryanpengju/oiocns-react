@@ -22,7 +22,7 @@ interface IProps {
   todoGroup?: Promise<ITodoGroup>;
 }
 /**
- * 办事-好友申请
+ * 办事-通用申请
  * @returns
  */
 const CommonApply: React.FC<IProps> = (props) => {

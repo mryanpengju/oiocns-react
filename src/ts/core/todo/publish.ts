@@ -188,3 +188,8 @@ export const loadPublishTodo = async () => {
   }
   return todoGroups;
 };
+
+/** 加载应用上架任务 */
+export const loadPublishApply = async () => {
+  return new PublishTodo({ name: '我的申请' } as XMarket);
+};

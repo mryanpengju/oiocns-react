@@ -6,6 +6,7 @@ import todoCtrl from '@/ts/controller/todo/todoCtrl';
 import thingCtrl from '@/ts/controller/thing';
 import { ToTopOutlined } from '@ant-design/icons';
 import { MenuItemType } from 'typings/globelType';
+import { getUuid } from '@/utils/tools';
 
 export const loadPlatformTodoMenu = async () => {
   let friendTodo = await loadChildren(todoCtrl.FriendTodo);
@@ -158,7 +159,7 @@ const loadChildren = async (todoGroups: ITodoGroup[]) => {
     let count = todoGroup.id ? await todoGroup.getCount() : 0;
     children.push({
       icon: icon,
-      key: todoGroup.name + todoGroup.type,
+      key: getUuid(),
       label: todoGroup.name,
       itemType: todoGroup.type,
       item: todoGroup,

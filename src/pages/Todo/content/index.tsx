@@ -1,6 +1,14 @@
 import { MenuItemType } from 'typings/globelType';
 import React from 'react';
-import { IApplyItem, IApprovalItem, ITodoGroup, WorkType } from '@/ts/core';
+import {
+  IApplyItem,
+  IApprovalItem,
+  ITodoGroup,
+  loadMarketApply,
+  loadOrgApply,
+  loadPublishApply,
+  WorkType,
+} from '@/ts/core';
 import { MarketColumns, MerchandiseColumns, OrgColumns } from '../config/columns';
 import CommonTodo from './Common/Todo';
 import CommonApply from './Common/Apply';
@@ -9,6 +17,7 @@ import Work from './Work';
 import { XOperation } from '@/ts/base/schema';
 import { ProColumns } from '@ant-design/pro-components';
 import BuyOrder from './Common/Order/Buy';
+import userCtrl from '@/ts/controller/setting';
 
 interface IProps {
   reflashMenu: () => void;
@@ -66,6 +75,7 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
         return (
           <CommonApply
             type={selectMenu.itemType}
+            todoGroup={loadOrgApply(userCtrl.space, selectMenu.itemType as WorkType)}
             columns={OrgColumns as ProColumns<IApplyItem>[]}
             reflashMenu={reflashMenu}
           />
@@ -74,6 +84,7 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
         return (
           <CommonApply
             type={selectMenu.itemType}
+            todoGroup={loadMarketApply()}
             columns={MarketColumns as ProColumns<IApplyItem>[]}
             reflashMenu={reflashMenu}
           />
@@ -82,6 +93,7 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
         return (
           <CommonApply
             type={selectMenu.itemType}
+            todoGroup={loadPublishApply()}
             columns={MerchandiseColumns as ProColumns<IApplyItem>[]}
             reflashMenu={reflashMenu}
           />

@@ -1,5 +1,5 @@
 export type { IApplyItem, IApprovalItem, IOrderApplyItem, ITodoGroup } from './itodo';
-export { loadMarketTodo } from './marketjoin';
+export { loadMarketTodo, loadMarketApply } from './marketjoin';
 export { loadOrderTodo } from './order';
-export { loadOrgTodo } from './orgrelation';
-export { loadPublishTodo } from './publish';
+export { loadOrgTodo, loadOrgApply } from './orgrelation';
+export { loadPublishTodo, loadPublishApply } from './publish';

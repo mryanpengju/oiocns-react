@@ -179,3 +179,8 @@ export const loadMarketTodo = async () => {
   }
   return todoGroups;
 };
+
+/** 加载市场任务 */
+export const loadMarketApply = async () => {
+  return new MarketJoinTodo({ name: '加入申请' } as XMarket);
+};

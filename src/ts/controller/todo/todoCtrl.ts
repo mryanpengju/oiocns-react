@@ -2,6 +2,7 @@ import {
   loadOrderTodo,
   loadMarketTodo,
   loadOrgTodo,
+  loadOrgApply,
   loadPublishTodo,
   ITodoGroup,
   DomainTypes,
@@ -19,8 +20,10 @@ class TodoController extends Emitter {
   private _friendTodo: ITodoGroup[] = [];
   private _groupTodo: ITodoGroup[] = [];
   private _companyTodo: ITodoGroup[] = [];
+  private _pubApply: ITodoGroup | undefined;
   private _pubTodo: ITodoGroup[] = [];
   private _orderTodo: ITodoGroup | undefined;
+  private _marketApply: ITodoGroup | undefined;
   private _marketTodo: ITodoGroup[] = [];
   private _curAppTodo: ITodoGroup | undefined;
   constructor() {
@@ -52,6 +55,7 @@ class TodoController extends Emitter {
           WorkType.CompanyTodo,
         );
         this._pubTodo = await loadPublishTodo();
+        this._pubApply = await loadPublishTodo();
         this._orderTodo = await loadOrderTodo();
         this._marketTodo = await loadMarketTodo();
         this.changCallback();
@@ -70,6 +74,10 @@ class TodoController extends Emitter {
   public get GroupTodo(): ITodoGroup[] {
     return this._groupTodo!;
   }
+  /** 组织申请 */
+  public get MarketApply(): ITodoGroup {
+    return this._marketApply!;
+  }
   /** 市场审批 */
   public get MarketTodo(): ITodoGroup[] {
     return this._marketTodo!;
@@ -77,6 +85,10 @@ class TodoController extends Emitter {
   /** 订单审批 */
   public get OrderTodo(): ITodoGroup {
     return this._orderTodo!;
+  }
+  /** 组织申请 */
+  public get PubApply(): ITodoGroup {
+    return this._pubApply!;
   }
   /** 应用上架审批 */
   public get PublishTodo(): ITodoGroup[] {

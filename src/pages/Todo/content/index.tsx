@@ -27,14 +27,13 @@ interface IProps {
 
 const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
   if (operations.length <= 0) {
-    let todoGroup = selectMenu.item as ITodoGroup;
     switch (selectMenu.itemType) {
       case WorkType.FriendTodo:
       case WorkType.CompanyTodo:
       case WorkType.GroupTodo:
         return (
           <CommonTodo
-            todoGroup={todoGroup}
+            todoGroup={selectMenu.item}
             columns={OrgColumns as ProColumns<IApprovalItem>[]}
             reflashMenu={reflashMenu}
             tabList={[
@@ -46,7 +45,7 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
       case WorkType.JoinStoreTodo:
         return (
           <CommonTodo
-            todoGroup={todoGroup}
+            todoGroup={selectMenu.item}
             tabList={[
               { key: 'todo', tab: '我的待办' },
               { key: 'complete', tab: '我的已办' },
@@ -58,7 +57,7 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
       case WorkType.PublishTodo:
         return (
           <CommonTodo
-            todoGroup={todoGroup}
+            todoGroup={selectMenu.item}
             tabList={[
               { key: 'todo', tab: '我的待办' },
               { key: 'complete', tab: '我的已办' },
@@ -68,13 +67,13 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
           />
         );
       case WorkType.OrderTodo:
-        return <SellOrder typeName={selectMenu.key} todoGroup={todoGroup} />;
+        return <SellOrder typeName={selectMenu.key} todoGroup={selectMenu.item} />;
       case WorkType.FriendApply:
       case WorkType.CompanyApply:
       case WorkType.GroupApply:
         return (
           <CommonApply
-            type={selectMenu.itemType}
+            menu={selectMenu}
             todoGroup={loadOrgApply(userCtrl.space, selectMenu.itemType as WorkType)}
             columns={OrgColumns as ProColumns<IApplyItem>[]}
             reflashMenu={reflashMenu}
@@ -83,8 +82,7 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
       case WorkType.JoinStoreApply:
         return (
           <CommonApply
-            type={selectMenu.itemType}
-            todoGroup={loadMarketApply()}
+            menu={selectMenu}
             columns={MarketColumns as ProColumns<IApplyItem>[]}
             reflashMenu={reflashMenu}
           />
@@ -92,14 +90,13 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
       case WorkType.PublishApply:
         return (
           <CommonApply
-            type={selectMenu.itemType}
-            todoGroup={loadPublishApply()}
+            menu={selectMenu}
             columns={MerchandiseColumns as ProColumns<IApplyItem>[]}
             reflashMenu={reflashMenu}
           />
         );
       case WorkType.OrderApply:
-        return <BuyOrder typeName={selectMenu.key} todoGroup={todoGroup} />;
+        return <BuyOrder typeName={selectMenu.key} todoGroup={selectMenu.item} />;
       default:
         return <></>;
     }

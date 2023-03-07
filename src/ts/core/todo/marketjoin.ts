@@ -18,8 +18,9 @@ class MarketJoinTodo implements ITodoGroup {
   public id: string;
   public name: string;
   public icon?: string;
-  constructor(market: XMarket) {
+  constructor(market: XMarket, type: WorkType) {
     this.id = market.id;
+    this.type = type;
     this.icon = market.photo;
     this.name = market.name;
     this._todoList = [];
@@ -172,7 +173,7 @@ export const loadMarketTodo = async () => {
   let todoGroups: ITodoGroup[] = [];
   if (res.success && res.data.result) {
     for (const market of res.data.result) {
-      const marketTodo = new MarketJoinTodo(market);
+      const marketTodo = new MarketJoinTodo(market, WorkType.JoinStoreTodo);
       await marketTodo.getTodoList();
       todoGroups.push(marketTodo);
     }
@@ -182,5 +183,5 @@ export const loadMarketTodo = async () => {
 
 /** 加载市场任务 */
 export const loadMarketApply = async () => {
-  return new MarketJoinTodo({ name: '加入申请' } as XMarket);
+  return new MarketJoinTodo({ name: '加入申请' } as XMarket, WorkType.JoinStoreApply);
 };

@@ -61,6 +61,7 @@ export const loadPlatformTodoMenu = async () => {
           ...MarketTodo,
         },
       ],
+      count: PublishTodo.count + MarketTodo.count,
     },
     {
       children: [],
@@ -116,6 +117,7 @@ export const loadPlatformApplyMenu = async () => {
           label: '上架',
           itemType: WorkType.PublishApply,
           icon: <ToTopOutlined />,
+          item: todoCtrl.PublishApply,
           children: [],
         },
         {
@@ -123,6 +125,7 @@ export const loadPlatformApplyMenu = async () => {
           label: '加入',
           itemType: WorkType.JoinStoreApply,
           icon: <im.ImBarcode />,
+          item: todoCtrl.MarketApply,
           children: [],
         },
       ],

@@ -8,6 +8,8 @@ import {
   DomainTypes,
   emitter,
   WorkType,
+  loadPublishApply,
+  loadMarketApply,
 } from '@/ts/core';
 import { Emitter } from '@/ts/base/common';
 import userCtrl from '../setting';
@@ -55,9 +57,10 @@ class TodoController extends Emitter {
           WorkType.CompanyTodo,
         );
         this._pubTodo = await loadPublishTodo();
-        this._pubApply = await loadPublishTodo();
+        this._pubApply = await loadPublishApply();
         this._orderTodo = await loadOrderTodo();
         this._marketTodo = await loadMarketTodo();
+        this._marketApply = await loadMarketApply();
         this.changCallback();
       }, 800);
     });
@@ -87,7 +90,7 @@ class TodoController extends Emitter {
     return this._orderTodo!;
   }
   /** 组织申请 */
-  public get PubApply(): ITodoGroup {
+  public get PublishApply(): ITodoGroup {
     return this._pubApply!;
   }
   /** 应用上架审批 */

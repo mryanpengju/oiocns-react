@@ -156,18 +156,18 @@ export const MerchandiseColumns = [
     title: '说明',
     dataIndex: ['Data', 'information'],
   },
-  {
-    title: '应用',
-    dataIndex: ['Data', 'product', 'name'],
-    render: (name: any, record: any) => {
-      return (
-        <Space>
-          {name}
-          <Tag>{record.Data.product?.code}</Tag>
-        </Space>
-      );
-    },
-  },
+  // {
+  //   title: '应用',
+  //   dataIndex: ['Data', 'product', 'name'],
+  //   render: (name: any, record: any) => {
+  //     return (
+  //       <Space>
+  //         {name}
+  //         <Tag>{record.Data.product?.code}</Tag>
+  //       </Space>
+  //     );
+  //   },
+  // },
   {
     title: '价格',
     dataIndex: ['Data', 'price'],

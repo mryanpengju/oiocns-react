@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CardOrTableComp from '@/components/CardOrTableComp';
 import { IApplyItem, IApprovalItem, ITodoGroup } from '@/ts/core/todo/itodo';
 import { CommonStatus, TargetType, WorkType } from '@/ts/core';
@@ -10,30 +10,32 @@ import cls from './index.module.less';
 import { PageRequest } from '@/ts/base/model';
 import SearchCompany from '@/bizcomponents/SearchCompany';
 import userCtrl from '@/ts/controller/setting';
-import { XTarget } from '@/ts/base/schema';
+import { XMarket, XTarget } from '@/ts/base/schema';
+import { MenuItemType } from 'typings/globelType';
+import SearchShop from '@/bizcomponents/SearchShop';
 
 // 卡片渲染
 interface IProps {
-  type: WorkType;
+  menu: MenuItemType;
   reflashMenu: () => void;
   columns: ProColumns<IApplyItem>[];
-  todoGroup: Promise<ITodoGroup>;
+  todoGroup?: Promise<ITodoGroup>;
 }
 /**
  * 办事-好友申请
  * @returns
  */
-const CommonTodo: React.FC<IProps> = (props) => {
+const CommonApply: React.FC<IProps> = (props) => {
   const parentRef = useRef<any>(null);
   const [key, forceUpdate] = useObjectUpdate(props);
   const [apply, setApply] = useState<ITodoGroup>();
   const [targetType, setTargetType] = useState<TargetType>(TargetType.Person);
   const [open, setOpen] = useState<boolean>(false);
-  const [selectTarget, setSelectTarget] = useState<XTarget[]>([]);
+  const [selectTarget, setSelectTarget] = useState<XTarget[] | XMarket[]>([]);
   const [selectedRows, setSelectRows] = useState<IApplyItem[] | IApprovalItem[]>([]);
 
   useEffect(() => {
-    switch (props.type) {
+    switch (props.menu.itemType) {
       case WorkType.GroupApply:
         setTargetType(TargetType.Group);
         break;
@@ -44,12 +46,35 @@ const CommonTodo: React.FC<IProps> = (props) => {
         setTargetType(TargetType.Company);
         break;
       default:
-        return;
+        break;
     }
-    setTimeout(async () => {
-      setApply(await props.todoGroup);
-    });
+    if (!props.menu.item) {
+      setTimeout(async () => {
+        setApply(await props.todoGroup);
+      });
+    } else {
+      setApply(props.menu.item);
+    }
   });
+
+  const loadDiaContent = () => {
+    switch (props.menu.itemType) {
+      case WorkType.FriendApply:
+      case WorkType.CompanyApply:
+      case WorkType.GroupApply:
+        return <SearchCompany searchCallback={setSelectTarget} searchType={targetType} />;
+      case WorkType.JoinStoreApply:
+        return (
+          <SearchShop
+            searchCallback={(markets: XMarket[]) => {
+              setSelectTarget(markets);
+            }}
+          />
+        );
+      default:
+        return <></>;
+    }
+  };
 
   const operation = () => {
     return (
@@ -122,24 +147,30 @@ const CommonTodo: React.FC<IProps> = (props) => {
         </div>
       </PageCard>
       <Modal
-        title={props.type}
+        title={props.menu.itemType}
         destroyOnClose={true}
         open={open}
         onOk={async () => {
           let success = false;
           for (let target of selectTarget) {
-            switch (props.type) {
+            switch (props.menu.itemType) {
               case WorkType.CompanyApply:
                 success = await userCtrl.user.applyJoinCompany(
                   target.id,
-                  target.typeName as TargetType,
+                  (target as XTarget).typeName as TargetType,
                 );
                 break;
               case WorkType.FriendApply:
-                success = await userCtrl.user.applyFriend(target);
+                success = await userCtrl.user.applyFriend(target as XTarget);
                 break;
               case WorkType.GroupApply:
                 success = await userCtrl.company.applyJoinGroup(target.id);
+                break;
+              case WorkType.JoinStoreApply:
+                success = await userCtrl.space.applyJoinMarket(target.id);
+                break;
+              case WorkType.PublishApply:
+                success = true;
                 break;
               default:
                 break;
@@ -153,7 +184,7 @@ const CommonTodo: React.FC<IProps> = (props) => {
         }}
         onCancel={() => setOpen(false)}
         width={670}>
-        <SearchCompany searchCallback={setSelectTarget} searchType={targetType} />
+        {loadDiaContent()}
       </Modal>
     </>
   ) : (
@@ -161,4 +192,4 @@ const CommonTodo: React.FC<IProps> = (props) => {
   );
 };
 
-export default CommonTodo;
+export default CommonApply;

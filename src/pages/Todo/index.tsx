@@ -22,9 +22,12 @@ const Setting: React.FC<any> = () => {
         setSelectMenu(data);
       }}
       checkedList={checkedList}
-      onTabChanged={(_) => {
+      onTabChanged={(key) => {
         setCheckedList([]);
-        refreshMenu();
+        let menu = menus.find((a) => a.key == key)?.menu;
+        if (menu) {
+          setSelectMenu(menu);
+        }
       }}
       tabKey={'1'}
       onCheckedChange={(checkedList: any[]) => {

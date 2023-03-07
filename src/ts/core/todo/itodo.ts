@@ -1,4 +1,4 @@
-import { TodoType } from '../enum';
+import { WorkType } from '../enum';
 import { model } from '../../base';
 import { XOrder } from '@/ts/base/schema';
 
@@ -19,7 +19,7 @@ export interface IApplyItemResult {
 /** 待办组 */
 export interface ITodoGroup {
   /**@type 待办类型 */
-  type: TodoType;
+  type: WorkType;
   /**@id 唯一值 */
   id?: string;
   /**@icon 图标 */

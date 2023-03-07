@@ -1,5 +1,5 @@
 import { common } from '../../base';
-import { CommonStatus, TodoType } from '../enum';
+import { CommonStatus, TargetType, WorkType } from '../enum';
 import {
   ITodoGroup,
   IApprovalItem,
@@ -13,12 +13,13 @@ class OrgTodo implements ITodoGroup {
   readonly id: string;
   icon?: string;
   name: string = '组织审批';
+  type: WorkType;
   private _todoList: ApprovalItem[] = [];
   private _doList: ApprovalItem[] = [];
   private _applyList: ApplyItem[] = [];
-  type: TodoType = TodoType.OrgTodo;
-  constructor(id: string, name: string, avatar?: string) {
+  constructor(id: string, name: string, type: WorkType, avatar?: string) {
     this.id = id;
+    this.type = type;
     if (avatar) {
       this.icon = JSON.parse(avatar).thumbnail;
     }
@@ -53,10 +54,33 @@ class OrgTodo implements ITodoGroup {
   }
   async getApplyList(page: model.PageRequest): Promise<IApplyItemResult> {
     const res = await kernel.queryJoinTeamApply({
-      id: this.id,
-      page,
+      id: '0',
+      page: {
+        offset: 0,
+        limit: common.Constants.MAX_UINT_16,
+        filter: '',
+      },
     });
     if (res.success && res.data.result) {
+      switch (this.type) {
+        case WorkType.FriendApply:
+          res.data.result = res.data.result.filter(
+            (a) => a.team?.target?.typeName == TargetType.Person,
+          );
+          break;
+        case WorkType.CompanyApply:
+          res.data.result = res.data.result.filter(
+            (a) => a.team?.target?.typeName == TargetType.Company,
+          );
+          break;
+        case WorkType.GroupApply:
+          res.data.result = res.data.result.filter(
+            (a) => a.team?.target?.typeName == TargetType.Group,
+          );
+          break;
+        default:
+          break;
+      }
       this._applyList = res.data.result.map((a) => {
         return new ApplyItem(a, (q) => {
           this._applyList = this._applyList.filter((s) => {
@@ -66,7 +90,7 @@ class OrgTodo implements ITodoGroup {
       });
     }
     return {
-      result: this._applyList,
+      result: this._applyList.slice(page.offset, page.offset + page.limit),
       total: res.data.total,
       offset: page.offset,
       limit: page.limit,
@@ -174,12 +198,21 @@ class ApplyItem implements IApplyItem {
 /** 加载组织任务 */
 export const loadOrgTodo = async (
   targets: { id: string; name: string; avatar?: string }[],
+  type: WorkType,
 ) => {
   let todoGroups = [];
   for (const target of targets) {
-    const companyTodo = new OrgTodo(target.id, target.name, target.avatar);
+    const companyTodo = new OrgTodo(target.id, target.name, type, target.avatar);
     await companyTodo.getTodoList();
     todoGroups.push(companyTodo);
   }
   return todoGroups;
+};
+
+/** 加载组织申请 */
+export const loadOrgApply = async (
+  target: { id: string; name: string; avatar?: string },
+  type: WorkType,
+) => {
+  return new OrgTodo(target.id, target.name, type, target.avatar);
 };

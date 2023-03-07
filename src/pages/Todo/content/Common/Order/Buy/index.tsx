@@ -4,7 +4,7 @@ import { OrderStatus } from '@/ts/core';
 import { XOrderDetail } from '@/ts/base/schema';
 import CardOrTableComp from '@/components/CardOrTableComp';
 import { IOrderApplyItem, ITodoGroup } from '@/ts/core/todo/itodo';
-import { BuyOrderColumns, BuyOrderItemColumns } from '../../../config/columns';
+import { BuyOrderColumns, BuyOrderItemColumns } from '../../../../config/columns';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
 
 // 卡片渲染
@@ -16,7 +16,7 @@ interface IProps {
  * 办事-订单
  * @returns
  */
-const BuyOrderTodo: React.FC<IProps> = (props) => {
+const BuyOrder: React.FC<IProps> = (props) => {
   const [key, forceUpdate] = useObjectUpdate(props);
   const orderOperation = (data: IOrderApplyItem, _record?: XOrderDetail) => {
     const item = data.Data;
@@ -61,13 +61,14 @@ const BuyOrderTodo: React.FC<IProps> = (props) => {
   const expandedRowRender = (item: IOrderApplyItem) => {
     return (
       <CardOrTableComp<XOrderDetail>
+        showChangeBtn={false}
         columns={BuyOrderItemColumns}
         rowKey={(record) => record.id}
         headerTitle={false}
         search={false}
         options={false}
         dataSource={item?.Data?.details || []}
-        pagination={false}
+        pagination={true}
         operation={(_record: XOrderDetail) => orderOperation(item, _record)}
       />
     );
@@ -98,4 +99,4 @@ const BuyOrderTodo: React.FC<IProps> = (props) => {
   );
 };
 
-export default BuyOrderTodo;
+export default BuyOrder;

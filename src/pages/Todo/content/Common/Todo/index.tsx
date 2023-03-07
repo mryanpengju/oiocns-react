@@ -15,7 +15,7 @@ interface IProps {
   todoGroup: ITodoGroup;
   reflashMenu: () => void;
   tabList?: CardTabListType[];
-  columns: ProColumns<IApplyItem | IApprovalItem>[];
+  columns: ProColumns<IApprovalItem>[];
 }
 /**
  * 办事-好友申请
@@ -64,20 +64,6 @@ const CommonTodo: React.FC<IProps> = (props) => {
             </Button>
           </Space>
         );
-      case 'apply':
-        return (
-          <Button
-            type="link"
-            onClick={async () => {
-              selectedRows.forEach(async (a) => {
-                await (a as IApplyItem).cancel(CommonStatus.ApproveStartStatus, '');
-                forceUpdate();
-              });
-            }}
-            style={{ color: 'red' }}>
-            取消
-          </Button>
-        );
       default:
         return <></>;
     }
@@ -90,12 +76,12 @@ const CommonTodo: React.FC<IProps> = (props) => {
       onTabChange={(key) => setTabKey(key)}
       tabBarExtraContent={operation()}>
       <div className={cls['page-content-table']} ref={parentRef}>
-        <CardOrTableComp<IApplyItem | IApprovalItem>
+        <CardOrTableComp<IApprovalItem>
           key={key}
           dataSource={[]}
           params={tabKey}
           parentRef={parentRef}
-          rowKey={(record: IApplyItem | IApprovalItem) => record.Data?.id}
+          rowKey={(record: IApprovalItem) => record.Data?.id}
           columns={props.columns}
           request={async (page: PageRequest) => {
             switch (tabKey) {
@@ -110,13 +96,11 @@ const CommonTodo: React.FC<IProps> = (props) => {
               }
               case 'complete':
                 return await props.todoGroup.getDoList(page);
-              case 'apply':
-                return await props.todoGroup.getApplyList(page);
               default:
                 return { total: 0, result: [], offset: page.offset, limit: page.limit };
             }
           }}
-          operation={(item: IApplyItem | IApprovalItem) => {
+          operation={(item: IApprovalItem) => {
             switch (tabKey) {
               case 'todo':
               case 'complete':
@@ -146,27 +130,13 @@ const CommonTodo: React.FC<IProps> = (props) => {
                     },
                   },
                 ];
-              case 'apply':
-                return [
-                  {
-                    key: 'cancel',
-                    label: '取消',
-                    onClick: async () => {
-                      await (item as IApplyItem).cancel(
-                        CommonStatus.ApproveStartStatus,
-                        '',
-                      );
-                      forceUpdate();
-                    },
-                  },
-                ];
               default:
                 return [];
             }
           }}
           rowSelection={{
             type: 'checkbox',
-            onChange: (_: React.Key[], selectedRows: IApplyItem[] | IApprovalItem[]) => {
+            onChange: (_: React.Key[], selectedRows: IApprovalItem[]) => {
               setSelectRows(selectedRows);
             },
           }}

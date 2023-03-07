@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import SchemaForm from '@/components/SchemaForm';
 import { IAuthority } from '@/ts/core/target/authority/iauthority';
+import userCtrl from '@/ts/controller/setting';
+import { targetsToTreeData } from '../..';
 
 interface Iprops {
   title: string;
@@ -53,6 +55,21 @@ const AuthorityModal = (props: Iprops) => {
       },
     },
     {
+      title: '选择制定组织',
+      dataIndex: 'belongId',
+      valueType: 'treeSelect',
+      initialValue: userCtrl.space.id,
+      formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
+      request: async () => {
+        const res = await userCtrl.getTeamTree();
+        return targetsToTreeData(res);
+      },
+      fieldProps: {
+        disabled: title === '修改',
+        showSearch: true,
+      },
+    },
+    {
       title: '备注',
       dataIndex: 'remark',
       valueType: 'textarea',
@@ -84,10 +101,11 @@ const AuthorityModal = (props: Iprops) => {
       layoutType="ModalForm"
       onFinish={async (values) => {
         if (title.includes('新增')) {
-          const { name, code, remark } = values;
+          const { name, code, remark, belongId } = values;
           const res = await current?.createSubAuthority(
             name,
             code,
+            belongId,
             values.public,
             remark,
           );

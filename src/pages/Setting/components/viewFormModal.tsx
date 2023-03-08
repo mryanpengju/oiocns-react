@@ -25,7 +25,13 @@ const ViewFormModal = (props: FormDesignProps) => {
       destroyOnClose={true}
       cancelText={'关闭'}
       width={900}>
-      <OioForm operationId={data?.id as string} />
+      {/* <OioForm operationId={data?.id as string} /> */}
+      {data && (
+        <OioForm
+          operation={data}
+          onValuesChange={(values) => console.log('values', values)}
+        />
+      )}
     </Modal>
   );
 };

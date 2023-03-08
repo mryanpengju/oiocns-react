@@ -9,30 +9,39 @@ import SpeciesTabs from './SpeciesTabs';
 
 type OioFormProps = {
   operation: XOperation;
+  operationItems?: any[];
   onValuesChange?: (values: any) => void;
 };
 
 /**
  * 奥集能表单
  */
-const OioForm: React.FC<OioFormProps> = ({ operation, onValuesChange }) => {
+const OioForm: React.FC<OioFormProps> = ({
+  operation,
+  operationItems,
+  onValuesChange,
+}) => {
   const [items, setItems] = useState<XOperationItem[]>([]);
   let config: any = { col: 12, layout: 'horizontal' };
   if (operation.remark) {
     config = JSON.parse(operation.remark);
   }
   useEffect(() => {
-    const queryItems = async () => {
-      // 表单项
-      const operateItemRes = await kernel.queryOperationItems({
-        id: operation.id,
-        spaceId: userCtrl.space.id,
-        page: { offset: 0, limit: 100000, filter: '' },
-      });
-      const operateItems = (operateItemRes.data.result || []) as XOperationItem[];
-      setItems(operateItems);
-    };
-    queryItems();
+    if (operationItems) {
+      setItems(operationItems);
+    } else {
+      const queryItems = async () => {
+        // 表单项
+        const operateItemRes = await kernel.queryOperationItems({
+          id: operation.id,
+          spaceId: userCtrl.space.id,
+          page: { offset: 0, limit: 100000, filter: '' },
+        });
+        const operateItems = (operateItemRes.data.result || []) as XOperationItem[];
+        setItems(operateItems);
+      };
+      queryItems();
+    }
   }, [operation.id]);
 
   return (

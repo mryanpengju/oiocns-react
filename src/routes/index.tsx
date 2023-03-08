@@ -122,6 +122,15 @@ const SettingRouter: IRouteConfig[] = [
   },
 ];
 
+const AppManagerRouter: IRouteConfig[] = [
+  {
+    path: '/appmanager',
+    title: '应用设置',
+    icon: 'icon-setting',
+    component: React.lazy(() => import('@/pages/App')),
+  },
+];
+
 const WelfareRouter: IRouteConfig[] = [
   {
     path: '/welfare',
@@ -158,6 +167,7 @@ const Routers: IRouteConfig[] = [
       ...MarketRouter,
       ...SettingRouter,
       ...WelfareRouter,
+      ...AppManagerRouter,
       {
         path: '/online',
         title: '第三方应用',

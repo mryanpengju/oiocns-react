@@ -173,7 +173,7 @@ const Design: React.FC<IProps> = ({
         }
 
         species!
-          .loadAttrs(userCtrl.space.id, {
+          .loadAttrs(userCtrl.space.id, true, true, {
             offset: 0,
             limit: 100,
             filter: '',

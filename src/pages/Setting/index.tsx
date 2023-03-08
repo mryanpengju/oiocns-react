@@ -14,12 +14,22 @@ import { IconFont } from '@/components/IconFont';
 import AuthorityModal from './content/Authority/AuthorityModal';
 import { SettingOutlined } from '@ant-design/icons';
 
+export const targetsToTreeData = (targets: ITarget[]): any[] => {
+  return targets.map((t) => {
+    return {
+      label: t.teamName,
+      value: t.id,
+      children: targetsToTreeData(t.subTeam),
+    };
+  });
+};
+
 const TeamSetting: React.FC = () => {
   const [species, setSpecies] = useState<ISpeciesItem>();
   const [key, menus, refreshMenu, selectMenu, setSelectMenu] = useMenuUpdate();
   const [editTarget, setEditTarget] = useState<ITarget>();
   const [operateKeys, setOperateKeys] = useState<string[]>(['']);
-  console.log('selectMenu====', selectMenu);
+
   return (
     <MainLayout
       headerMenu={{

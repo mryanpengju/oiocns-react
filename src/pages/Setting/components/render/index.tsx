@@ -10,7 +10,7 @@ import SpeciesTabs from './SpeciesTabs';
 type OioFormProps = {
   operation: XOperation;
   operationItems?: any[];
-  onValuesChange?: (values: any) => void;
+  onValuesChange?: (changedValues: any, values: Record<string, any>) => void;
 };
 
 /**
@@ -23,7 +23,7 @@ const OioForm: React.FC<OioFormProps> = ({
 }) => {
   const [items, setItems] = useState<XOperationItem[]>([]);
   let config: any = { col: 12, layout: 'horizontal' };
-  if (operation.remark) {
+  if (operation?.remark) {
     config = JSON.parse(operation.remark);
   }
   useEffect(() => {
@@ -42,7 +42,7 @@ const OioForm: React.FC<OioFormProps> = ({
       };
       queryItems();
     }
-  }, [operation.id]);
+  }, [operation?.id]);
 
   return (
     <ProForm

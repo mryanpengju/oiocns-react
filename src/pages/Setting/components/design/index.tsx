@@ -636,14 +636,9 @@ const Design: React.FC<DesignProps> = ({
                     <Input.TextArea />
                   </Form.Item>
                   <Form.Item
-                    label="校验规则"
+                    label="正则校验规则"
                     name="rules"
-                    tooltip="示例：[
-      {
-        pattern: '^[A-Za-z0-9]+$',
-        message: '只允许填写英文字母和数字',
-      },
-    ]">
+                    tooltip="示例：^[A-Za-z0-9]+$">
                     <Input.TextArea />
                   </Form.Item>
                 </Form>

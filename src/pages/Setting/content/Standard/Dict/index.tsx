@@ -109,7 +109,7 @@ const DictInfo: React.FC<IProps> = ({
         key: '删除项',
         label: <span style={{ color: 'red' }}>删除项</span>,
         onClick: async () => {
-          currentDict?.deleteItem(item.id).then((success) => {
+          currentDict?.deleteItem(item.id).then((success: any) => {
             setItemKey(getUuid());
             success ? message.success('删除成功') : message.error('删除失败');
           });

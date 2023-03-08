@@ -1,5 +1,5 @@
 import { common } from '../../base';
-import { CommonStatus, TodoType } from '../enum';
+import { CommonStatus, WorkType } from '../enum';
 import {
   ITodoGroup,
   IApprovalItem,
@@ -18,9 +18,10 @@ class PublishTodo implements ITodoGroup {
   private _doList: ApprovalItem[] = [];
   private _applyList: ApplyItem[] = [];
   private _todoList: ApprovalItem[] = [];
-  type: TodoType = TodoType.MarketTodo;
-  constructor(market: XMarket) {
+  type: WorkType = WorkType.PublishTodo;
+  constructor(market: XMarket, type: WorkType) {
     this.id = market.id;
+    this.type = type;
     this.icon = market.photo;
     this.name = market.name;
   }
@@ -178,13 +179,18 @@ export const loadPublishTodo = async () => {
   const res = await kernel.queryManageMarket({
     page: { offset: 0, limit: common.Constants.MAX_UINT_16, filter: '' },
   });
-  let todoGroups: ITodoGroup[] = [new PublishTodo({ name: '我的申请' } as XMarket)];
+  let todoGroups: ITodoGroup[] = [];
   if (res.success && res.data.result) {
     for (const market of res.data.result) {
-      const publishTodo = new PublishTodo(market);
+      const publishTodo = new PublishTodo(market, WorkType.PublishTodo);
       await publishTodo.getTodoList();
       todoGroups.push(publishTodo);
     }
   }
   return todoGroups;
+};
+
+/** 加载应用上架任务 */
+export const loadPublishApply = async () => {
+  return new PublishTodo({ name: '我的申请' } as XMarket, WorkType.PublishApply);
 };

@@ -11,6 +11,7 @@ import {
 import { Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React from 'react';
+import { targetsToTreeData } from '..';
 import ProFormAuth from './render/widgets/ProFormAuth';
 
 interface Iprops {
@@ -106,18 +107,12 @@ const OperationModal = (props: Iprops) => {
           required={true}
           colProps={{ span: 12 }}
           request={async () => {
-            return await userCtrl.getTeamTree();
+            const res = await userCtrl.getTeamTree();
+            return targetsToTreeData(res);
           }}
           fieldProps={{
-            disabled: title === '修改',
-            fieldNames: {
-              label: 'teamName',
-              value: 'id',
-              children: 'subTeam',
-            },
+            disabled: title === '修改' || title === '编辑',
             showSearch: true,
-            filterTreeNode: true,
-            treeNodeFilterProp: 'teamName',
           }}
         />
         <ProFormSelect

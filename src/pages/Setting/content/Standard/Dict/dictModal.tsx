@@ -4,8 +4,9 @@ import SchemaForm from '@/components/SchemaForm';
 import { DictModel } from '@/ts/base/model';
 import { IDict } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting';
-import { ISpeciesItem } from '@/ts/core/target/species/ispecies';
+import { ISpeciesItem } from '@/ts/core/thing/ispecies';
 import { XDict } from '@/ts/base/schema';
+import { targetsToTreeData } from '@/pages/Setting';
 
 interface Iprops {
   open: boolean;
@@ -46,16 +47,15 @@ const DictModal = (props: Iprops) => {
       title: '选择制定组织',
       dataIndex: 'belongId',
       valueType: 'treeSelect',
+      initialValue: userCtrl.space.id,
       formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
       request: async () => {
-        return await userCtrl.getTeamTree();
+        const res = await userCtrl.getTeamTree();
+        return targetsToTreeData(res);
       },
       fieldProps: {
-        disabled: title === '编辑',
-        fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
+        disabled: title === '编辑' || title === '修改',
         showSearch: true,
-        filterTreeNode: true,
-        treeNodeFilterProp: 'teamName',
       },
     },
     // {

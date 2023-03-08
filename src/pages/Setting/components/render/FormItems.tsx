@@ -19,6 +19,7 @@ import ProFormDict from './../render/widgets/ProFormDict';
 import ProFormPerson from './../render/widgets/ProFormPerson';
 import ProFormDept from './../render/widgets/ProFormDept';
 import ProFormGroup from './../render/widgets/ProFormGroup';
+import { Rule } from 'antd/es/form';
 
 /**
  * 表单项渲染
@@ -26,11 +27,14 @@ import ProFormGroup from './../render/widgets/ProFormGroup';
 const OioFormItem = (props: any) => {
   const { item } = props;
   const rule = JSON.parse(item.rule);
-  // Todo 规则校验
-  // console.log('rule.rules', rule);
-  // if (rule.rules && typeof rule.rules === 'string') {
-  //   rule.rules = JSON.parse(rule.rules);
-  // }
+  // 规则校验
+  let rules: Rule[] = [];
+  if (rule.rules) {
+    rules = [...rules, { message: '所填内容不符合要求', pattern: rule.rules }];
+  }
+  if (rule.required === true) {
+    rules = [...rules, { required: true, message: `${rule.title}为必填项` }];
+  }
   switch (rule.widget) {
     case 'input':
     case 'string':
@@ -41,7 +45,7 @@ const OioFormItem = (props: any) => {
           label={rule.title}
           required={rule.required}
           fieldProps={rule}
-          rules={rule.rules}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -53,7 +57,7 @@ const OioFormItem = (props: any) => {
           name={item.code}
           label={rule.title}
           fieldProps={rule}
-          rules={rule.rules}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -64,7 +68,7 @@ const OioFormItem = (props: any) => {
           name={item.code}
           label={rule.title}
           fieldProps={rule}
-          rules={rule.rules}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -74,6 +78,7 @@ const OioFormItem = (props: any) => {
         <ProFormTreeSelect
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -85,7 +90,7 @@ const OioFormItem = (props: any) => {
           name={item.code}
           label={rule.title}
           fieldProps={rule}
-          rules={rule.rules}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -95,6 +100,7 @@ const OioFormItem = (props: any) => {
         <ProFormDatePicker
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -104,6 +110,7 @@ const OioFormItem = (props: any) => {
         <ProFormDateTimePicker
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -113,6 +120,7 @@ const OioFormItem = (props: any) => {
         <ProFormDateRangePicker
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -122,6 +130,7 @@ const OioFormItem = (props: any) => {
         <ProFormDateTimeRangePicker
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -131,6 +140,7 @@ const OioFormItem = (props: any) => {
         <ProFormCheckbox
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -140,6 +150,7 @@ const OioFormItem = (props: any) => {
         <ProFormRadio
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -149,6 +160,7 @@ const OioFormItem = (props: any) => {
         <ProFormMoney
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -158,6 +170,7 @@ const OioFormItem = (props: any) => {
         <ProFormDict
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
           props={rule}
@@ -168,6 +181,7 @@ const OioFormItem = (props: any) => {
         <ProFormDept
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -177,6 +191,7 @@ const OioFormItem = (props: any) => {
         <ProFormPerson
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -186,6 +201,7 @@ const OioFormItem = (props: any) => {
         <ProFormGroup
           name={item.code}
           label={rule.title}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />
@@ -196,7 +212,7 @@ const OioFormItem = (props: any) => {
           name={item.code}
           label={rule.title}
           fieldProps={rule}
-          rules={rule.rules}
+          rules={rules}
           tooltip={rule.description}
           labelAlign="right"
         />

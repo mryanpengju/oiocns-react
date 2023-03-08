@@ -35,6 +35,21 @@ const AuthorityModal = (props: Iprops) => {
       },
     },
     {
+      title: '选择制定组织',
+      dataIndex: 'belongId',
+      valueType: 'treeSelect',
+      initialValue: userCtrl.space.id,
+      formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
+      request: async () => {
+        const res = await userCtrl.getTeamTree();
+        return targetsToTreeData(res);
+      },
+      fieldProps: {
+        disabled: title === '修改',
+        showSearch: true,
+      },
+    },
+    {
       title: '是否公开',
       dataIndex: 'public',
       valueType: 'select',
@@ -52,21 +67,6 @@ const AuthorityModal = (props: Iprops) => {
       },
       formItemProps: {
         rules: [{ required: true, message: '是否公开为必填项' }],
-      },
-    },
-    {
-      title: '选择制定组织',
-      dataIndex: 'belongId',
-      valueType: 'treeSelect',
-      initialValue: userCtrl.space.id,
-      formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
-      request: async () => {
-        const res = await userCtrl.getTeamTree();
-        return targetsToTreeData(res);
-      },
-      fieldProps: {
-        disabled: title === '修改',
-        showSearch: true,
       },
     },
     {

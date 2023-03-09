@@ -30,7 +30,13 @@ const OioFormItem = (props: any) => {
   // 规则校验
   let rules: Rule[] = [];
   if (rule.rules) {
-    rules = [...rules, { message: '所填内容不符合要求', pattern: rule.rules }];
+    if (typeof rule.rules === 'string') {
+      rules = [...rules, { message: '所填内容不符合要求', pattern: rule.rules }];
+    } else if (rule.rules instanceof Array) {
+      for (const r of rule.rules) {
+        rules = [...rules, { message: '所填内容不符合要求', pattern: r }];
+      }
+    }
   }
   if (rule.required === true) {
     rules = [...rules, { required: true, message: `${rule.title}为必填项` }];

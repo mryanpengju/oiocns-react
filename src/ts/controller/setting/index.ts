@@ -202,6 +202,14 @@ class SettingController extends Emitter {
       return team.name;
     }
   }
+
+  // public async getOperationName(speciesIds: string[]) {
+  //   let xOperationArray  = await kernel.queryOperationBySpeciesIds({ ids: speciesIds, spaceId: this.space.id });
+  //   const operation = this.findTeamInfoById(id);
+  //   if (operation) {
+  //     return operation.name;
+  //   }
+  // }
 }
 
 export default new SettingController();

@@ -3,8 +3,8 @@ import cls from './index.module.less';
 import FieldInfo from './Field';
 import ChartDesign from './Chart';
 import { Branche, FlowNode, XFlowDefine } from '@/ts/base/schema';
-import { Branche as BrancheModel, FlowNode as FlowNodeModel } from '@/ts/base/model';
-import { Button, Card, Empty, Layout, message, Modal, Space, Steps } from 'antd';
+import { Branche as BrancheModel } from '@/ts/base/model';
+import { Button, Card, Layout, message, Modal, Space, Steps } from 'antd';
 import {
   ExclamationCircleOutlined,
   SendOutlined,
@@ -59,7 +59,7 @@ const Design: React.FC<IProps> = ({
   const [currentStep, setCurrentStep] = useState(modalType == '新增流程设计' ? 0 : 1);
   const [showErrorsModal, setShowErrorsModal] = useState<ReactNode[]>([]);
   // const [key, setKey] = useState<string>();
-  const [spaceResource, setSpaceResource] = useState<any>();
+  // const [spaceResource, setSpaceResource] = useState<any>();
   const [conditionData, setConditionData] = useState<FlowDefine>({
     name: '',
     fields: [],
@@ -114,7 +114,7 @@ const Design: React.FC<IProps> = ({
   useEffect(() => {
     const load = async () => {
       if (current) {
-        setSpaceResource(undefined);
+        // setSpaceResource(undefined);
         // content字段可能取消
         let resource_: any;
         if (modalType != '新增流程设计') {
@@ -427,9 +427,9 @@ const Design: React.FC<IProps> = ({
         let nodeId = getUuid();
         resource.nodeId = nodeId;
         // setVisualNodes([...visualNodes, resource]);
-        if (resource.belongId == userCtrl.space.id) {
-          setSpaceResource(resource);
-        }
+        // if (resource.belongId == userCtrl.space.id) {
+        //   setSpaceResource(resource);
+        // }
         flowNode = {
           id: resource.id,
           nodeId: nodeId,

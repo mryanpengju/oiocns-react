@@ -1,4 +1,4 @@
-import { Card, Modal, message, TreeSelect } from 'antd';
+import { Card, Modal, message } from 'antd';
 import React, { useRef, useEffect, useState } from 'react';
 import cls from './index.module.less';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -10,9 +10,6 @@ import FlowCard from './FlowCard';
 import { FlowColumn } from '@/pages/Setting/config/columns';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
 import { ISpeciesItem } from '@/ts/core/thing/ispecies';
-// import { IsThingAdmin } from '@/utils/authority';
-import { ITarget } from '@/ts/core';
-import { DefaultOptionType } from 'rc-select/lib/Select';
 import { kernel } from '@/ts/base';
 import { PageRequest } from '@/ts/base/model';
 import { getUuid } from '@/utils/tools';
@@ -49,7 +46,6 @@ const FlowList: React.FC<IProps> = ({
   const [key, setKey] = useState<string>();
   const [binds, setBinds] = useState<any[]>([]);
   const [operationModal, setOperationModal] = useState<string>();
-  const [treeData, setTreeData] = useState<any[]>([]);
   useEffect(() => {
     if (modalType.includes('新增流程设计')) {
       onCurrentChaned(undefined);
@@ -60,26 +56,6 @@ const FlowList: React.FC<IProps> = ({
   useEffect(() => {
     setBinds([]);
   }, [species]);
-
-  const getTreeData = (targets: ITarget[]): DefaultOptionType[] => {
-    return targets.map((item: ITarget) => {
-      return {
-        label: item.teamName,
-        value: item.id,
-        children:
-          item.subTeam && item.subTeam.length > 0 ? getTreeData(item.subTeam) : [],
-      };
-    });
-  };
-
-  const loadTreeData = async () => {
-    let tree = await userCtrl.getTeamTree();
-    setTreeData(getTreeData(tree));
-  };
-
-  useEffect(() => {
-    loadTreeData();
-  }, [userCtrl.space]);
 
   const renderOperation = (record: XFlowDefine): any[] => {
     let operations: any[] = [
@@ -223,14 +199,7 @@ const FlowList: React.FC<IProps> = ({
               }}
               onRow={(record: any) => {
                 return {
-                  onClick: async () => {
-                    // let res = await kernel.queryDefineRelation({
-                    //   id: record.id,
-                    //   page: { offset: 0, limit: 1000, filter: '' },
-                    // });
-                    // setBinds(res.data.result || []);
-                    // setKey(getUuid());
-                  },
+                  onClick: async () => {},
                 };
               }}
               renderCardContent={(items) => {

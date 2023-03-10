@@ -4,7 +4,7 @@ import { IconFont } from '@/components/IconFont';
 import { useLocation } from 'react-router-dom';
 import * as im from 'react-icons/im';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Form, Input, MenuProps, message, Modal } from 'antd';
+import { Button, Dropdown, MenuProps, message } from 'antd';
 import ChooseOperation from '@/pages/App/chooseOperation';
 import { getUuid } from '@/utils/tools';
 import { MenuItemType } from 'typings/globelType';

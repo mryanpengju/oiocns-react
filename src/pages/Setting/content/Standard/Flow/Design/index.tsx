@@ -14,7 +14,6 @@ import {
   FormOutlined,
 } from '@ant-design/icons';
 import userCtrl from '@/ts/controller/setting';
-// import { FlowNode } from '@/ts/base/model';
 import { ISpeciesItem } from '@/ts/core';
 import { kernel } from '@/ts/base';
 import { getUuid } from '@/utils/tools';
@@ -37,7 +36,6 @@ type FlowDefine = {
   name: string;
   fields: any[];
   remark: string;
-  // resource: string;
   authId: string;
   belongId: string;
   public: boolean | undefined;
@@ -58,13 +56,10 @@ const Design: React.FC<IProps> = ({
   const [scale, setScale] = useState<number>(90);
   const [currentStep, setCurrentStep] = useState(modalType == '新增流程设计' ? 0 : 1);
   const [showErrorsModal, setShowErrorsModal] = useState<ReactNode[]>([]);
-  // const [key, setKey] = useState<string>();
-  // const [spaceResource, setSpaceResource] = useState<any>();
   const [conditionData, setConditionData] = useState<FlowDefine>({
     name: '',
     fields: [],
     remark: '',
-    // resource: '',
     authId: '',
     belongId: current?.belongId || userCtrl.space.id,
     public: true,
@@ -114,7 +109,6 @@ const Design: React.FC<IProps> = ({
   useEffect(() => {
     const load = async () => {
       if (current) {
-        // setSpaceResource(undefined);
         // content字段可能取消
         let resource_: any;
         if (modalType != '新增流程设计') {
@@ -426,10 +420,6 @@ const Design: React.FC<IProps> = ({
       if (resource.type == 'EMPTY') {
         let nodeId = getUuid();
         resource.nodeId = nodeId;
-        // setVisualNodes([...visualNodes, resource]);
-        // if (resource.belongId == userCtrl.space.id) {
-        //   setSpaceResource(resource);
-        // }
         flowNode = {
           id: resource.id,
           nodeId: nodeId,
@@ -846,16 +836,12 @@ const Design: React.FC<IProps> = ({
                     conditionData.belongId = userCtrl.space.id;
                     conditionData.name = params.name;
                     conditionData.remark = params.remark;
-                    // conditionData.operateOrgId = params.operateOrgId;
-                    // setOperateOrgId(params.operateOrgId);
                     setConditionData(conditionData);
                   }}
                   nextStep={(params) => {
                     conditionData.belongId = userCtrl.space.id;
                     conditionData.name = params.name;
                     conditionData.remark = params.remark;
-                    // conditionData.operateOrgId = params.operateOrgId;
-                    // setOperateOrgId(params.operateOrgId);
                     setConditionData(conditionData);
                     setCurrentStep(1);
                   }}

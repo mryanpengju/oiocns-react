@@ -9,12 +9,8 @@ import SpeciesTabs from './SpeciesTabs';
 
 type OioFormProps = {
   operation: XOperation;
-<<<<<<< HEAD
   onValuesChange?: (changedValues: any, values: Record<string, any>) => void;
-=======
   operationItems?: any[];
-  onValuesChange?: (values: any) => void;
->>>>>>> cb856dce... 应用编排
 };
 
 /**

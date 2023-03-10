@@ -95,8 +95,6 @@ const FlowList: React.FC<IProps> = ({
             okType: 'danger',
             onOk: () => {
               onCurrentChaned(record);
-              // setIsModalOpen(true);
-              // setIsModalOpen(false);
               setOperateOrgId(userCtrl.space.id);
               setModalType('编辑流程设计');
               onDesign();
@@ -208,7 +206,7 @@ const FlowList: React.FC<IProps> = ({
           bordered={false}
           // style={{ paddingBottom: '10px' }}
           bodyStyle={{ paddingTop: 0 }}>
-          <div className={cls['app-wrap']} ref={parentRef} style={{ height: 400 }}>
+          <div className={cls['app-wrap']} ref={parentRef}>
             <CardOrTable<XFlowDefine>
               columns={FlowColumn}
               parentRef={parentRef}
@@ -226,13 +224,12 @@ const FlowList: React.FC<IProps> = ({
               onRow={(record: any) => {
                 return {
                   onClick: async () => {
-                    let res = await kernel.queryDefineRelation({
-                      id: record.id,
-                      page: { offset: 0, limit: 1000, filter: '' },
-                    });
-                    setBinds(res.data.result || []);
-                    setKey(getUuid());
-                    // setHeight(0.3 * useWindowSize().height);
+                    // let res = await kernel.queryDefineRelation({
+                    //   id: record.id,
+                    //   page: { offset: 0, limit: 1000, filter: '' },
+                    // });
+                    // setBinds(res.data.result || []);
+                    // setKey(getUuid());
                   },
                 };
               }}
@@ -262,7 +259,6 @@ const FlowList: React.FC<IProps> = ({
               parentRef={parentRef2}
               key={key}
               rowKey={'id'}
-              // params={tkey}
               columns={OperationColumns}
               showChangeBtn={false}
               dataSource={binds}

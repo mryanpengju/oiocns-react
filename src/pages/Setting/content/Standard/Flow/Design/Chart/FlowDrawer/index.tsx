@@ -9,6 +9,7 @@ import ConditionNode from './components/ConditionNode';
 import { AddNodeType, dataType, FieldCondition, NodeType } from './processType';
 import userCtrl from '@/ts/controller/setting';
 import { getUuid } from '@/utils/tools';
+import { ISpeciesItem } from '@/ts/core';
 /**
  * @description: 流程设置抽屉
  * @return {*}
@@ -21,6 +22,7 @@ interface IProps {
   current?: NodeType;
   conditions?: FieldCondition[];
   onClose: () => void;
+  species?: ISpeciesItem;
 }
 
 const FlowDrawer: React.FC<IProps> = ({
@@ -30,6 +32,7 @@ const FlowDrawer: React.FC<IProps> = ({
   current,
   operateOrgId,
   designOrgId,
+  species,
 }) => {
   const [key, setKey] = useState<string>();
   const Component = (current: any) => {
@@ -62,9 +65,21 @@ const FlowDrawer: React.FC<IProps> = ({
     } else {
       switch (current?.type) {
         case AddNodeType.ROOT:
-          return <RootNode current={current} orgId={operateOrgId || designOrgId} />;
+          return (
+            <RootNode
+              current={current}
+              orgId={operateOrgId || designOrgId}
+              species={species}
+            />
+          );
         case AddNodeType.APPROVAL:
-          return <ApprovalNode current={current} orgId={operateOrgId || designOrgId} />;
+          return (
+            <ApprovalNode
+              current={current}
+              orgId={operateOrgId || designOrgId}
+              species={species}
+            />
+          );
         case AddNodeType.CC:
           return <CcNode current={current} orgId={operateOrgId || designOrgId} />;
         case AddNodeType.CONDITION:

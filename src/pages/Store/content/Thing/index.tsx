@@ -7,7 +7,6 @@ import { XAttribute } from '@/ts/base/schema';
 import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 import DataGrid, {
-  Button,
   Column,
   ColumnChooser,
   ColumnFixing,
@@ -150,7 +149,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             dataField={attr.id}
             caption={attr.name}
             dataType="string"
-            width={150}
+            width={180}
           />
         );
     }
@@ -173,7 +172,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             rowAlternationEnabled={true}
             hoverStateEnabled={true}
             height={'calc(100vh - 175px)'}
-            width={'calc(100vw - 300px)'}
+            width={'calc(100vw - 320px)'}
             showBorders={true}>
             <ColumnChooser
               enabled={true}

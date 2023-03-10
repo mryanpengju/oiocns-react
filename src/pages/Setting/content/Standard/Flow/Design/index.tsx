@@ -281,6 +281,10 @@ const Design: React.FC<IProps> = ({
     //校验Root类型节点角色不为空  至少有一个审批节点 + 每个节点的 belongId + 审核和抄送的destId + 条件节点条件不为空 + 分支下最多只能有n个分支children为空
     let allNodes: FlowNode[] = getAllNodes(resource, []);
     let allBranches: Branche[] = getAllBranches(resource, []);
+    //校验Root根节点角色不为空
+    if (!resource.operationIds || resource.operationIds.length == 0) {
+      errors.push(getErrorItem('ROOT节点未绑定表单'));
+    }
     //校验Root类型节点角色不为空
     let rootNodes = allNodes.filter((item) => item.type == 'ROOT');
     for (let rootNode of rootNodes) {
@@ -322,7 +326,6 @@ const Design: React.FC<IProps> = ({
     //条件节点条件不为空  分支下最多只能有n个分支children为空
     let n = 0;
     let parentIdSet: Set<string> = new Set();
-    // let map: Map<string, undefined[]> = new Map();
     for (let branch of allBranches) {
       if (branch.conditions && branch.conditions.length > 0) {
         for (let condition of branch.conditions) {
@@ -453,6 +456,7 @@ const Design: React.FC<IProps> = ({
           name: resource.name,
           desc: '',
           props: {
+            operationIds: resource.operationIds || [],
             assignedType: 'JOB',
             mode: 'AND',
             assignedUser: [
@@ -572,6 +576,7 @@ const Design: React.FC<IProps> = ({
         name: resource.name,
         num: resource.props == undefined ? 0 : resource.props.num,
         destType: resource.type == 'ROOT' ? '角色' : '身份',
+        operationIds: resource.props.operationIds || [],
         destId:
           resource.props != undefined &&
           resource.props.assignedUser != undefined &&
@@ -773,6 +778,7 @@ const Design: React.FC<IProps> = ({
                           resource,
                           'flowNode',
                         ) as FlowNode;
+                        console.log(resource_);
                         let errors = checkValid(resource_);
                         if (errors.length > 0) {
                           setShowErrorsModal(errors);
@@ -858,6 +864,7 @@ const Design: React.FC<IProps> = ({
                 <div>
                   <ChartDesign
                     // key={key}
+                    species={species}
                     operateOrgId={operateOrgId}
                     designOrgId={conditionData.belongId}
                     conditions={conditionData.fields}

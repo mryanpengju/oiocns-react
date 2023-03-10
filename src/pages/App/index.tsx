@@ -238,44 +238,12 @@ const AppManager: React.FC = () => {
           }
           setBaseInfoModal(undefined);
         }}></BaseInfo>
-      {/* <Modal
-        title="基础信息"
-        destroyOnClose={true}
-        onCancel={() => {
-          setBaseInfoModal(undefined);
-        }}
-        onOk={async () => {
-          let valid = await form.validateFields();
-          if (valid) {
-            let values = form.getFieldsValue();
-            // let renameModal_ = renameModal;
-            // renameModal_.label = values.name;
-            // refreshApp(renameModal_.key, renameModal_);
-            form.resetFields();
-            setBaseInfoModal(undefined);
-          }
-        }}
-        open={baseInfoModal}
-        bodyStyle={{ padding: 0, border: 0 }}>
-        <Form
-          layout={'horizontal'}
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          form={form}
-          onValuesChange={() => {}}
-          style={{ maxWidth: 800 }}>
-          <Form.Item name="name" label="名称" rules={[{ required: true }]}>
-            <Input placeholder="请输入名称" />
-          </Form.Item>
-        </Form>
-      </Modal> */}
       <ChooseOperation
         open={chooseOperationModal != undefined}
         onOk={(item: any) => {
           if (chooseOperationModal.type.includes('Add')) {
             addFolderOrForm(chooseOperationModal.data, 'form', item);
           } else if (chooseOperationModal.type.includes('chooseTemplate')) {
-            debugger;
             let node = chooseOperationModal.data;
             node.item = item;
             refreshApp(chooseOperationModal.data.key, node);
@@ -284,19 +252,6 @@ const AppManager: React.FC = () => {
         }}
         onCancel={() => setChooseOperationModal(undefined)}></ChooseOperation>
     </MainLayout>
-
-    // <Layout style={{ height: '100%', position: 'relative' }}>
-    //   <Sider className={cls.sider} width={250} collapsed={false}>
-    //     <div className={cls.title}>
-    //       <span style={{ fontSize: 16, margin: 6 }}>
-    //         <IconFont type={'icon-jianyingyong'} />
-    //       </span>
-    //       {<strong>应用({app.name})</strong>}
-    //     </div>
-    //     <div className={cls.container} id="templateMenu"></div>
-    //   </Sider>
-    //   <Layout className={cls.container}>内容区</Layout>
-    // </Layout>
   );
 };
 

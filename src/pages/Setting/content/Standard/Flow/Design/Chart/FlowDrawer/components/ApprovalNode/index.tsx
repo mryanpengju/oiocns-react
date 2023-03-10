@@ -1,15 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Row, Button, Divider, Col, Radio, Space, Form, InputNumber, Modal } from 'antd';
+import {
+  Row,
+  Button,
+  Divider,
+  Col,
+  Radio,
+  Space,
+  Form,
+  InputNumber,
+  Modal,
+  Tag,
+} from 'antd';
+import CardOrTable from '@/components/CardOrTableComp';
 import IndentitySelect from '@/bizcomponents/IndentityManage';
 import cls from './index.module.less';
 import { NodeType } from '../../processType';
 import userCtrl from '@/ts/controller/setting';
+import { ISpeciesItem } from '@/ts/core';
+import { XOperation } from '@/ts/base/schema';
+import { OperationColumns } from '@/pages/Setting/config/columns';
 interface IProps {
   current: NodeType;
   orgId?: string;
-  // nodeOperateOrgId?: string;
-  // setNodeOperateOrgId: Function;
+  species?: ISpeciesItem;
 }
 
 /**
@@ -20,6 +34,52 @@ interface IProps {
 const ApprovalNode: React.FC<IProps> = (props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false); // 打开弹窗
   const [radioValue, setRadioValue] = useState(1);
+  const [operations, setOperations] = useState<XOperation[]>([]);
+  const [operationIds, setOperationIds] = useState<string[]>([]);
+  const [operationModal, setOperationModal] = useState<any>();
+  // 操作内容渲染函数
+  const renderOperate = (item: XOperation) => {
+    return [
+      {
+        key: 'bind',
+        label: '绑定',
+        onClick: async () => {
+          if (!operationIds.includes(item.id)) {
+            props.current.props.operationIds = [...operationIds, item.id];
+            setOperationIds([...operationIds, item.id]);
+          }
+          setOperationModal(undefined);
+        },
+      },
+    ];
+  };
+  useEffect(() => {
+    setOperationIds(props.current.props.operationIds || []);
+    const loadOperations = async () => {
+      if (userCtrl.space.id && props.species) {
+        let xOperationArray = await props.species.loadOperations(
+          userCtrl.space.id,
+          false,
+          true,
+          true,
+          {
+            offset: 0,
+            limit: 1000,
+            filter: '',
+          },
+        );
+        setOperations(xOperationArray.result || []);
+      }
+    };
+    loadOperations();
+  }, []);
+
+  useEffect(() => {
+    // 加载业务表单列表
+    if (props.current.props.num && props.current.props.num != 0) {
+      setRadioValue(2);
+    }
+  }, [props.current]);
 
   // const [processValue, setProcessValue] = useState(1);
   const [nodeOperateOrgId, setNodeOperateOrgId] = useState<string>(
@@ -30,10 +90,10 @@ const ApprovalNode: React.FC<IProps> = (props) => {
     key: '',
     data: { id: '', name: '' },
   });
-  const onChange = (newValue: string) => {
-    setNodeOperateOrgId(newValue);
-    props.current.belongId = newValue;
-  };
+  // const onChange = (newValue: string) => {
+  //   setNodeOperateOrgId(newValue);
+  //   props.current.belongId = newValue;
+  // };
 
   useEffect(() => {
     if (!props.current.belongId) {
@@ -71,6 +131,12 @@ const ApprovalNode: React.FC<IProps> = (props) => {
           <Col className={cls['roval-node-select-col']}>👩‍👦‍👦 审批方式</Col>
           <Radio.Group
             onChange={(e) => {
+              if (e.target.value == 1) {
+                props.current.props.num = 0;
+              } else {
+                props.current.props.num = 1;
+              }
+
               setRadioValue(e.target.value);
             }}
             style={{ paddingBottom: '10px' }}
@@ -87,6 +153,7 @@ const ApprovalNode: React.FC<IProps> = (props) => {
                 onChange={(e: number | null) => {
                   props.current.props.num = e;
                 }}
+                value={props.current.props.num}
                 placeholder="请设置会签人数"
                 addonBefore={<UserOutlined />}
                 style={{ width: '60%' }}
@@ -94,6 +161,55 @@ const ApprovalNode: React.FC<IProps> = (props) => {
             </Form.Item>
           )}
         </div>
+      </div>
+      <Divider />
+      <div style={{ marginBottom: '10px' }}>
+        <Button
+          type="primary"
+          shape="round"
+          size="small"
+          onClick={() => {
+            setOperationModal('');
+          }}>
+          绑定表单
+        </Button>
+      </div>
+      <div>
+        {operationIds && operationIds.length > 0 && (
+          <span>
+            已绑定表单：{' '}
+            <Space size={[0, 10]} wrap>
+              {operationIds.map((item) => {
+                return (
+                  <Tag
+                    key={item}
+                    closable
+                    onClose={() => {
+                      let tags = operationIds.filter((id: string) => id !== item);
+                      props.current.props.operationIds = tags;
+                      setOperationIds(tags);
+                    }}>
+                    {operations.filter((op) => op.id == item)[0]?.name}
+                  </Tag>
+                );
+              })}
+            </Space>
+          </span>
+        )}
+        <Modal
+          title={'绑定业务'}
+          footer={[]}
+          open={operationModal != undefined}
+          onCancel={() => setOperationModal(undefined)}
+          width={'60%'}>
+          <CardOrTable<XOperation>
+            rowKey={'id'}
+            columns={OperationColumns}
+            showChangeBtn={false}
+            operation={renderOperate}
+            dataSource={operations}
+          />
+        </Modal>
       </div>
       <Modal
         width="650px"

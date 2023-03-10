@@ -25,6 +25,7 @@ interface CustomMenuType {
   onSelect?: (item: MenuItemType) => void;
   onCheckedChange?: Function;
   onMenuClick?: (item: MenuItemType, menuKey: string) => void;
+  searchRightRegion?: any;
 }
 const CustomMenu = (props: CustomMenuType) => {
   const [filter, setFilter] = useState<string>('');
@@ -244,14 +245,18 @@ const CustomMenu = (props: CustomMenuType) => {
           </Row>
         </Layout>
       )}
-      <Input
-        style={{ height: 36, fontSize: 15 }}
-        placeholder="搜索"
-        prefix={<ImSearch />}
-        onChange={(e) => {
-          setFilter(e.target.value);
-        }}
-      />
+      <span style={{ display: 'flex' }}>
+        <Input
+          style={{ height: 36, fontSize: 15 }}
+          placeholder="搜索"
+          prefix={<ImSearch />}
+          onChange={(e) => {
+            setFilter(e.target.value);
+          }}
+        />
+        {props.searchRightRegion}
+      </span>
+
       <Menu
         className={props.menuStyle ? props.menuStyle : style.customMenu}
         mode="inline"

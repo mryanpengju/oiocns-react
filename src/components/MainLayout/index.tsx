@@ -32,6 +32,7 @@ type MainLayoutType = {
   onCheckedChange: Function;
   onSelect?: (item: MenuItemType) => void;
   onMenuClick?: (item: MenuItemType, menuKey: string) => void;
+  searchRightRegion?: any;
 };
 
 /**
@@ -81,6 +82,7 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
               }}
               onCheckedChange={onCheckedChange}
               checkedList={checkedList}
+              searchRightRegion={props.searchRightRegion}
             />
           )}
           {tabs && (
@@ -111,6 +113,7 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
                       }}
                       onCheckedChange={onCheckedChange}
                       checkedList={checkedList}
+                      searchRightRegion={props.searchRightRegion}
                     />
                   ),
                 };

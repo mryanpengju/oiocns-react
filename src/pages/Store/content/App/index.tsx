@@ -162,12 +162,12 @@ const StoreApp: React.FC = () => {
                     history.push('/store/app/create');
                   },
                 },
-                // {
-                //   text: '生成',
-                //   onClick: () => {
-                //     setChooseCreateWayOpen(true);
-                //   },
-                // },
+                {
+                  text: '生成',
+                  onClick: () => {
+                    setChooseCreateWayOpen(true);
+                  },
+                },
               ]}
             />
           }
@@ -242,7 +242,8 @@ const StoreApp: React.FC = () => {
         title="应用信息"
         open={createWay == 'createBlankApp'}
         // setCreateWay={setCreateWay}
-        handleOk={() => {
+        handleOk={(values) => {
+          history.push({ pathname: '/appmanager', state: { appInfo: values } });
           setCreateWay(undefined);
         }}
         handleCancel={() => {

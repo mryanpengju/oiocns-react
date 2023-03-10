@@ -251,6 +251,9 @@ export const findSpecesName = (
 };
 
 export const findAuthName = (auths: IAuthority[], id: string): string | undefined => {
+  if (!id) {
+    return undefined;
+  }
   let authName = undefined;
   for (const item of auths) {
     if (item?.id == id) {

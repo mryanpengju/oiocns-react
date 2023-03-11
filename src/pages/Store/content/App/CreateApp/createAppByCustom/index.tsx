@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, message, Modal } from 'antd';
 import React from 'react';
 interface Iprops {
   open: boolean;
@@ -17,6 +17,8 @@ const CreateAppByCustomModal: React.FC<Iprops> = ({ open, setCreateWay }: Iprops
       onOk={async () => {
         let valid = await form.validateFields();
         if (valid) {
+          message.success('需求已提交,我们会在数个工作日内与您联系');
+          form.resetFields();
           setCreateWay(undefined);
         }
       }}

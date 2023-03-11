@@ -184,6 +184,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
       width={1424}
       title="身份设置"
       destroyOnClose
+      footer={[]}
       bodyStyle={{ padding: 0 }}
       {...other}>
       <Layout style={{ height: 682, overflow: 'hidden' }}>

@@ -61,7 +61,7 @@ export type NodeType = {
   belongId?: string;
   task?: any;
   conditions: conditiondType[];
-  props: { assignedUser: {}; assignedType: {}; num: number | null };
+  props: { operationIds: string[], assignedUser: {}; assignedType: {}; num: number | null };
 };
 
 export const getConditionKeys: (type: string) => any[] = (type: string) => {
@@ -137,7 +137,7 @@ type Approvalprops = {
 export const APPROVAL_PROPS: Approvalprops = {
   assignedType: 'USER',
   mode: 'AND',
-  num: 1,
+  num: 0,
   assignedUser: [],
   refuse: {
     type: 'TO_END', //驳回规则 TO_END  TO_NODE  TO_BEFORE

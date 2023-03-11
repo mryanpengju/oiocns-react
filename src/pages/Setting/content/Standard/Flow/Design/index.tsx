@@ -3,8 +3,8 @@ import cls from './index.module.less';
 import FieldInfo from './Field';
 import ChartDesign from './Chart';
 import { Branche, FlowNode, XFlowDefine } from '@/ts/base/schema';
-import { Branche as BrancheModel, FlowNode as FlowNodeModel } from '@/ts/base/model';
-import { Button, Card, Empty, Layout, message, Modal, Space, Steps } from 'antd';
+import { Branche as BrancheModel } from '@/ts/base/model';
+import { Button, Card, Layout, message, Modal, Space, Steps } from 'antd';
 import {
   ExclamationCircleOutlined,
   SendOutlined,
@@ -14,7 +14,6 @@ import {
   FormOutlined,
 } from '@ant-design/icons';
 import userCtrl from '@/ts/controller/setting';
-// import { FlowNode } from '@/ts/base/model';
 import { ISpeciesItem } from '@/ts/core';
 import { kernel } from '@/ts/base';
 import { getUuid } from '@/utils/tools';
@@ -37,7 +36,6 @@ type FlowDefine = {
   name: string;
   fields: any[];
   remark: string;
-  // resource: string;
   authId: string;
   belongId: string;
   public: boolean | undefined;
@@ -58,13 +56,10 @@ const Design: React.FC<IProps> = ({
   const [scale, setScale] = useState<number>(90);
   const [currentStep, setCurrentStep] = useState(modalType == '新增流程设计' ? 0 : 1);
   const [showErrorsModal, setShowErrorsModal] = useState<ReactNode[]>([]);
-  // const [key, setKey] = useState<string>();
-  const [spaceResource, setSpaceResource] = useState<any>();
   const [conditionData, setConditionData] = useState<FlowDefine>({
     name: '',
     fields: [],
     remark: '',
-    // resource: '',
     authId: '',
     belongId: current?.belongId || userCtrl.space.id,
     public: true,
@@ -114,7 +109,6 @@ const Design: React.FC<IProps> = ({
   useEffect(() => {
     const load = async () => {
       if (current) {
-        setSpaceResource(undefined);
         // content字段可能取消
         let resource_: any;
         if (modalType != '新增流程设计') {
@@ -173,7 +167,7 @@ const Design: React.FC<IProps> = ({
         }
 
         species!
-          .loadAttrs(userCtrl.space.id, {
+          .loadAttrs(userCtrl.space.id, true, true, {
             offset: 0,
             limit: 100,
             filter: '',
@@ -281,6 +275,10 @@ const Design: React.FC<IProps> = ({
     //校验Root类型节点角色不为空  至少有一个审批节点 + 每个节点的 belongId + 审核和抄送的destId + 条件节点条件不为空 + 分支下最多只能有n个分支children为空
     let allNodes: FlowNode[] = getAllNodes(resource, []);
     let allBranches: Branche[] = getAllBranches(resource, []);
+    //校验Root根节点角色不为空
+    if (!resource.operationIds || resource.operationIds.length == 0) {
+      errors.push(getErrorItem('ROOT节点未绑定表单'));
+    }
     //校验Root类型节点角色不为空
     let rootNodes = allNodes.filter((item) => item.type == 'ROOT');
     for (let rootNode of rootNodes) {
@@ -322,7 +320,6 @@ const Design: React.FC<IProps> = ({
     //条件节点条件不为空  分支下最多只能有n个分支children为空
     let n = 0;
     let parentIdSet: Set<string> = new Set();
-    // let map: Map<string, undefined[]> = new Map();
     for (let branch of allBranches) {
       if (branch.conditions && branch.conditions.length > 0) {
         for (let condition of branch.conditions) {
@@ -423,10 +420,6 @@ const Design: React.FC<IProps> = ({
       if (resource.type == 'EMPTY') {
         let nodeId = getUuid();
         resource.nodeId = nodeId;
-        // setVisualNodes([...visualNodes, resource]);
-        if (resource.belongId == userCtrl.space.id) {
-          setSpaceResource(resource);
-        }
         flowNode = {
           id: resource.id,
           nodeId: nodeId,
@@ -453,6 +446,7 @@ const Design: React.FC<IProps> = ({
           name: resource.name,
           desc: '',
           props: {
+            operationIds: resource.operationIds || [],
             assignedType: 'JOB',
             mode: 'AND',
             assignedUser: [
@@ -572,6 +566,7 @@ const Design: React.FC<IProps> = ({
         name: resource.name,
         num: resource.props == undefined ? 0 : resource.props.num,
         destType: resource.type == 'ROOT' ? '角色' : '身份',
+        operationIds: resource.props.operationIds || [],
         destId:
           resource.props != undefined &&
           resource.props.assignedUser != undefined &&
@@ -773,6 +768,7 @@ const Design: React.FC<IProps> = ({
                           resource,
                           'flowNode',
                         ) as FlowNode;
+                        console.log(resource_);
                         let errors = checkValid(resource_);
                         if (errors.length > 0) {
                           setShowErrorsModal(errors);
@@ -840,16 +836,12 @@ const Design: React.FC<IProps> = ({
                     conditionData.belongId = userCtrl.space.id;
                     conditionData.name = params.name;
                     conditionData.remark = params.remark;
-                    // conditionData.operateOrgId = params.operateOrgId;
-                    // setOperateOrgId(params.operateOrgId);
                     setConditionData(conditionData);
                   }}
                   nextStep={(params) => {
                     conditionData.belongId = userCtrl.space.id;
                     conditionData.name = params.name;
                     conditionData.remark = params.remark;
-                    // conditionData.operateOrgId = params.operateOrgId;
-                    // setOperateOrgId(params.operateOrgId);
                     setConditionData(conditionData);
                     setCurrentStep(1);
                   }}
@@ -858,6 +850,7 @@ const Design: React.FC<IProps> = ({
                 <div>
                   <ChartDesign
                     // key={key}
+                    species={species}
                     operateOrgId={operateOrgId}
                     designOrgId={conditionData.belongId}
                     conditions={conditionData.fields}

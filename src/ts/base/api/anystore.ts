@@ -233,7 +233,7 @@ export default class AnyStore {
    */
   public async loadThing<T>(options: any): Promise<ResultType<T>> {
     if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('ThingLoad', options);
+      return await this._storeHub.invoke('LoadAsync', options);
     }
     return await this._restRequest('Thing', 'Load', options);
   }
@@ -244,7 +244,7 @@ export default class AnyStore {
    */
   public async loadThingArchives<T>(options: any): Promise<ResultType<T>> {
     if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('ThingLoadArchives', options);
+      return await this._storeHub.invoke('LoadArchivesAsync', options);
     }
     return await this._restRequest('Thing', 'LoadArchives', options);
   }
@@ -255,7 +255,7 @@ export default class AnyStore {
    */
   public async createThing<T>(number: number): Promise<ResultType<T>> {
     if (this._storeHub.isConnected) {
-      return await this._storeHub.invoke('ThingCreate', number);
+      return await this._storeHub.invoke('CreateAsync', number);
     }
     return await this._restRequest('Thing', 'Create', number);
   }

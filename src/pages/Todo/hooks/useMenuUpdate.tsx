@@ -74,7 +74,7 @@ const useMenuUpdate = (): [
               label: '办事项',
               itemType: 'group',
               icon: <SettingOutlined />,
-              children: await operate.loadThingMenus('work', true),
+              children: await operate.loadThingMenus('work', false),
             },
           ],
         },

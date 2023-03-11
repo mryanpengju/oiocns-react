@@ -95,7 +95,6 @@ const TypeSetting = ({ selectMenu, reflashMenu, operations }: IProps) => {
   } else {
     return <Work key={'work'} operations={operations}></Work>;
   }
-  return <></>;
 };
 
 export default TypeSetting;

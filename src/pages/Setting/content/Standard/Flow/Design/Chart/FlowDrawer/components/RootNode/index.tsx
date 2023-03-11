@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Space, Tag } from 'antd';
+import { Button, Space, Tag } from 'antd';
 import cls from './index.module.less';
 import { NodeType } from '../../processType';
 import userCtrl from '@/ts/controller/setting';
 import { XOperation } from '@/ts/base/schema';
 import { ISpeciesItem } from '@/ts/core';
-import CardOrTable from '@/components/CardOrTableComp';
-import { OperationColumns } from '@/pages/Setting/config/columns';
+import ChooseOperation from '@/pages/App/chooseOperation';
 interface IProps {
   current: NodeType;
   orgId?: string;
@@ -22,25 +21,11 @@ const RootNode: React.FC<IProps> = (props) => {
   const [operations, setOperations] = useState<XOperation[]>([]);
   const [operationModal, setOperationModal] = useState<any>();
   // 操作内容渲染函数
-  const renderOperate = (item: XOperation) => {
-    return [
-      {
-        key: 'bind',
-        label: '绑定',
-        onClick: async () => {
-          if (!operationIds.includes(item.id)) {
-            props.current.props.operationIds = [...operationIds, item.id];
-            setOperationIds([...operationIds, item.id]);
-          }
-          setOperationModal(undefined);
-        },
-      },
-    ];
-  };
   useEffect(() => {
     setOperationIds(props.current.props.operationIds || []);
     const loadOperations = async () => {
       if (userCtrl.space.id && props.species) {
+        //要改成根据id查询operation
         let xOperationArray = await props.species.loadOperations(
           userCtrl.space.id,
           false,
@@ -93,20 +78,15 @@ const RootNode: React.FC<IProps> = (props) => {
               </Space>
             </span>
           )}
-          <Modal
-            title={'绑定业务'}
-            footer={[]}
+          <ChooseOperation
             open={operationModal != undefined}
-            onCancel={() => setOperationModal(undefined)}
-            width={'60%'}>
-            <CardOrTable<XOperation>
-              rowKey={'id'}
-              columns={OperationColumns}
-              showChangeBtn={false}
-              operation={renderOperate}
-              dataSource={operations}
-            />
-          </Modal>
+            onOk={(item: any) => {
+              props.current.props.operationIds = [item.operation.id];
+              setOperations([item.operation]);
+              setOperationIds([item.operation.id]);
+              setOperationModal(undefined);
+            }}
+            onCancel={() => setOperationModal(undefined)}></ChooseOperation>
         </div>
       </div>
     </div>

@@ -411,6 +411,8 @@ export type XFlowDefine = {
   authId?: string;
   // 公开的
   public?: boolean;
+  //数据源id
+  sourceId?: string;
 };
 
 export type FlowNode = {

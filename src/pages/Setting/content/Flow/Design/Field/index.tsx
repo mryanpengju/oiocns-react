@@ -11,14 +11,24 @@ import {
   ProFormSelect,
   ProFormDependency,
   ProFormTextArea,
+  ProFormTreeSelect,
 } from '@ant-design/pro-components';
+import thingCtrl from '@/ts/controller/thing';
 
 interface IProps {
   currentFormValue: {};
   nextStep: (params: any) => void;
   onChange: (params: any) => void;
 }
-
+export const toTreeData = (species: any[]): any[] => {
+  return species.map((t) => {
+    return {
+      label: t.name,
+      value: t.id,
+      children: toTreeData(t.children),
+    };
+  });
+};
 /** 傻瓜组件，只负责读取状态 */
 const FieldInfo: React.FC<IProps> = ({ nextStep, currentFormValue, onChange }) => {
   const [form] = Form.useForm();
@@ -44,6 +54,27 @@ const FieldInfo: React.FC<IProps> = ({ nextStep, currentFormValue, onChange }) =
           label="流程名称"
           placeholder="输入流程名称"
           rules={[{ required: true, message: '请输入流程名称!' }]}
+        />
+        <ProFormTreeSelect
+          // initialValue={['0-0-0']}
+          // label="数据源"
+          // fieldProps={{
+          //   fieldNames: {
+          //     label: 'name',
+          //   },
+          //   treeData,
+          //   placeholder: '请选择',
+          // }}
+          name="datasource"
+          label="数据源"
+          placeholder="请选择数据源"
+          request={async () => {
+            const species = await thingCtrl.loadSpeciesTree();
+            return toTreeData([species]);
+          }}
+          fieldProps={{
+            showSearch: true,
+          }}
         />
         <ProFormTextArea
           name="remark"

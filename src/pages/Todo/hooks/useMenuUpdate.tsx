@@ -1,8 +1,5 @@
-import { kernel } from '@/ts/base';
-import { XOperation } from '@/ts/base/schema';
-import userCtrl from '@/ts/controller/setting';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
-import { emitter, ISpeciesItem } from '@/ts/core';
+import { emitter } from '@/ts/core';
 import { SettingOutlined } from '@ant-design/icons';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
@@ -20,14 +17,9 @@ const useMenuUpdate = (): [
   () => void,
   MenuItemType,
   (items: MenuItemType) => void,
-  MenuItemType[],
-  XOperation[],
-  (checkedList: MenuItemType[]) => void,
 ] => {
   const [key, setKey] = useState<string>('');
   const [menus, setMenu] = useState<TabItemType[]>([]);
-  const [checkedList, setCheckedList] = useState<MenuItemType[]>([]);
-  const [operations, setOperations] = useState<XOperation[]>([]);
   const [selectMenu, setSelectMenu] = useState<MenuItemType>({
     key: 'work',
     label: '办事',
@@ -74,25 +66,12 @@ const useMenuUpdate = (): [
               label: '办事项',
               itemType: 'group',
               icon: <SettingOutlined />,
-              children: await operate.loadThingMenus('work', true),
+              children: await operate.loadThingMenus('work'),
             },
           ],
         },
       },
     ]);
-  };
-
-  const LoadWorkOperation = async (items: MenuItemType[]) => {
-    setCheckedList(items);
-    if (items.length > 0) {
-      const res = await kernel.queryOperationBySpeciesIds({
-        ids: items.map((a) => (a.item as ISpeciesItem).id),
-        spaceId: userCtrl.space.id,
-      });
-      setOperations(res.data.result ?? []);
-    } else {
-      setOperations([]);
-    }
   };
 
   useEffect(() => {
@@ -104,16 +83,7 @@ const useMenuUpdate = (): [
       emitter.unsubscribe(id);
     };
   }, []);
-  return [
-    key,
-    menus,
-    refreshMenu,
-    selectMenu,
-    setSelectMenu,
-    checkedList,
-    operations,
-    LoadWorkOperation,
-  ];
+  return [key, menus, refreshMenu, selectMenu, setSelectMenu];
 };
 
 export default useMenuUpdate;

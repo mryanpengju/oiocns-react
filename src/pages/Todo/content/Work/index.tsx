@@ -1,49 +1,72 @@
-import OioForm from '@/pages/Setting/components/render';
-import { XOperation } from '@/ts/base/schema';
-import { SaveOutlined } from '@ant-design/icons';
-import { Button, Card } from 'antd';
-import React, { useState } from 'react';
-import cls from './index.module.less';
+import { kernel } from '@/ts/base';
+import { SpeciesItem } from '@/ts/core/thing/species';
+import { Card } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { MenuItemType } from 'typings/globelType';
+import userCtrl from '@/ts/controller/setting';
+import { XFlowDefine } from '@/ts/base/schema';
+import CardOrTableComp from '@/components/CardOrTableComp';
+import useObjectUpdate from '@/hooks/useObjectUpdate';
+import { FlowColumn } from '@/pages/Setting/config/columns';
 
 // 卡片渲染
 interface IProps {
-  operations: XOperation[];
+  selectMenu: MenuItemType;
 }
 /**
- * 办事-订单
+ * 办事-业务流程
  * @returns
  */
-const Work: React.FC<IProps> = ({ operations }) => {
+const Work: React.FC<IProps> = ({ selectMenu }) => {
+  const [key, forceUpdate] = useObjectUpdate(selectMenu);
   const [data, setData] = useState<any>({});
+  const species: SpeciesItem = selectMenu.item;
+  const [flowDefines, setFlowDefines] = useState<XFlowDefine[]>([]);
 
-  const submit = () => {
-    console.log('data', data);
+  useEffect(() => {
+    const loadFlowDefine = async () => {
+      if (species?.id) {
+        const res = await kernel.queryDefine({
+          speciesId: species?.id,
+          spaceId: userCtrl.space.id,
+          page: { offset: 0, limit: 1000000, filter: '' },
+        });
+        setFlowDefines(res.data?.result || []);
+      }
+    };
+    loadFlowDefine();
+  }, [species?.id]);
+
+  const getOperations = (data: XFlowDefine) => {
+    const menus = [];
+    menus.push({
+      key: 'retractApply',
+      label: '发起流程',
+      onClick: async () => {
+        // 1、 选物
+        // 2、 通过流程，获取所有流程节点
+        // 3、 通过流程节点获取节点对应的表单
+        const res = await kernel.queryNodes({
+          id: data.id,
+          spaceId: userCtrl.space.id,
+          page: { offset: 0, limit: 100000, filter: '' },
+        });
+        console.log('res===', res);
+      },
+    });
+    return menus;
   };
+
   return (
-    <>
-      {operations.length > 0 && (
-        <>
-          {operations.map((operation) => (
-            <Card key={operation.id} title={operation?.name}>
-              <OioForm
-                operation={operation}
-                onValuesChange={(changedValues, values) => {
-                  data[operation.id] = values;
-                  setData(data);
-                }}
-              />
-            </Card>
-          ))}
-          <Button
-            icon={<SaveOutlined />}
-            type="primary"
-            className={cls['bootom_right']}
-            onClick={() => submit()}>
-            提交
-          </Button>
-        </>
-      )}
-    </>
+    <Card>
+      <CardOrTableComp<XFlowDefine>
+        key={key}
+        rowKey={(record) => record?.id}
+        columns={FlowColumn}
+        dataSource={flowDefines}
+        operation={(item) => getOperations(item)}
+      />
+    </Card>
   );
 };
 

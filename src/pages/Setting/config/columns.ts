@@ -347,11 +347,6 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
     dataIndex: 'name',
   },
   {
-    title: '备注',
-    ellipsis: true,
-    dataIndex: 'remark',
-  },
-  {
     title: '共享组织',
     dataIndex: 'belongId',
     key: 'belongId',
@@ -366,6 +361,11 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
   {
     title: '创建时间',
     dataIndex: 'createTime',
+  },
+  {
+    title: '备注',
+    ellipsis: true,
+    dataIndex: 'remark',
   },
 ];
 

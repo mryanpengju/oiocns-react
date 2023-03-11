@@ -432,8 +432,8 @@ export type FlowNode = {
   branches: Branche[];
   // 节点归属
   belongId: string;
-  // 节点绑定的表单Id集合
-  operationIds: string[];
+  // 绑定的表单信息
+  operations: XOperation[];
 };
 
 export type Branche = {

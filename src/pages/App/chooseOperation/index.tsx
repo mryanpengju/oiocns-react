@@ -124,22 +124,14 @@ const ChooseOperation: React.FC<Iprops> = (props) => {
         key: '使用',
         label: '使用',
         onClick: () => {
-          Modal.confirm({
-            title: '提示',
-            content: '选取模板后，页面设计将重置。是否继续？',
-            okText: '确认',
-            cancelText: '取消',
-            onOk: async () => {
-              props.onOk({ operation: item, species: choosedSpecies, design: item });
-            },
-          });
+          props.onOk({ operation: item, species: choosedSpecies, design: item });
         },
       },
     ];
   };
   return (
     <Modal
-      title="业务模板"
+      title="选择表单"
       open={props.open}
       footer={[]}
       onCancel={() => {

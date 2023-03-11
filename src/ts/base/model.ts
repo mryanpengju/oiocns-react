@@ -885,7 +885,7 @@ export type CreateDefineReq = {
   authId?: string;
   //是否公开
   public?: boolean;
-  // 操作对象分类Id
+  //数据源id
   sourceId?: string;
 };
 

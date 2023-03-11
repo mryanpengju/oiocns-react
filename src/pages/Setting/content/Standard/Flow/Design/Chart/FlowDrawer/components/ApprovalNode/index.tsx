@@ -12,14 +12,13 @@ import {
   Modal,
   Tag,
 } from 'antd';
-import CardOrTable from '@/components/CardOrTableComp';
 import IndentitySelect from '@/bizcomponents/IndentityManage';
 import cls from './index.module.less';
 import { NodeType } from '../../processType';
 import userCtrl from '@/ts/controller/setting';
 import { ISpeciesItem } from '@/ts/core';
 import { XOperation } from '@/ts/base/schema';
-import { OperationColumns } from '@/pages/Setting/config/columns';
+import ChooseOperation from '@/pages/App/chooseOperation';
 interface IProps {
   current: NodeType;
   orgId?: string;
@@ -38,40 +37,26 @@ const ApprovalNode: React.FC<IProps> = (props) => {
   const [operationIds, setOperationIds] = useState<string[]>([]);
   const [operationModal, setOperationModal] = useState<any>();
   // 操作内容渲染函数
-  const renderOperate = (item: XOperation) => {
-    return [
-      {
-        key: 'bind',
-        label: '绑定',
-        onClick: async () => {
-          if (!operationIds.includes(item.id)) {
-            props.current.props.operationIds = [...operationIds, item.id];
-            setOperationIds([...operationIds, item.id]);
-          }
-          setOperationModal(undefined);
-        },
-      },
-    ];
-  };
   useEffect(() => {
+    setOperations(props.current.props.bindOperations || []);
     setOperationIds(props.current.props.operationIds || []);
-    const loadOperations = async () => {
-      if (userCtrl.space.id && props.species) {
-        let xOperationArray = await props.species.loadOperations(
-          userCtrl.space.id,
-          false,
-          true,
-          true,
-          {
-            offset: 0,
-            limit: 1000,
-            filter: '',
-          },
-        );
-        setOperations(xOperationArray.result || []);
-      }
-    };
-    loadOperations();
+    //   const loadOperations = async () => {
+    //     if (userCtrl.space.id && props.species) {
+    //       let xOperationArray = await props.species.loadOperations(
+    //         userCtrl.space.id,
+    //         false,
+    //         true,
+    //         true,
+    //         {
+    //           offset: 0,
+    //           limit: 1000,
+    //           filter: '',
+    //         },
+    //       );
+    //       setOperations(xOperationArray.result || []);
+    //     }
+    //   };
+    //   loadOperations();
   }, []);
 
   useEffect(() => {
@@ -90,10 +75,6 @@ const ApprovalNode: React.FC<IProps> = (props) => {
     key: '',
     data: { id: '', name: '' },
   });
-  // const onChange = (newValue: string) => {
-  //   setNodeOperateOrgId(newValue);
-  //   props.current.belongId = newValue;
-  // };
 
   useEffect(() => {
     if (!props.current.belongId) {
@@ -136,7 +117,6 @@ const ApprovalNode: React.FC<IProps> = (props) => {
               } else {
                 props.current.props.num = 1;
               }
-
               setRadioValue(e.target.value);
             }}
             style={{ paddingBottom: '10px' }}
@@ -186,7 +166,12 @@ const ApprovalNode: React.FC<IProps> = (props) => {
                     closable
                     onClose={() => {
                       let tags = operationIds.filter((id: string) => id !== item);
+                      let operations_ = operations.filter(
+                        (operation: XOperation) => operation.id !== item,
+                      );
                       props.current.props.operationIds = tags;
+                      props.current.props.bindOperations = operations_;
+                      setOperations(operations_);
                       setOperationIds(tags);
                     }}>
                     {operations.filter((op) => op.id == item)[0]?.name}
@@ -196,20 +181,16 @@ const ApprovalNode: React.FC<IProps> = (props) => {
             </Space>
           </span>
         )}
-        <Modal
-          title={'绑定业务'}
-          footer={[]}
+        <ChooseOperation
           open={operationModal != undefined}
-          onCancel={() => setOperationModal(undefined)}
-          width={'60%'}>
-          <CardOrTable<XOperation>
-            rowKey={'id'}
-            columns={OperationColumns}
-            showChangeBtn={false}
-            operation={renderOperate}
-            dataSource={operations}
-          />
-        </Modal>
+          onOk={(item: any) => {
+            props.current.props.operationIds = [item.operation.id];
+            props.current.props.bindOperations = [item.operation];
+            setOperations([item.operation]);
+            setOperationIds([item.operation.id]);
+            setOperationModal(undefined);
+          }}
+          onCancel={() => setOperationModal(undefined)}></ChooseOperation>
       </div>
       <Modal
         width="650px"

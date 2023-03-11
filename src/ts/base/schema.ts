@@ -405,7 +405,7 @@ export type XFlowDefine = {
   authId?: string;
   // 公开的
   public?: boolean;
-  // 操作对象分类Id
+  //数据源id
   sourceId?: string;
 };
 

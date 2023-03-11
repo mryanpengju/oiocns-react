@@ -3,8 +3,7 @@ import cls from './index.module.less';
 import React, { useEffect, useRef } from 'react';
 import { ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import SchemaForm from '@/components/SchemaForm';
-import { AttributeModel } from '@/ts/base/model';
-import userCtrl from '@/ts/controller/setting';
+import thingCtrl from '@/ts/controller/thing';
 
 interface IProps {
   currentFormValue: any;
@@ -14,7 +13,15 @@ interface IProps {
   nextStep: (params: any) => void;
   onChange: (params: any) => void;
 }
-
+export const toTreeData = (species: any[]): any[] => {
+  return species.map((t) => {
+    return {
+      label: t.name,
+      value: t.id,
+      children: toTreeData(t.children),
+    };
+  });
+};
 /** 傻瓜组件，只负责读取状态 */
 const FieldInfo: React.FC<IProps> = ({
   nextStep,
@@ -25,7 +32,7 @@ const FieldInfo: React.FC<IProps> = ({
   const [form] = Form.useForm();
   const formRef = useRef<ProFormInstance>();
   const getFromColumns = () => {
-    const columns: ProFormColumnsType<AttributeModel>[] = [
+    const columns: ProFormColumnsType<any>[] = [
       {
         title: '流程名称',
         dataIndex: 'name',
@@ -33,7 +40,22 @@ const FieldInfo: React.FC<IProps> = ({
         formItemProps: {
           rules: [{ required: true, message: '流程名称为必填项' }],
         },
-        colProps: { span: 24 },
+        colProps: { span: 12 },
+      },
+      {
+        title: '选择数据源',
+        dataIndex: 'sourceId',
+        valueType: 'treeSelect',
+        request: async () => {
+          const species = await thingCtrl.loadSpeciesTree();
+          let tree = toTreeData([species]);
+          return tree;
+        },
+        fieldProps: {
+          showSearch: true,
+          filterTreeNode: true,
+        },
+        colProps: { span: 12 },
       },
       // {
       //   title: '归属',
@@ -153,7 +175,6 @@ const FieldInfo: React.FC<IProps> = ({
         form={form}
         open={true}
         width={640}
-        // onOpenChange={(open: boolean) => {}}
         onValuesChange={async () => {
           const currentValue = await form.getFieldsValue();
           onChange(currentValue);

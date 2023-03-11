@@ -40,6 +40,7 @@ type FlowDefine = {
   belongId: string;
   public: boolean | undefined;
   operateOrgId?: string;
+  sourceId?: string;
 };
 
 const Design: React.FC<IProps> = ({
@@ -64,6 +65,7 @@ const Design: React.FC<IProps> = ({
     belongId: current?.belongId || userCtrl.space.id,
     public: true,
     operateOrgId: modalType == '编辑流程设计' ? operateOrgId : undefined,
+    sourceId: undefined,
   });
   const [resource, setResource] = useState({
     nodeId: `node_${getUuid()}`,
@@ -119,6 +121,7 @@ const Design: React.FC<IProps> = ({
               page: { offset: 0, limit: 1000, filter: '' },
             })
           ).data;
+          debugger;
           let resourceData = loadResource(resource_, 'flowNode', '', '', undefined, '');
           let nodes = getAllNodes(resourceData, []);
           let spaceRootNodes = nodes.filter(
@@ -180,6 +183,7 @@ const Design: React.FC<IProps> = ({
               authId: current.authId || '',
               belongId: current.belongId,
               public: current.public,
+              sourceId: current.sourceId,
               operateOrgId: modalType == '编辑流程设计' ? operateOrgId : undefined,
               fields: attrs.map((attr: any) => {
                 switch (attr.valueType) {
@@ -446,6 +450,7 @@ const Design: React.FC<IProps> = ({
           name: resource.name,
           desc: '',
           props: {
+            bindOperations: resource.bindOperations,
             operationIds: resource.operationIds || [],
             assignedType: 'JOB',
             mode: 'AND',
@@ -567,6 +572,7 @@ const Design: React.FC<IProps> = ({
         num: resource.props == undefined ? 0 : resource.props.num,
         destType: resource.type == 'ROOT' ? '角色' : '身份',
         operationIds: resource.props.operationIds || [],
+        bindOperations: resource.props.bindOperations,
         destId:
           resource.props != undefined &&
           resource.props.assignedUser != undefined &&
@@ -774,10 +780,12 @@ const Design: React.FC<IProps> = ({
                           setShowErrorsModal(errors);
                           return;
                         }
+                        debugger;
                         if (modalType == '新增流程设计') {
                           define = await species?.createFlowDefine({
                             code: conditionData.name,
                             name: conditionData.name,
+                            sourceId: conditionData.sourceId,
                             fields: JSON.stringify(conditionData.fields),
                             remark: conditionData.remark,
                             resource: resource_,
@@ -788,6 +796,7 @@ const Design: React.FC<IProps> = ({
                             id: current.id,
                             code: conditionData.name,
                             name: conditionData.name,
+                            sourceId: conditionData.sourceId,
                             fields: JSON.stringify(conditionData.fields),
                             remark: conditionData.remark,
                             resource: resource_,
@@ -836,12 +845,14 @@ const Design: React.FC<IProps> = ({
                     conditionData.belongId = userCtrl.space.id;
                     conditionData.name = params.name;
                     conditionData.remark = params.remark;
+                    conditionData.sourceId = params.sourceId;
                     setConditionData(conditionData);
                   }}
                   nextStep={(params) => {
                     conditionData.belongId = userCtrl.space.id;
                     conditionData.name = params.name;
                     conditionData.remark = params.remark;
+                    conditionData.sourceId = params.sourceId;
                     setConditionData(conditionData);
                     setCurrentStep(1);
                   }}

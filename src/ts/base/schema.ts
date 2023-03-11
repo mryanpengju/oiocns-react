@@ -504,6 +504,8 @@ export type XFlowInstance = {
   flowDefine: XFlowDefine | undefined;
   // 归属
   belongId: string;
+  // 填写的表单Id集合
+  operationIds: string;
 };
 
 //流程实例查询返回集合

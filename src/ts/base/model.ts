@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { FlowNode as SchemaFlowNode } from './schema';
+import { FlowNode as SchemaFlowNode, XOperation } from './schema';
 
 // 请求类型定义
 export type ReqestType = {
@@ -862,6 +862,8 @@ export type FlowInstanceModel = {
   title: string;
   // 回调地址
   hook: string;
+  // 操作主体对象集合
+  thingIds: string[];
 };
 
 export type CreateDefineReq = {
@@ -900,6 +902,8 @@ export type FlowNode = {
   children: FlowNode;
   branches: Branche[];
   belongId: string;
+  // 绑定的表单信息
+  operations: XOperation[];
 };
 
 export type Branche = {

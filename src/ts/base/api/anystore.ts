@@ -227,6 +227,39 @@ export default class AnyStore {
     return await this._restRequest('Bucket', 'Operate', data);
   }
   /**
+   * 加载物
+   * @param  过滤参数
+   * @returns {ResultType<T>} 移除异步结果
+   */
+  public async loadThing<T>(options: any): Promise<ResultType<T>> {
+    if (this._storeHub.isConnected) {
+      return await this._storeHub.invoke('ThingLoad', options);
+    }
+    return await this._restRequest('Thing', 'Load', options);
+  }
+  /**
+   * 加载物的归档信息
+   * @param  过滤参数
+   * @returns {ResultType<T>} 移除异步结果
+   */
+  public async loadThingArchives<T>(options: any): Promise<ResultType<T>> {
+    if (this._storeHub.isConnected) {
+      return await this._storeHub.invoke('ThingLoadArchives', options);
+    }
+    return await this._restRequest('Thing', 'LoadArchives', options);
+  }
+  /**
+   * 创建物
+   * @param  创建数量
+   * @returns {ResultType<T>} 移除异步结果
+   */
+  public async createThing<T>(number: number): Promise<ResultType<T>> {
+    if (this._storeHub.isConnected) {
+      return await this._storeHub.invoke('ThingCreate', number);
+    }
+    return await this._restRequest('Thing', 'Create', number);
+  }
+  /**
    * 对象变更通知
    * @param key 主键
    * @param data 数据

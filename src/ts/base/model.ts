@@ -885,6 +885,8 @@ export type CreateDefineReq = {
   authId?: string;
   //是否公开
   public?: boolean;
+  // 操作对象分类Id
+  sourceId?: string;
 };
 
 export type FlowNode = {
@@ -942,6 +944,12 @@ export type Refuse = {
   type: string;
   target: string;
 };
+export type QueryTaskReq = {
+  // 流程定义Id
+  defineId: string;
+  // 任务类型 审批、抄送
+  typeName: string;
+};
 
 export type FlowRelationModel = {
   //流程定义Id
@@ -953,6 +961,8 @@ export type FlowRelationModel = {
 export type FlowReq = {
   // 流程实例Id
   id?: string;
+  // 流程定义Id
+  defineId?: string;
   // 空间Id
   spaceId?: string;
   // 状态

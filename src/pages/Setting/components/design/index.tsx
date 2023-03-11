@@ -20,10 +20,10 @@ import { useState } from 'react';
 import userCtrl from '@/ts/controller/setting';
 import { ProForm } from '@ant-design/pro-components';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
-import { EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import AttrItem from './AttrItem';
 import OperateItem from './OperateItem';
-import SpeciesTabs from './SpeciesTabs';
+// import SpeciesTabs from './SpeciesTabs';
 import SpeciesTreeModal from './SpeciesTreeModal';
 import { ISpeciesItem } from '@/ts/core';
 import { XOperation, XOperationItem } from '@/ts/base/schema';
@@ -531,16 +531,16 @@ const Design: React.FC<DesignProps> = ({
     tforceUpdate();
   };
 
-  // 删除表单子表项
-  const deleteOperationItem = (code: string) => {
-    items['operationItems'] = items['operationItems'].filter((i: any) => i.code !== code);
-    setItems(items);
-    setOperationModel({
-      ...operation,
-      ...{ items: items['operationItems'] },
-    });
-    tforceUpdate();
-  };
+  // // 删除表单子表项
+  // const deleteOperationItem = (code: string) => {
+  //   items['operationItems'] = items['operationItems'].filter((i: any) => i.code !== code);
+  //   setItems(items);
+  //   setOperationModel({
+  //     ...operation,
+  //     ...{ items: items['operationItems'] },
+  //   });
+  //   tforceUpdate();
+  // };
 
   return (
     <div key={tkey}>
@@ -597,24 +597,6 @@ const Design: React.FC<DesignProps> = ({
                         layoutChange({ layout: value });
                       }}
                     />
-                    {!operation.flow && (
-                      <Button
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                          toFlowDesign(operation);
-                        }}>
-                        新建流程
-                      </Button>
-                    )}
-                    {operation.flow && (
-                      <Button
-                        icon={<EditOutlined />}
-                        onClick={() => {
-                          toFlowDesign(operation);
-                        }}>
-                        设计流程
-                      </Button>
-                    )}
                     <Space wrap>
                       <Button
                         icon={<PlusOutlined />}
@@ -657,7 +639,7 @@ const Design: React.FC<DesignProps> = ({
                           <OperateItem item={item} />
                         </Col>
                       ))}
-                    {items['operationItems'].filter((i: XOperationItem) => !i.attrId)
+                    {/* {items['operationItems'].filter((i: XOperationItem) => !i.attrId)
                       .length > 0 && (
                       <Col span={24}>
                         <SpeciesTabs
@@ -669,7 +651,7 @@ const Design: React.FC<DesignProps> = ({
                           setOpenSpeciesModal={setOpenSpeciesModal}
                         />
                       </Col>
-                    )}
+                    )} */}
                   </Row>
                 </ProForm>
               </Card>

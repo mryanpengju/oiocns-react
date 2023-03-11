@@ -12,7 +12,7 @@ import { Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React from 'react';
 import { targetsToTreeData } from '..';
-import ProFormAuth from './render/widgets/ProFormAuth';
+// import ProFormAuth from './render/widgets/ProFormAuth';
 
 interface Iprops {
   title: string;
@@ -138,12 +138,12 @@ const OperationModal = (props: Iprops) => {
             rules: [{ required: true, message: '是否公开为必填项' }],
           }}
         />
-        <ProFormAuth
+        {/* <ProFormAuth
           width="md"
           name="beginAuthId"
           placeholder="请选择角色"
           colProps={{ span: 12 }}
-        />
+        /> */}
       </ProForm>
     </Modal>
   );

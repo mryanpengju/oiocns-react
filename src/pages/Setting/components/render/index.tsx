@@ -11,7 +11,6 @@ type OioFormProps = {
   operation: XOperation;
   operationItems?: any[];
   onValuesChange?: (changedValues: any, values: Record<string, any>) => void;
-  operationItems?: any[];
 };
 
 /**

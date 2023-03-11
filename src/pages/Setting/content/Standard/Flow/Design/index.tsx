@@ -121,6 +121,7 @@ const Design: React.FC<IProps> = ({
               page: { offset: 0, limit: 1000, filter: '' },
             })
           ).data;
+          debugger;
           let resourceData = loadResource(resource_, 'flowNode', '', '', undefined, '');
           let nodes = getAllNodes(resourceData, []);
           let spaceRootNodes = nodes.filter(
@@ -449,6 +450,7 @@ const Design: React.FC<IProps> = ({
           name: resource.name,
           desc: '',
           props: {
+            bindOperations: resource.bindOperations,
             operationIds: resource.operationIds || [],
             assignedType: 'JOB',
             mode: 'AND',
@@ -570,6 +572,7 @@ const Design: React.FC<IProps> = ({
         num: resource.props == undefined ? 0 : resource.props.num,
         destType: resource.type == 'ROOT' ? '角色' : '身份',
         operationIds: resource.props.operationIds || [],
+        bindOperations: resource.props.bindOperations,
         destId:
           resource.props != undefined &&
           resource.props.assignedUser != undefined &&

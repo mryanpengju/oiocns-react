@@ -38,24 +38,25 @@ const ApprovalNode: React.FC<IProps> = (props) => {
   const [operationModal, setOperationModal] = useState<any>();
   // 操作内容渲染函数
   useEffect(() => {
+    setOperations(props.current.props.bindOperations || []);
     setOperationIds(props.current.props.operationIds || []);
-    const loadOperations = async () => {
-      if (userCtrl.space.id && props.species) {
-        let xOperationArray = await props.species.loadOperations(
-          userCtrl.space.id,
-          false,
-          true,
-          true,
-          {
-            offset: 0,
-            limit: 1000,
-            filter: '',
-          },
-        );
-        setOperations(xOperationArray.result || []);
-      }
-    };
-    loadOperations();
+    //   const loadOperations = async () => {
+    //     if (userCtrl.space.id && props.species) {
+    //       let xOperationArray = await props.species.loadOperations(
+    //         userCtrl.space.id,
+    //         false,
+    //         true,
+    //         true,
+    //         {
+    //           offset: 0,
+    //           limit: 1000,
+    //           filter: '',
+    //         },
+    //       );
+    //       setOperations(xOperationArray.result || []);
+    //     }
+    //   };
+    //   loadOperations();
   }, []);
 
   useEffect(() => {
@@ -116,7 +117,6 @@ const ApprovalNode: React.FC<IProps> = (props) => {
               } else {
                 props.current.props.num = 1;
               }
-
               setRadioValue(e.target.value);
             }}
             style={{ paddingBottom: '10px' }}
@@ -166,7 +166,12 @@ const ApprovalNode: React.FC<IProps> = (props) => {
                     closable
                     onClose={() => {
                       let tags = operationIds.filter((id: string) => id !== item);
+                      let operations_ = operations.filter(
+                        (operation: XOperation) => operation.id !== item,
+                      );
                       props.current.props.operationIds = tags;
+                      props.current.props.bindOperations = operations_;
+                      setOperations(operations_);
                       setOperationIds(tags);
                     }}>
                     {operations.filter((op) => op.id == item)[0]?.name}
@@ -180,6 +185,8 @@ const ApprovalNode: React.FC<IProps> = (props) => {
           open={operationModal != undefined}
           onOk={(item: any) => {
             props.current.props.operationIds = [item.operation.id];
+            props.current.props.bindOperations = [item.operation];
+            setOperations([item.operation]);
             setOperationIds([item.operation.id]);
             setOperationModal(undefined);
           }}

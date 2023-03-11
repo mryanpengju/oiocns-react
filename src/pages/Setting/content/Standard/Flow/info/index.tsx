@@ -78,13 +78,13 @@ const FlowList: React.FC<IProps> = ({
           });
         },
       },
-      {
-        key: 'bindOperation',
-        label: '绑定业务',
-        onClick: () => {
-          setOperationModal(record.id);
-        },
-      },
+      // {
+      //   key: 'bindOperation',
+      //   label: '绑定业务',
+      //   onClick: () => {
+      //     setOperationModal(record.id);
+      //   },
+      // },
       {
         key: 'createInstance',
         label: '发起测试流程',

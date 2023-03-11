@@ -1,3 +1,5 @@
+import { XOperation } from "@/ts/base/schema";
+
 // 类型 枚举
 export enum dataType {
   'STRING' = 'STRING',
@@ -61,7 +63,7 @@ export type NodeType = {
   belongId?: string;
   task?: any;
   conditions: conditiondType[];
-  props: { operationIds: string[], assignedUser: {}; assignedType: {}; num: number | null };
+  props: { bindOperations: XOperation[], operationIds: string[], assignedUser: {}; assignedType: {}; num: number | null };
 };
 
 export const getConditionKeys: (type: string) => any[] = (type: string) => {

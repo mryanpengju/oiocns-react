@@ -20,18 +20,6 @@ export default class FlowTarget extends BaseTarget {
     }
     return this.defines;
   }
-  async queryFlowRelation(reload: boolean = false): Promise<schema.XOperation[]> {
-    if (!reload && this.defineRelations.length > 0) {
-      return this.defineRelations;
-    }
-    const res = await kernel.queryDefineRelation({
-      id: this.target.id,
-    });
-    if (res.success && res.data.result) {
-      this.defineRelations = res.data.result;
-    }
-    return this.defineRelations;
-  }
   async publishDefine(
     data: Omit<model.CreateDefineReq, 'belongId'>,
   ): Promise<schema.XFlowDefine> {
@@ -57,9 +45,5 @@ export default class FlowTarget extends BaseTarget {
   }
   async createInstance(data: model.FlowInstanceModel): Promise<schema.XFlowInstance> {
     return (await kernel.createInstance(data)).data;
-  }
-  async bindingFlowRelation(data: model.FlowRelationModel): Promise<boolean> {
-    const res = await kernel.createFlowRelation(data);
-    return res.data;
   }
 }

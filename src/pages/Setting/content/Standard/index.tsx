@@ -50,14 +50,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
 
   // 跳转到流程设计
   const toFlowDesign = (operation: XOperation) => {
-    if (operation.flow) {
-      setTabKey('流程定义');
-      setModalType('编辑流程设计');
-      setFlowTabKey(1);
-      setFlowDesign(operation.flow);
-    } else {
-      setTabKey('流程定义');
-    }
+    setTabKey('流程定义');
   };
 
   /** 操作按钮 */

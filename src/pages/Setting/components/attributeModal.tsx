@@ -130,6 +130,30 @@ const AttributeModal = (props: Iprops) => {
               value: '选择型',
               label: '选择型',
             },
+            {
+              value: '分类',
+              label: '分类',
+            },
+            {
+              value: '附件',
+              label: '附件',
+            },
+            {
+              value: '日期型',
+              label: '日期型',
+            },
+            {
+              value: '时间型',
+              label: '时间型',
+            },
+            {
+              value: '人员',
+              label: '人员',
+            },
+            {
+              value: '部门',
+              label: '部门',
+            },
           ],
           onSelect: (select: string) => {
             setSelectType(select);

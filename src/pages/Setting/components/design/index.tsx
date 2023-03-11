@@ -216,7 +216,25 @@ const transformAttrToOperationItem = (
   } else if (attr.valueType === '选择型') {
     widget = 'dict';
     dictId = attr.dictId;
-  }
+  } else if (attr.valueType === '分类') {
+    widget = 'species';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '日期型') {
+    widget = 'date';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '时间型') {
+    widget = 'datetime';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '附件') {
+    widget = 'file';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '人员') {
+    widget = 'person';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '部门') {
+    widget = 'department';
+    dictId = attr.dictId;
+  } // Todo 增加类型
   return (
     attr.operationItem || {
       id: attr.id,

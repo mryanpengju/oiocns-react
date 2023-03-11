@@ -41,7 +41,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
     const menus = [];
     menus.push({
       key: 'retractApply',
-      label: '发起流程',
+      label: '发起',
       onClick: async () => {
         // 1、 选物
         // 2、 通过流程，获取所有流程节点
@@ -51,7 +51,6 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
           spaceId: userCtrl.space.id,
           page: { offset: 0, limit: 100000, filter: '' },
         });
-        console.log('res===', res);
       },
     });
     return menus;

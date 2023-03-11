@@ -15,6 +15,7 @@ import {
   ProFormMoney,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
+import ProFormAuth from './../render/widgets/ProFormAuth';
 import ProFormDict from './../render/widgets/ProFormDict';
 import ProFormPerson from './../render/widgets/ProFormPerson';
 import ProFormDept from './../render/widgets/ProFormDept';
@@ -47,7 +48,7 @@ const OioFormItem = (props: any) => {
     case 'text':
       return (
         <ProFormText
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           required={rule.required}
           fieldProps={rule}
@@ -60,7 +61,7 @@ const OioFormItem = (props: any) => {
     case 'number':
       return (
         <ProFormDigit
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           fieldProps={rule}
           rules={rules}
@@ -71,7 +72,7 @@ const OioFormItem = (props: any) => {
     case 'select':
       return (
         <ProFormSelect
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           fieldProps={rule}
           rules={rules}
@@ -82,7 +83,7 @@ const OioFormItem = (props: any) => {
     case 'treeSelect':
       return (
         <ProFormTreeSelect
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -93,7 +94,7 @@ const OioFormItem = (props: any) => {
     case 'upload':
       return (
         <ProFormUploadButton
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           fieldProps={rule}
           rules={rules}
@@ -104,7 +105,7 @@ const OioFormItem = (props: any) => {
     case 'date':
       return (
         <ProFormDatePicker
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -114,7 +115,7 @@ const OioFormItem = (props: any) => {
     case 'datetime':
       return (
         <ProFormDateTimePicker
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -124,7 +125,7 @@ const OioFormItem = (props: any) => {
     case 'dateRange':
       return (
         <ProFormDateRangePicker
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -134,7 +135,7 @@ const OioFormItem = (props: any) => {
     case 'dateTimeRange':
       return (
         <ProFormDateTimeRangePicker
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -144,7 +145,7 @@ const OioFormItem = (props: any) => {
     case 'checkbox':
       return (
         <ProFormCheckbox
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -154,7 +155,7 @@ const OioFormItem = (props: any) => {
     case 'radio':
       return (
         <ProFormRadio
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -164,7 +165,7 @@ const OioFormItem = (props: any) => {
     case 'money':
       return (
         <ProFormMoney
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -174,7 +175,7 @@ const OioFormItem = (props: any) => {
     case 'dict':
       return (
         <ProFormDict
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -182,10 +183,10 @@ const OioFormItem = (props: any) => {
           props={rule}
         />
       );
-    case 'dept':
+    case 'department':
       return (
         <ProFormDept
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -195,7 +196,7 @@ const OioFormItem = (props: any) => {
     case 'person':
       return (
         <ProFormPerson
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -205,7 +206,17 @@ const OioFormItem = (props: any) => {
     case 'group':
       return (
         <ProFormGroup
-          name={item.code}
+          name={item.attrId}
+          label={rule.title}
+          rules={rules}
+          tooltip={rule.description}
+          labelAlign="right"
+        />
+      );
+    case 'auth':
+      return (
+        <ProFormAuth
+          name={item.attrId}
           label={rule.title}
           rules={rules}
           tooltip={rule.description}
@@ -215,7 +226,7 @@ const OioFormItem = (props: any) => {
     default:
       return (
         <ProFormText
-          name={item.code}
+          name={item.attrId}
           label={rule.title}
           fieldProps={rule}
           rules={rules}

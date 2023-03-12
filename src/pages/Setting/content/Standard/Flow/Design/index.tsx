@@ -121,7 +121,6 @@ const Design: React.FC<IProps> = ({
               page: { offset: 0, limit: 1000, filter: '' },
             })
           ).data;
-          debugger;
           let resourceData = loadResource(resource_, 'flowNode', '', '', undefined, '');
           let nodes = getAllNodes(resourceData, []);
           let spaceRootNodes = nodes.filter(
@@ -280,7 +279,7 @@ const Design: React.FC<IProps> = ({
     let allNodes: FlowNode[] = getAllNodes(resource, []);
     let allBranches: Branche[] = getAllBranches(resource, []);
     //校验Root根节点角色不为空
-    if (!resource.operationIds || resource.operationIds.length == 0) {
+    if (!resource.operations || resource.operations.length == 0) {
       errors.push(getErrorItem('ROOT节点未绑定表单'));
     }
     //校验Root类型节点角色不为空
@@ -289,12 +288,12 @@ const Design: React.FC<IProps> = ({
       if (rootNode.destId == undefined) {
         errors.push(getErrorItem('ROOT节点缺少角色'));
       }
-      let companyApprovalNodes = allNodes.filter(
-        (item) => item.type == 'APPROVAL' && item.belongId == rootNode.belongId,
-      );
-      if (companyApprovalNodes.length == 0) {
-        errors.push(getErrorItem('至少需要一个审批节点'));
-      }
+      // let companyApprovalNodes = allNodes.filter(
+      //   (item) => item.type == 'APPROVAL' && item.belongId == rootNode.belongId,
+      // );
+      // if (companyApprovalNodes.length == 0) {
+      //   errors.push(getErrorItem('至少需要一个审批节点'));
+      // }
     }
 
     //每个节点的 belongId  审核和抄送的destId
@@ -450,8 +449,7 @@ const Design: React.FC<IProps> = ({
           name: resource.name,
           desc: '',
           props: {
-            bindOperations: resource.bindOperations,
-            operationIds: resource.operationIds || [],
+            operations: resource.operations,
             assignedType: 'JOB',
             mode: 'AND',
             assignedUser: [
@@ -571,8 +569,7 @@ const Design: React.FC<IProps> = ({
         name: resource.name,
         num: resource.props == undefined ? 0 : resource.props.num,
         destType: resource.type == 'ROOT' ? '角色' : '身份',
-        operationIds: resource.props.operationIds || [],
-        bindOperations: resource.props.bindOperations,
+        operations: resource.props.operations,
         destId:
           resource.props != undefined &&
           resource.props.assignedUser != undefined &&
@@ -780,7 +777,6 @@ const Design: React.FC<IProps> = ({
                           setShowErrorsModal(errors);
                           return;
                         }
-                        debugger;
                         if (modalType == '新增流程设计') {
                           define = await species?.createFlowDefine({
                             code: conditionData.name,

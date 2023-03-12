@@ -88,9 +88,9 @@ const TypeSetting = ({ selectMenu, reflashMenu }: IProps) => {
     case WorkType.OrderApply:
       return <BuyOrder typeName={selectMenu.key} todoGroup={selectMenu.item} />;
     case WorkType.WorkItem:
-      return <Work key={'work'} selectMenu={selectMenu}></Work>;
+      return <Work selectMenu={selectMenu}></Work>;
     case WorkType.WorkTodo:
-      return <WorkTodo key={'todo'} selectMenu={selectMenu}></WorkTodo>;
+      return <WorkTodo selectMenu={selectMenu}></WorkTodo>;
     default:
       return <></>;
   }

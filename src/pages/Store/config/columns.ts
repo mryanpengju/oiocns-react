@@ -1,9 +1,6 @@
 import { schema } from '@/ts/base';
 import { IProduct } from '@/ts/core';
 import { ProColumns } from '@ant-design/pro-table';
-import { Tag } from 'antd';
-import ColumnGroup from 'antd/lib/table/ColumnGroup';
-import React from 'react';
 
 export const PersonColumns: ProColumns<schema.XTarget>[] = [
   {

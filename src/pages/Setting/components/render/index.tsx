@@ -15,6 +15,7 @@ type OioFormProps = {
   onFinished?: Function;
   fieldsValue?: any;
   formRef: any;
+  disabled?: boolean;
 };
 
 /**
@@ -28,6 +29,7 @@ const OioForm: React.FC<OioFormProps> = ({
   onFinished,
   fieldsValue,
   formRef,
+  disabled,
 }) => {
   const [items, setItems] = useState<XOperationItem[]>([]);
   // const formRef = useRef<ProFormInstance<any>>();
@@ -61,6 +63,8 @@ const OioForm: React.FC<OioFormProps> = ({
 
   return (
     <ProForm
+      disabled={disabled === true}
+      initialValues={fieldsValue}
       submitter={
         submitter || {
           searchConfig: {

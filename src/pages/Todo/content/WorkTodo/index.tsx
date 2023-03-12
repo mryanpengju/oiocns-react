@@ -1,12 +1,9 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import TaskList from './TaskList';
 import Approve from './Approve';
 import { XFlowTaskHistory } from '@/ts/base/schema';
-import { kernel } from '@/ts/base';
-import userCtrl from '@/ts/controller/setting';
 
-// 卡片渲染
 interface IProps {
   selectMenu: MenuItemType;
 }

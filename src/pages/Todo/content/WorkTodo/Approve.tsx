@@ -1,9 +1,9 @@
 import OioForm from '@/pages/Setting/components/render';
 import Design from '@/pages/Setting/content/Standard/Flow/Design';
 import { kernel } from '@/ts/base';
-import { XFlowDefine, XFlowInstance, XFlowTaskHistory } from '@/ts/base/schema';
-import { ProFormInstance } from '@ant-design/pro-form';
-import { Button, Card, Collapse, Input, Tabs, TabsProps, Timeline } from 'antd';
+import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
+import { ProFormInstance, ProFormTextArea } from '@ant-design/pro-form';
+import { Button, Card, Collapse, Input, message, Tabs, TabsProps, Timeline } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
 import cls from './index.module.less';
@@ -19,7 +19,8 @@ interface IApproveProps {
 
 const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
   const formRef = useRef<ProFormInstance<any>>();
-  const [nodes, setNodes] = useState<XFlowInstance[]>([]);
+  const [taskHistory, setTaskHistorys] = useState<XFlowTaskHistory[]>([]);
+  const [comment, setComment] = useState<string>('');
 
   useEffect(() => {
     const loadNodes = async () => {
@@ -31,12 +32,30 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
         const instances = res.data.result || [];
         if (instances.length > 0) {
           console.log(instances[0].historyTasks);
-          setNodes(instances[0].historyTasks);
+          setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
         }
       }
     };
     loadNodes();
   }, [flowTask]);
+
+  // 审批
+  const approvalTask = async (status: number) => {
+    const result = await formRef.current?.validateFields();
+    console.log(result);
+    const res = await kernel.approvalTask({
+      id: flowTask?.id as string,
+      status,
+      comment,
+      data: JSON.stringify(formRef.current?.getFieldsValue()),
+    });
+    if (res.success) {
+      message.success('审批成功!');
+      setTabKey(0);
+    } else {
+      message.error('审批失败!');
+    }
+  };
 
   const items: TabsProps['items'] = [
     {
@@ -45,80 +64,100 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
       children: (
         <>
           <Timeline>
-            {nodes.map((node, index) => {
-              const color = node.status == 100 ? 'green' : 'red';
-              const activeKey = node.status == 100 ? undefined : node.id;
+            {taskHistory.map((th, index) => {
+              const isCur = th.status != 100;
+              const color = isCur ? 'red' : 'green';
               const title = index == 0 ? '发起人' : '审批人';
               return (
-                <Timeline.Item key={node.id} color={color}>
+                <Timeline.Item key={th.id} color={color}>
                   <Card>
                     <div style={{ display: 'flex' }}>
-                      <div style={{ paddingRight: '18px' }}>{node.createTime}</div>
+                      <div style={{ paddingRight: '18px' }}>{th.createTime}</div>
                       <div>
-                        {title}：{userCtrl.findTeamInfoById(node.createUser).name}
+                        {title}：{userCtrl.findTeamInfoById(th.createUser).name}
                       </div>
                     </div>
-                    <Collapse ghost activeKey={activeKey}>
-                      <Panel header="表单信息" key={node.id}>
-                        {node.bindOperations.map(operation => {
+                    {!isCur && (
+                      <Collapse ghost>
+                        {th.node?.bindOperations.map((operation, i) => {
+                          const record =
+                            th.records && th.records.length > 0
+                              ? th.records[i]
+                              : undefined;
+                          let formValue = {};
+                          if (record?.data) {
+                            formValue = JSON.parse(record?.data);
+                          }
                           return (
-                            <OioForm
-                              key={operation.id}
-                              operation={operation}
-                              formRef={undefined}></OioForm>
+                            <Panel header={operation.name} key={th.id}>
+                              <OioForm
+                                key={operation.id}
+                                operation={operation}
+                                formRef={undefined}
+                                fieldsValue={formValue}
+                                disabled={th.status == 100}></OioForm>
+                            </Panel>
                           );
                         })}
-                      </Panel>
-                    </Collapse>
+                      </Collapse>
+                    )}
+                    {isCur && (
+                      <>
+                        {th.node?.bindOperations.map((operation, i) => {
+                          const record =
+                            th.records && th.records.length > 0
+                              ? th.records[i]
+                              : undefined;
+                          let formValue = {};
+                          if (record?.data) {
+                            formValue = JSON.parse(record?.data);
+                          }
+                          return (
+                            <Card title={operation.name} key={th.id} bordered={false}>
+                              <OioForm
+                                key={operation.id}
+                                operation={operation}
+                                fieldsValue={formValue}
+                                formRef={formRef}
+                                disabled={th.status == 100}></OioForm>
+                            </Card>
+                          );
+                        })}
+                      </>
+                    )}
                   </Card>
                 </Timeline.Item>
               );
             })}
           </Timeline>
-          {flowTask?.node?.bindOperations.map((operation: any) => (
-            <OioForm
-              key={operation.id}
-              operation={operation}
-              formRef={formRef}
-              submitter={{
-                resetButtonProps: {
-                  style: { display: 'none' },
-                },
-                render: (_: any, dom: any) => (
-                  <div className={cls['bootom_right']}>
-                    <Input.TextArea
-                      size="small"
-                      placeholder="请填写审批意见"></Input.TextArea>
-                    <div style={{ paddingTop: '8px', display: 'flex' }}>
-                      <Button
-                        type="primary"
-                        style={{ marginRight: '8px', marginLeft: '12px' }}
-                        icon={<CloseOutlined />}
-                        onClick={() => {
-                          console.log(200);
-                        }}>
-                        驳回
-                      </Button>
-                      <Button
-                        type="primary"
-                        icon={<CheckOutlined />}
-                        onClick={() => {
-                          console.log(100);
-                        }}>
-                        同意
-                      </Button>
-                    </div>
-                  </div>
-                ),
-              }}
-              onFinished={async (values: any) => {
-                console.log('values', values);
-              }}
-              onValuesChange={(changedValues, values) => {
-                console.log('values', values);
-              }}
-            />
-          ))}
+          <div className={cls['bootom_right']}>
+            <Input.TextArea
+              size="small"
+              placeholder="请填写审批意见"
+              value={comment}
+              onChange={(e) => {
+                setComment(e.target.value);
+              }}></Input.TextArea>
+            <div style={{ paddingTop: '8px', display: 'flex' }}>
+              <Button
+                type="primary"
+                style={{ marginRight: '8px', marginLeft: '12px' }}
+                icon={<CloseOutlined />}
+                onClick={() => {
+                  approvalTask(200);
+                }}>
+                驳回
+              </Button>
+              <Button
+                type="primary"
+                icon={<CheckOutlined />}
+                onClick={() => {
+                  approvalTask(100);
+                }}>
+                同意
+              </Button>
+            </div>
+          </div>
         </>
       ),
     },

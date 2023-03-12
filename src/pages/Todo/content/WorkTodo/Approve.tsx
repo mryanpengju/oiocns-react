@@ -1,10 +1,11 @@
 import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
 import { Card, Tabs, TabsProps } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import userCtrl from '@/ts/controller/setting';
 import { ImUndo2 } from 'react-icons/im';
 import Design from '@/pages/Setting/content/Standard/Flow/Design';
+import OioForm from '@/pages/Setting/components/render';
 
 interface IApproveProps {
   flowTask?: XFlowTaskHistory;
@@ -12,32 +13,50 @@ interface IApproveProps {
 }
 
 const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
+  const [operations, setOperations] = useState<any>([]);
+
   useEffect(() => {
     const loadNodes = async () => {
       if (flowTask) {
-        // 1、 通过流程节点获取节点对应的表单
-        // 2、 跳界面显示详情
-        // 3、 详情页显示绑定表单
         const res = await kernel.queryNodes({
           id: flowTask.flowInstance?.defineId as string,
           spaceId: userCtrl.space.id,
           page: { offset: 0, limit: 100000, filter: '' },
         });
-        console.log('res===', res);
+        const node = res.data;
+        setOperations(node.operations || []);
       }
     };
     loadNodes();
   }, [flowTask]);
 
-  const onChange = (key: string) => {
-    console.log(key);
-  };
-
   const items: TabsProps['items'] = [
     {
       key: '1',
       label: `流程审批`,
-      children: `Content of Tab Pane 1`,
+      children: (
+        <>
+          {operations.length > 0 && (
+            <>
+              {operations.map((operation: any) => (
+                <OioForm
+                  key={operation.id}
+                  operation={operation}
+                  //   submitter={{
+                  //     render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
+                  //   }}
+                  onFinished={async (values: any) => {
+                    // Todo 提交
+                  }}
+                  onValuesChange={(changedValues, values) => {
+                    console.log('values', values);
+                  }}
+                />
+              ))}
+            </>
+          )}
+        </>
+      ),
     },
     {
       key: '2',
@@ -58,7 +77,7 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
     },
   ];
 
-  const operations = (
+  const tabBarExtraContent = (
     <div
       style={{ display: 'flex', cursor: 'pointer' }}
       onClick={() => {
@@ -76,8 +95,7 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
       <Tabs
         defaultActiveKey="1"
         items={items}
-        onChange={onChange}
-        tabBarExtraContent={operations}></Tabs>
+        tabBarExtraContent={tabBarExtraContent}></Tabs>
     </Card>
   );
 };

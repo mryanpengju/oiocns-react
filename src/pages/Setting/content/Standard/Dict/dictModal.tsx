@@ -58,6 +58,26 @@ const DictModal = (props: Iprops) => {
         showSearch: true,
       },
     },
+    {
+      title: '向下级组织公开',
+      dataIndex: 'public',
+      valueType: 'select',
+      fieldProps: {
+        options: [
+          {
+            value: true,
+            label: '公开',
+          },
+          {
+            value: false,
+            label: '不公开',
+          },
+        ],
+      },
+      formItemProps: {
+        rules: [{ required: true, message: '是否公开为必填项' }],
+      },
+    },
     // {
     //   title: '选择管理职权',
     //   dataIndex: 'authId',

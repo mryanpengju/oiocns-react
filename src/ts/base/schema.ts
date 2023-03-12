@@ -524,7 +524,7 @@ export type XFlowInstance = {
   // 更新时间
   updateTime: string;
   // 流程的定义
-  flowDefine: XFlowDefine | undefined;
+  define: XFlowDefine | undefined;
   // 归属
   belongId: string;
   // 填写的表单Id集合
@@ -713,7 +713,7 @@ export type XFlowTaskHistory = {
   // 任务审批的身份
   identity: XIdentity | undefined;
   // 流程的定义
-  flowInstance: XFlowInstance | undefined;
+  instance: XFlowInstance | undefined;
   // 流程节点
   node: XFlowNode | undefined;
 };

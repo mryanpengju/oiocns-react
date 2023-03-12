@@ -1,7 +1,7 @@
 import { kernel } from '@/ts/base';
 import { SpeciesItem } from '@/ts/core/thing/species';
 import { Button, Card, InputNumber, message, Modal, Result } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import userCtrl from '@/ts/controller/setting';
 import { XFlowDefine } from '@/ts/base/schema';
@@ -16,6 +16,7 @@ import { getUuid } from '@/utils/tools';
 import OioForm from '@/pages/Setting/components/render';
 import { PlusOutlined } from '@ant-design/icons';
 import cls from './index.module.less';
+import { ProFormInstance } from '@ant-design/pro-components';
 
 // 卡片渲染
 interface IProps {
@@ -40,6 +41,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   const [rows, setRows] = useState<any>([]);
   const [successPage, setSuccessPage] = useState<boolean>(false);
   const [thingFreshKey, setThingFreshKey] = useState<string>();
+  const formRef = useRef<ProFormInstance<any>>();
 
   const getSpecies = (parent: INullSpeciesItem, id: string) => {
     if (parent) {
@@ -140,6 +142,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             <OioForm
               key={operation.id}
               operation={operation}
+              formRef={formRef}
               submitter={{
                 resetButtonProps: {
                   style: { display: 'none' },

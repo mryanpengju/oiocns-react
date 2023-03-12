@@ -1,13 +1,12 @@
 import CardOrTableComp from '@/components/CardOrTableComp';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
-import { kernel } from '@/ts/base';
 import { XFlowTaskHistory } from '@/ts/base/schema';
-import userCtrl from '@/ts/controller/setting';
 import { SpeciesItem } from '@/ts/core/thing/species';
 import { Card, Tabs, TabsProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
-import { WorkColumns } from '../../config/columns';
+import { WorkTodoColumns } from '../../config/columns';
+import todoCtrl from '@/ts/controller/todo/todoCtrl';
 
 // 卡片渲染
 interface IProps {
@@ -22,30 +21,16 @@ interface IProps {
 const TaskList: React.FC<IProps> = ({ selectMenu, setTabKey, setFlowTask }) => {
   const [key, forceUpdate] = useObjectUpdate(selectMenu);
   const species: SpeciesItem = selectMenu.item;
-  const [approveTasks, setApproveTasks] = useState<XFlowTaskHistory[]>([{ id: '111' }]);
+  const [todoTasks, setTodoTasks] = useState<XFlowTaskHistory[]>([]);
+  const [csTasks, setCsTasks] = useState<XFlowTaskHistory[]>([]);
 
   useEffect(() => {
     // 查询待办任务
     const loadTasks = async () => {
-      if (species?.id) {
-        const res = await kernel.queryDefine({
-          speciesId: species?.id,
-          spaceId: userCtrl.space.id,
-          page: { offset: 0, limit: 1000000, filter: '' },
-        });
-        const flowDefines = res.data?.result || [];
-        let flowTasks: XFlowTaskHistory[] = [];
-        if (flowDefines.length > 0) {
-          for (const flowDefine of flowDefines) {
-            const taskRes = await kernel.queryApproveTask({
-              defineId: flowDefine.id,
-              typeName: '审批',
-            });
-            flowTasks = [...flowTasks, ...(taskRes.data?.result || [])];
-          }
-        }
-        // setApproveTasks(flowTasks);
-      }
+      const tasks = (await todoCtrl.getWorkTodoBySpeciesId(species?.id)) || [];
+      setTodoTasks(tasks.filter((t) => t.node?.nodeType == '审批'));
+      setCsTasks(tasks.filter((t) => t.node?.nodeType == '抄送'));
+      forceUpdate();
     };
     loadTasks();
   }, [species?.id]);
@@ -58,13 +43,13 @@ const TaskList: React.FC<IProps> = ({ selectMenu, setTabKey, setFlowTask }) => {
         <CardOrTableComp<XFlowTaskHistory>
           key={key}
           rowKey={(record) => record?.id}
-          columns={WorkColumns}
-          dataSource={approveTasks}
+          columns={WorkTodoColumns}
+          dataSource={todoTasks}
           operation={(item) => {
             return [
               {
                 key: 'approve',
-                label: '审批',
+                label: '去审批',
                 onClick: async () => {
                   setFlowTask(item);
                   setTabKey(1);
@@ -82,8 +67,8 @@ const TaskList: React.FC<IProps> = ({ selectMenu, setTabKey, setFlowTask }) => {
         <CardOrTableComp<XFlowTaskHistory>
           key={key}
           rowKey={(record) => record?.id}
-          columns={WorkColumns}
-          dataSource={approveTasks}
+          columns={WorkTodoColumns}
+          dataSource={csTasks}
           operation={(item) => {
             return [
               {
@@ -106,8 +91,8 @@ const TaskList: React.FC<IProps> = ({ selectMenu, setTabKey, setFlowTask }) => {
         <CardOrTableComp<XFlowTaskHistory>
           key={key}
           rowKey={(record) => record?.id}
-          columns={WorkColumns}
-          dataSource={approveTasks}
+          columns={WorkTodoColumns}
+          dataSource={csTasks}
           operation={(item) => {
             return [
               {

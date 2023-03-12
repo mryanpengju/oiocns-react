@@ -19,14 +19,6 @@ const WorkTodo: React.FC<IProps> = ({ selectMenu }) => {
   const [flowTask, setFlowTask] = useState<XFlowTaskHistory>();
 
   useEffect(() => {
-    setTimeout(async () => {
-      let res = await kernel.queryApproveTask({ id: userCtrl.space.id });
-      if (res.success) {
-        res.data.result?.forEach(async (task) => {
-          await kernel.approvalTask({ id: task.id, status: 100, comment: '', data: '' });
-        });
-      }
-    }, 10);
     setTabKey(0);
   }, [selectMenu]);
 

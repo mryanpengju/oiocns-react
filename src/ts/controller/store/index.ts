@@ -19,7 +19,7 @@ class StoreController extends Emitter {
   private _root: IFileSystemItem = getFileSysItemRoot();
   constructor() {
     super();
-    emitter.subscribePart(DomainTypes.User, () => {
+    emitter.subscribePart([DomainTypes.User, DomainTypes.Company], () => {
       this._root = getFileSysItemRoot();
       setTimeout(async () => {
         this._home = await this._root.create('主目录');

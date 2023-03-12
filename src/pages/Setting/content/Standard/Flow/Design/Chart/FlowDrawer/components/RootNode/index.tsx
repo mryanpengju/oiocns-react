@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Space, Tag } from 'antd';
+import { Button, message, Space, Tag } from 'antd';
 import cls from './index.module.less';
 import { NodeType } from '../../processType';
 import { XOperation } from '@/ts/base/schema';
 import { ISpeciesItem } from '@/ts/core';
 import ChooseOperation from '@/pages/App/chooseOperation';
+import ViewFormModal from '@/pages/Setting/components/viewFormModal';
 interface IProps {
   current: NodeType;
   orgId?: string;
@@ -16,33 +17,13 @@ interface IProps {
  */
 
 const RootNode: React.FC<IProps> = (props) => {
-  debugger;
-  const [operationIds, setOperationIds] = useState<string[]>([]);
   const [operations, setOperations] = useState<XOperation[]>([]);
   const [operationModal, setOperationModal] = useState<any>();
+  const [viewFormOpen, setViewFormOpen] = useState<boolean>(false);
+  const [editData, setEditData] = useState<XOperation>();
   // 操作内容渲染函数
   useEffect(() => {
-    setOperations(props.current.props.bindOperations || []);
-    setOperationIds(props.current.props.operationIds || []);
-
-    // const loadOperations = async () => {
-    //   if (userCtrl.space.id && props.species) {
-    //     //要改成根据id查询operation
-    //     let xOperationArray = await props.species.loadOperations(
-    //       userCtrl.space.id,
-    //       false,
-    //       true,
-    //       true,
-    //       {
-    //         offset: 0,
-    //         limit: 1000,
-    //         filter: '',
-    //       },
-    //     );
-    //     setOperations(xOperationArray.result || []);
-    //   }
-    // };
-    // loadOperations();
+    setOperations(props.current.props.operations || []);
   }, []);
   return (
     <div className={cls[`app-roval-node`]}>
@@ -59,27 +40,32 @@ const RootNode: React.FC<IProps> = (props) => {
           </Button>
         </div>
         <div>
-          {operationIds && operationIds.length > 0 && (
+          {operations && operations.length > 0 && (
             <span>
-              已绑定表单：{' '}
+              点击预览：{' '}
               <Space size={[0, 10]} wrap>
-                {operationIds.map((item) => {
+                {operations.map((item) => {
                   return (
-                    <Tag
-                      key={item}
-                      closable
-                      onClose={() => {
-                        let tags = operationIds.filter((id: string) => id !== item);
-                        let operations_ = operations.filter(
-                          (operation: XOperation) => operation.id !== item,
-                        );
-                        props.current.props.operationIds = tags;
-                        props.current.props.bindOperations = operations_;
-                        setOperations(operations_);
-                        setOperationIds(tags);
+                    <a
+                      key={item.id}
+                      onClick={() => {
+                        setEditData(item);
+                        setViewFormOpen(true);
                       }}>
-                      {operations.filter((op) => op.id == item)[0]?.name}
-                    </Tag>
+                      表单_{item.name}
+                    </a>
+                    // <Tag
+                    //   key={item.id}
+                    //   closable
+                    //   onClose={() => {
+                    //     let operations_ = operations.filter(
+                    //       (operation: XOperation) => operation.id !== item.id,
+                    //     );
+                    //     props.current.props.operations = operations_;
+                    //     setOperations(operations_);
+                    //   }}>
+                    //   {operations.filter((op) => op.id == item.id)[0]?.name}
+                    // </Tag>
                   );
                 })}
               </Space>
@@ -88,13 +74,21 @@ const RootNode: React.FC<IProps> = (props) => {
           <ChooseOperation
             open={operationModal != undefined}
             onOk={(item: any) => {
-              props.current.props.operationIds = [item.operation.id];
-              props.current.props.bindOperations = [item.operation];
+              props.current.props.operations = [item.operation];
               setOperations([item.operation]);
-              setOperationIds([item.operation.id]);
               setOperationModal(undefined);
             }}
             onCancel={() => setOperationModal(undefined)}></ChooseOperation>
+          <ViewFormModal
+            data={editData}
+            open={viewFormOpen}
+            handleCancel={() => {
+              setViewFormOpen(false);
+            }}
+            handleOk={() => {
+              setViewFormOpen(false);
+            }}
+          />
         </div>
       </div>
     </div>

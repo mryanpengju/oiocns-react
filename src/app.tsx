@@ -9,8 +9,16 @@ import './global.less';
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
+import config from 'devextreme/core/config';
+import { loadMessages, locale } from 'devextreme/localization';
+import zhMessage from 'devextreme/localization/messages/zh.json';
 
 moment.locale('cn');
+config({ defaultCurrency: 'zh' });
+loadMessages(zhMessage);
+locale('zh');
 
 message.config({
   prefixCls: 'ogo-message',

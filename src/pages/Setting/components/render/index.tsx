@@ -2,7 +2,7 @@ import { kernel } from '@/ts/base';
 import { XOperation, XOperationItem } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
 import { ProForm, ProFormInstance } from '@ant-design/pro-components';
-import { Col, message, Row } from 'antd';
+import { Col, Row } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import OioFormItem from './FormItems';
 import SpeciesTabs from './SpeciesTabs';

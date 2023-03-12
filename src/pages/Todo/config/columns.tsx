@@ -437,3 +437,5 @@ const statusMap = {
     text: '已退货',
   },
 };
+
+export const FlowInstanceColumns: ProColumns<IApprovalItem>[] = [];

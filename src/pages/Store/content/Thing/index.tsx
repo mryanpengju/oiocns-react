@@ -43,7 +43,10 @@ interface IProps {
 export const store = new CustomStore({
   key: 'Id',
   async load(loadOptions) {
-    const result = await kernel.anystore.loadThing(loadOptions, 'company');
+    const result = await kernel.anystore.loadThing(
+      loadOptions,
+      userCtrl.isCompanySpace ? 'company' : 'user',
+    );
     console.log(result);
     if (result.success) {
       return result.data;
@@ -281,7 +284,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
 
   return (
     <Card id={key} bordered={false}>
-      {thingAttrs && thingAttrs.length > 0 && getComponent()}
+      {getComponent()}
     </Card>
   );
 };

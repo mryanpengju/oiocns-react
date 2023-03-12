@@ -63,19 +63,23 @@ const FlowList: React.FC<IProps> = ({
         key: 'editor',
         label: '编辑',
         onClick: () => {
-          Modal.confirm({
-            title: '与该流程相关的未完成待办将会重置，是否确定编辑?',
-            icon: <ExclamationCircleOutlined />,
-            okText: '确认',
-            cancelText: '取消',
-            okType: 'danger',
-            onOk: () => {
-              onCurrentChaned(record);
-              setOperateOrgId(userCtrl.space.id);
-              setModalType('编辑流程设计');
-              onDesign();
-            },
-          });
+          // Modal.confirm({
+          //   title: '与该流程相关的未完成待办将会重置，是否确定编辑?',
+          //   icon: <ExclamationCircleOutlined />,
+          //   okText: '确认',
+          //   cancelText: '取消',
+          //   okType: 'danger',
+          //   onOk: () => {
+          //     onCurrentChaned(record);
+          //     setOperateOrgId(userCtrl.space.id);
+          //     setModalType('编辑流程设计');
+          //     onDesign();
+          //   },
+          // });
+          onCurrentChaned(record);
+          setOperateOrgId(userCtrl.space.id);
+          setModalType('编辑流程设计');
+          onDesign();
         },
       },
       // {

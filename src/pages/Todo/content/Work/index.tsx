@@ -1,12 +1,11 @@
 import { kernel } from '@/ts/base';
 import { SpeciesItem } from '@/ts/core/thing/species';
-import { Button, Card, InputNumber, message, Modal } from 'antd';
+import { Button, Card, InputNumber, message, Modal, Result } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import userCtrl from '@/ts/controller/setting';
 import { XFlowDefine } from '@/ts/base/schema';
 import CardOrTableComp from '@/components/CardOrTableComp';
-import cls from './index.module.less';
 import { FlowColumn } from '@/pages/Setting/config/columns';
 import Thing from '@/pages/Store/content/Thing';
 import { INullSpeciesItem, ISpeciesItem } from '@/ts/core';
@@ -15,8 +14,8 @@ import storeCtrl from '@/ts/controller/store';
 import { Editing, Item } from 'devextreme-react/data-grid';
 import { getUuid } from '@/utils/tools';
 import OioForm from '@/pages/Setting/components/render';
-import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { FooterToolbar } from '@ant-design/pro-components';
+import { PlusOutlined } from '@ant-design/icons';
+import cls from './index.module.less';
 
 // 卡片渲染
 interface IProps {
@@ -39,6 +38,8 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
     useState<boolean>(false);
   const [createThingNum, setCreateThingNum] = useState<number>();
   const [rows, setRows] = useState<any>([]);
+  const [successPage, setSuccessPage] = useState<boolean>(false);
+  const [thingFreshKey, setThingFreshKey] = useState<string>();
 
   const getSpecies = (parent: INullSpeciesItem, id: string) => {
     if (parent) {
@@ -54,6 +55,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   };
 
   useEffect(() => {
+    setSuccessPage(false);
     setRows([]);
     setCreateThingNum(1);
     setOperations([]);
@@ -105,8 +107,24 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   };
 
   return (
-    <Card title={selectMenu?.item?.name}>
-      {operations.length == 0 && (
+    <Card>
+      {successPage && (
+        <Result
+          status="success"
+          title="流程发起成功"
+          extra={[
+            <Button
+              type="primary"
+              key="back"
+              onClick={() => {
+                setSuccessPage(false);
+              }}>
+              返回
+            </Button>,
+          ]}
+        />
+      )}
+      {operations.length == 0 && !successPage && (
         <CardOrTableComp<XFlowDefine>
           key={key}
           rowKey={(record) => record?.id}
@@ -123,7 +141,12 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
               key={operation.id}
               operation={operation}
               submitter={{
-                render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
+                resetButtonProps: {
+                  style: { display: 'none' },
+                },
+                render: (_: any, dom: any) => (
+                  <div className={cls['bootom_right']}>{dom}</div>
+                ),
               }}
               onFinished={async (values: any) => {
                 //发起流程
@@ -137,7 +160,9 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
                   hook: '',
                   thingIds: rows.map((row: any) => row['416237430006484992']),
                 });
-                message.success('提交成功');
+                console.log('instance', instance);
+                setOperations([]);
+                setSuccessPage(true);
               }}
               onValuesChange={(changedValues, values) => {
                 data[operation.id] = values;
@@ -150,7 +175,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
 
       {chooseThingModal && (
         <Modal
-          title={'选择数据'}
+          title={'选择操作对象'}
           width="92%"
           open={chooseThingModal != undefined}
           onCancel={() => {
@@ -162,19 +187,23 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             if (rows && rows.length > 0) {
               setChooseThingModal(undefined);
             } else {
-              message.warn('请至少选择一条数据');
+              message.warn('请至少选择一条操作对象');
             }
           }}>
           <Modal
-            title="创建物"
+            title="创建操作对象"
             open={createThingByInputNumModal}
             onCancel={() => {
               setCreateThingByInputNumModal(false);
             }}
             onOk={async () => {
-              let res = await kernel.anystore.createThing(createThingNum || 1);
+              let res = await kernel.anystore.createThing(
+                createThingNum || 1,
+                userCtrl.isCompanySpace ? 'company' : 'user',
+              );
               if (res && res.success) {
                 message.success('创建成功');
+                setThingFreshKey(getUuid());
               } else {
                 message.error('创建失败');
               }
@@ -190,9 +219,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             />
           </Modal>
           <Thing
-            dataSource={[
-              { key: 111, '416237430006484992': 111, '422398957721882624': 222 },
-            ]}
+            key={thingFreshKey}
             current={chooseThingModal}
             onSelectionChanged={(rows: any) => {
               setRows(rows);
@@ -205,11 +232,12 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
                     <Item key={getUuid()}>
                       {' '}
                       <Button
-                        icon={<PlusOutlined />}
+                        icon={<PlusOutlined></PlusOutlined>}
                         onClick={() => {
                           setCreateThingByInputNumModal(true);
-                        }}
-                      />
+                        }}>
+                        创建对象
+                      </Button>
                     </Item>,
                   ]
             }

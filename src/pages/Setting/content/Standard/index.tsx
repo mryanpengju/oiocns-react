@@ -50,7 +50,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
 
   // 跳转到流程设计
   const toFlowDesign = (operation: XOperation) => {
-    setTabKey('流程定义');
+    setTabKey('办事定义');
   };
 
   /** 操作按钮 */
@@ -96,7 +96,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
             {'新增表单'}
           </Button>
         );
-      case '流程定义':
+      case '办事定义':
         return (
           <>
             {modalType == '' && (
@@ -192,8 +192,8 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
       ),
     },
     {
-      label: `流程定义`,
-      key: '流程定义',
+      label: `办事定义`,
+      key: '办事定义',
       children: (
         <SettingFlow
           key={tabKey}
@@ -212,7 +212,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
   const renderTabBarExtraContent = () => {
     return (
       <div>
-        {tabKey != '流程定义' && (
+        {tabKey != '办事定义' && (
           <Segmented
             options={['全部', '本组织']}
             onChange={(value) => {
@@ -224,7 +224,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
             }}
           />
         )}
-        {tabKey != '流程定义' && (
+        {tabKey != '办事定义' && (
           <Segmented
             options={['全部', '本分类']}
             onChange={(value) => {

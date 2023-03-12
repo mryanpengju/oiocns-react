@@ -105,7 +105,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   };
 
   return (
-    <Card>
+    <Card title={selectMenu?.item?.name}>
       {operations.length == 0 && (
         <CardOrTableComp<XFlowDefine>
           key={key}

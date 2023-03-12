@@ -2330,13 +2330,13 @@ export default class KernelApi {
    * @param {model.IdReq} params 查询参数
    * @returns {model.ResultType<schema.XFlowTaskArray>} 请求结果
    */
-  public async queryApproveTask(
-    params: model.QueryTaskReq,
-  ): Promise<model.ResultType<schema.XFlowTaskHistoryArray>> {
+  public async queryApproveTask(): Promise<
+    model.ResultType<schema.XFlowTaskHistoryArray>
+  > {
     return await this.request({
       module: 'flow',
       action: 'QueryApproveTask',
-      params: params,
+      params: {},
     });
   }
   /**

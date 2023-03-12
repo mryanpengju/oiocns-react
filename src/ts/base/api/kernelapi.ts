@@ -2331,7 +2331,7 @@ export default class KernelApi {
    * @returns {model.ResultType<schema.XFlowTaskArray>} 请求结果
    */
   public async queryApproveTask(
-    params: model.QueryTaskReq,
+    params: model.IdReq,
   ): Promise<model.ResultType<schema.XFlowTaskHistoryArray>> {
     return await this.request({
       module: 'flow',

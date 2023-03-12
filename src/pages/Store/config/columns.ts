@@ -208,7 +208,7 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
     width: 50,
   },
   {
-    title: '流程名称',
+    title: '办事名称',
     dataIndex: 'name',
     ellipsis: true,
   },

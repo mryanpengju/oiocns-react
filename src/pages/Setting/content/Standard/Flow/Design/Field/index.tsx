@@ -34,11 +34,11 @@ const FieldInfo: React.FC<IProps> = ({
   const getFromColumns = () => {
     const columns: ProFormColumnsType<any>[] = [
       {
-        title: '流程名称',
+        title: '办事名称',
         dataIndex: 'name',
         readonly: modalType == '编辑流程设计',
         formItemProps: {
-          rules: [{ required: true, message: '流程名称为必填项' }],
+          rules: [{ required: true, message: '办事名称为必填项' }],
         },
         colProps: { span: 12 },
       },
@@ -157,9 +157,9 @@ const FieldInfo: React.FC<IProps> = ({
         }}>
         <ProFormText
           name="name"
-          label="流程名称"
-          placeholder="输入流程名称"
-          rules={[{ required: true, message: '请输入流程名称!' }]}
+          label="办事名称"
+          placeholder="输入办事名称"
+          rules={[{ required: true, message: '请输入办事名称!' }]}
         />
         <ProFormSelect
           name="belongId"

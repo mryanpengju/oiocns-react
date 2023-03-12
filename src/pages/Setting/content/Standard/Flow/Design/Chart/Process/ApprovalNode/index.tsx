@@ -9,6 +9,7 @@ type ApprovalNodeProps = {
   onSelected: Function;
   type: {};
   config: any;
+  defaultEditable: boolean;
   [key: string]: any;
 };
 
@@ -41,6 +42,7 @@ const ApprovalNode: React.FC<ApprovalNodeProps> = (props: ApprovalNodeProps) => 
       onDelNode={props.onDelNode}
       onSelected={props.onSelected}
       operateOrgId={props.operateOrgId}
+      defaultEditable={props.defaultEditable}
       type={props?.config.type}
       showError={false}
       content={content}

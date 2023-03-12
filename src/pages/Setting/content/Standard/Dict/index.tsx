@@ -155,6 +155,7 @@ const DictInfo: React.FC<IProps> = ({
             setSelectKey(info.node.key);
             setCurrentDict(info.node.item);
             setItemKey(getUuid());
+            setShowAddDict(true);
           }}
           handleMenuClick={(key, node) => {
             switch (key) {
@@ -246,6 +247,7 @@ const DictInfo: React.FC<IProps> = ({
           handleOk={function (res: any): void {
             if (res) {
               setItemKey(getUuid());
+              setTreeKey(getUuid());
               message.success(`操作成功`);
             }
             setModalType('');

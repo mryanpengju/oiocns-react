@@ -4,6 +4,7 @@ import cls from './index.module.less';
 type ShareShowRecentProps = {
   departData: any[];
   deleteFuc: (id: string) => void;
+  onClick?: Function;
 };
 const ShareShowRecent: React.FC<ShareShowRecentProps> = (props) => {
   return (
@@ -15,11 +16,16 @@ const ShareShowRecent: React.FC<ShareShowRecentProps> = (props) => {
             <div
               style={{
                 background:
-                  el.type == 'del' ? '#ffb4c4' : el.type == 'add' ? '#beffd0' : '',
+                  el?.type == 'del' ? '#ffb4c4' : el?.type == 'add' ? '#beffd0' : '',
               }}
               key={el.id}
               className={cls.row}>
-              <div>{el.name}</div>
+              <div
+                onClick={() => {
+                  props.onClick?.call(this, el);
+                }}>
+                {props.onClick ? <a>{el.name}</a> : el.name}
+              </div>
               <CloseCircleOutlined
                 className={cls.closeIcon}
                 onClick={() => {

@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import cls from './index.module.less';
-import FieldInfo from './Field';
 import ChartDesign from './Chart';
 import { Branche, FlowNode, XFlowDefine } from '@/ts/base/schema';
 import { Branche as BrancheModel } from '@/ts/base/model';
@@ -10,7 +9,6 @@ import {
   SendOutlined,
   MinusOutlined,
   PlusOutlined,
-  FileTextOutlined,
   FormOutlined,
 } from '@ant-design/icons';
 import userCtrl from '@/ts/controller/setting';
@@ -29,6 +27,8 @@ interface IProps {
   setOperateOrgId: Function;
   setModalType: (modalType: string) => void;
   onBack: () => void;
+  testModel?: boolean;
+  defaultEditable?: boolean;
 }
 
 type FlowDefine = {
@@ -40,7 +40,7 @@ type FlowDefine = {
   belongId: string;
   public: boolean | undefined;
   operateOrgId?: string;
-  sourceId?: string;
+  sourceIds?: string;
 };
 
 const Design: React.FC<IProps> = ({
@@ -53,9 +53,10 @@ const Design: React.FC<IProps> = ({
   setInstance,
   setModalType,
   onBack,
+  testModel,
+  defaultEditable = true,
 }: IProps) => {
   const [scale, setScale] = useState<number>(90);
-  const [currentStep, setCurrentStep] = useState(modalType == '新增流程设计' ? 0 : 1);
   const [showErrorsModal, setShowErrorsModal] = useState<ReactNode[]>([]);
   const [conditionData, setConditionData] = useState<FlowDefine>({
     name: '',
@@ -64,8 +65,8 @@ const Design: React.FC<IProps> = ({
     authId: '',
     belongId: current?.belongId || userCtrl.space.id,
     public: true,
-    operateOrgId: modalType == '编辑流程设计' ? operateOrgId : undefined,
-    sourceId: undefined,
+    operateOrgId: operateOrgId,
+    sourceIds: undefined,
   });
   const [resource, setResource] = useState({
     nodeId: `node_${getUuid()}`,
@@ -113,60 +114,60 @@ const Design: React.FC<IProps> = ({
       if (current) {
         // content字段可能取消
         let resource_: any;
-        if (modalType != '新增流程设计') {
-          resource_ = (
-            await kernel.queryNodes({
-              id: current.id || '',
-              spaceId: operateOrgId,
-              page: { offset: 0, limit: 1000, filter: '' },
-            })
-          ).data;
-          let resourceData = loadResource(resource_, 'flowNode', '', '', undefined, '');
-          let nodes = getAllNodes(resourceData, []);
-          let spaceRootNodes = nodes.filter(
-            (item) => item.type == 'ROOT' && item.belongId == userCtrl.space.id,
-          );
-          if (spaceRootNodes.length == 0) {
-            resourceData = {
-              nodeId: `node_${getUuid()}`,
-              parentId: '',
-              type: 'ROOT',
-              name: '发起人',
-              props: {
-                assignedType: 'JOB',
-                mode: 'AND',
-                assignedUser: [
-                  {
-                    id: '0',
-                    name: undefined,
-                    type: undefined,
-                    orgIds: undefined,
-                  },
-                ],
-                refuse: {
-                  type: 'TO_END', //驳回规则 TO_END  TO_NODE  TO_BEFORE
-                  target: '', //驳回到指定ID的节点
+        // if (modalType != '设计流程') {
+        resource_ = (
+          await kernel.queryNodes({
+            id: current.id || '',
+            spaceId: operateOrgId,
+            page: { offset: 0, limit: 1000, filter: '' },
+          })
+        ).data;
+        let resourceData = loadResource(resource_, 'flowNode', '', '', undefined, '');
+        let nodes = getAllNodes(resourceData, []);
+        let spaceRootNodes = nodes.filter(
+          (item) => item.type == 'ROOT' && item.belongId == userCtrl.space.id,
+        );
+        if (spaceRootNodes.length == 0) {
+          resourceData = {
+            nodeId: `node_${getUuid()}`,
+            parentId: '',
+            type: 'ROOT',
+            name: '发起人',
+            props: {
+              assignedType: 'JOB',
+              mode: 'AND',
+              assignedUser: [
+                {
+                  id: '0',
+                  name: undefined,
+                  type: undefined,
+                  orgIds: undefined,
                 },
-                friendDialogmode: false,
-                num: 0,
+              ],
+              refuse: {
+                type: 'TO_END', //驳回规则 TO_END  TO_NODE  TO_BEFORE
+                target: '', //驳回到指定ID的节点
               },
-              belongId: userCtrl.space.id,
-              children: resourceData,
-            };
-          }
-          if (instance) {
-            let res = await kernel.queryInstance({
-              id: instance.id,
-              spaceId: instance.belongId,
-              page: { offset: 0, limit: 1000, filter: '' },
-            });
-            let instance_: any = res.data.result ? res.data.result[0] : undefined;
-            setInstance(instance_);
-            showTask(instance_, resourceData);
-          } else {
-            setResource(resourceData);
-          }
+              friendDialogmode: false,
+              num: 0,
+            },
+            belongId: userCtrl.space.id,
+            children: resourceData,
+          };
         }
+        if (instance) {
+          let res = await kernel.queryInstance({
+            id: instance.id,
+            spaceId: instance.belongId,
+            page: { offset: 0, limit: 1000, filter: '' },
+          });
+          let instance_: any = res.data.result ? res.data.result[0] : undefined;
+          setInstance(instance_);
+          showTask(instance_, resourceData);
+        } else {
+          setResource(resourceData);
+        }
+        // }
 
         species!
           .loadAttrs(userCtrl.space.id, true, true, {
@@ -182,8 +183,8 @@ const Design: React.FC<IProps> = ({
               authId: current.authId || '',
               belongId: current.belongId,
               public: current.public,
-              sourceId: current.sourceId,
-              operateOrgId: modalType == '编辑流程设计' ? operateOrgId : undefined,
+              sourceIds: current.sourceIds,
+              operateOrgId: operateOrgId,
               fields: attrs.map((attr: any) => {
                 switch (attr.valueType) {
                   case '描述型':
@@ -225,7 +226,7 @@ const Design: React.FC<IProps> = ({
           setModalType('');
         },
         onCancel() {
-          setModalType('新增流程设计');
+          setModalType('设计流程');
         },
       });
     }
@@ -309,7 +310,7 @@ const Design: React.FC<IProps> = ({
       }
       if (
         (node.type == 'APPROVAL' || node.type == 'CC') &&
-        (!node.destId || node.destId == 0)
+        (!node.destId || node.destId == '0' || node.destId == '')
       ) {
         errors.push(
           getErrorItem(
@@ -675,6 +676,7 @@ const Design: React.FC<IProps> = ({
     let instance: any = res.data.result ? res.data.result[0] : undefined;
     if (freshed) {
       setInstance(instance);
+      debugger;
       showTask(instance, resource);
     }
     // let node: FlowNode = nodeRes.data;
@@ -728,37 +730,22 @@ const Design: React.FC<IProps> = ({
                 justifyContent: 'space-between',
               }}>
               <div style={{ width: '200px' }}></div>
-              {modalType != '新增流程设计' && (
-                <>
-                  <div></div> <div></div>
-                </>
-              )}
+              <>
+                <div></div>
+              </>
 
               <div style={{ width: '300px' }}>
                 <Steps
-                  current={currentStep}
-                  items={
-                    modalType == '新增流程设计'
-                      ? [
-                          {
-                            title: '流程信息',
-                            icon: <FileTextOutlined />,
-                          },
-                          {
-                            title: '流程图设计',
-                            icon: <FormOutlined />,
-                          },
-                        ]
-                      : [
-                          {
-                            title: '流程图设计',
-                            icon: <FormOutlined />,
-                          },
-                        ]
-                  }></Steps>
+                  current={0}
+                  items={[
+                    {
+                      title: '办事流程设计',
+                      icon: <FormOutlined />,
+                    },
+                  ]}></Steps>
               </div>
               <div className={cls['publish']} style={{ width: '200px' }}>
-                {currentStep == 1 && !instance && (
+                {!instance && defaultEditable && (
                   <Space>
                     <Button
                       className={cls['publis-issue']}
@@ -778,28 +765,32 @@ const Design: React.FC<IProps> = ({
                           setShowErrorsModal(errors);
                           return;
                         }
-                        if (modalType == '新增流程设计') {
-                          define = await species?.createFlowDefine({
-                            code: conditionData.name,
-                            name: conditionData.name,
-                            sourceId: conditionData.sourceId,
-                            fields: JSON.stringify(conditionData.fields),
-                            remark: conditionData.remark,
-                            resource: resource_,
-                            belongId: conditionData.belongId,
-                          });
-                        } else {
-                          define = await species?.updateFlowDefine({
-                            id: current.id,
-                            code: conditionData.name,
-                            name: conditionData.name,
-                            sourceId: conditionData.sourceId,
-                            fields: JSON.stringify(conditionData.fields),
-                            remark: conditionData.remark,
-                            resource: resource_,
-                            belongId: operateOrgId,
-                          });
+                        let sourceIds_ = conditionData.sourceIds;
+                        if (Array.isArray(sourceIds_)) {
+                          sourceIds_ = sourceIds_.join(',');
                         }
+                        // if (modalType == '设计流程') {
+                        //   define = await species?.createFlowDefine({
+                        //     code: conditionData.name,
+                        //     name: conditionData.name,
+                        //     sourceIds: sourceIds_,
+                        //     fields: JSON.stringify(conditionData.fields),
+                        //     remark: conditionData.remark,
+                        //     resource: resource_,
+                        //     belongId: conditionData.belongId,
+                        //   });
+                        // } else {
+                        define = await species?.updateFlowDefine({
+                          id: current.id,
+                          code: conditionData.name,
+                          name: conditionData.name,
+                          sourceIds: sourceIds_,
+                          fields: JSON.stringify(conditionData.fields),
+                          remark: conditionData.remark,
+                          resource: resource_,
+                          belongId: operateOrgId,
+                        });
+                        // }
                         if (define) {
                           message.success('保存成功');
                           onBack();
@@ -825,52 +816,27 @@ const Design: React.FC<IProps> = ({
                     </Button>
                   </Space>
                 )}
-                {currentStep == 0 && <div></div>}
               </div>
             </div>
           </Layout.Header>
           <Layout.Content>
             <Card bordered={false}>
               {/* 基本信息组件 */}
-              {currentStep === 0 ? (
-                <FieldInfo
-                  currentFormValue={conditionData}
+              <div>
+                <ChartDesign
+                  // key={key}
+                  defaultEditable={defaultEditable}
+                  species={species}
                   operateOrgId={operateOrgId}
-                  setOperateOrgId={setOperateOrgId}
-                  modalType={modalType}
-                  onChange={(params) => {
-                    conditionData.belongId = userCtrl.space.id;
-                    conditionData.name = params.name;
-                    conditionData.remark = params.remark;
-                    conditionData.sourceId = params.sourceId;
-                    setConditionData(conditionData);
-                  }}
-                  nextStep={(params) => {
-                    conditionData.belongId = userCtrl.space.id;
-                    conditionData.name = params.name;
-                    conditionData.remark = params.remark;
-                    conditionData.sourceId = params.sourceId;
-                    setConditionData(conditionData);
-                    setCurrentStep(1);
-                  }}
+                  designOrgId={conditionData.belongId}
+                  conditions={conditionData.fields}
+                  resource={resource}
+                  scale={scale}
                 />
-              ) : (
-                <div>
-                  <ChartDesign
-                    // key={key}
-                    species={species}
-                    operateOrgId={operateOrgId}
-                    designOrgId={conditionData.belongId}
-                    conditions={conditionData.fields}
-                    resource={resource}
-                    scale={scale}
-                  />
-                </div>
-              )}
+              </div>
             </Card>
           </Layout.Content>
-
-          {instance && instance.status < 100 && (
+          {testModel && instance && instance.status < 100 && (
             <Button
               style={{ position: 'fixed', bottom: 0, zIndex: 100 }}
               type="primary"

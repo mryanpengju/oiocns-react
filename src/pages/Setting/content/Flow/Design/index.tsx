@@ -99,7 +99,7 @@ const Design: React.FC<IProps> = (props) => {
                       icon: <FileTextOutlined />,
                     },
                     {
-                      title: '流程图设计',
+                      title: '办事流程设计',
                       icon: <HighlightOutlined />,
                     },
                   ]}></Steps>

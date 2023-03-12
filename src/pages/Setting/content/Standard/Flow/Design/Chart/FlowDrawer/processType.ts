@@ -63,7 +63,7 @@ export type NodeType = {
   belongId?: string;
   task?: any;
   conditions: conditiondType[];
-  props: { operations: XOperation[], assignedUser: {}; assignedType: {}; num: number | null };
+  props: { operations: XOperation[], assignedUser: any; assignedType: {}; num: number | null };
 };
 
 export const getConditionKeys: (type: string) => any[] = (type: string) => {

@@ -888,7 +888,7 @@ export type CreateDefineReq = {
   //是否公开
   public?: boolean;
   //数据源id
-  sourceId?: string;
+  sourceIds?: string;
 };
 
 export type FlowNode = {

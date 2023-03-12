@@ -13,6 +13,8 @@ import { ISpeciesItem } from '@/ts/core/thing/ispecies';
 import { kernel } from '@/ts/base';
 import { PageRequest } from '@/ts/base/model';
 import { getUuid } from '@/utils/tools';
+// import FieldInfo from '../Design/Field';
+import DefineInfo from '@/pages/Setting/content/Standard/Flow/info/DefineInfo';
 
 interface IProps {
   modalType: string;
@@ -24,6 +26,7 @@ interface IProps {
   onDesign: () => void;
   onCurrentChaned: (item?: XFlowDefine) => void;
   setInstance: Function;
+  setTestModel?: Function;
 }
 
 /**
@@ -39,6 +42,7 @@ const FlowList: React.FC<IProps> = ({
   onDesign,
   onCurrentChaned,
   setInstance,
+  setTestModel,
 }: IProps) => {
   const parentRef = useRef<any>(null);
   const parentRef2 = useRef<any>(null);
@@ -46,10 +50,12 @@ const FlowList: React.FC<IProps> = ({
   const [key, setKey] = useState<string>();
   const [binds, setBinds] = useState<any[]>([]);
   const [operationModal, setOperationModal] = useState<string>();
+  const [defineInfo, setDefineInfo] = useState<XFlowDefine>();
   useEffect(() => {
-    if (modalType.includes('新增流程设计')) {
+    if (modalType.includes('新增办事')) {
       onCurrentChaned(undefined);
-      onDesign();
+      setDefineInfo(undefined);
+      // onDesign();
     }
   }, [modalType]);
 
@@ -63,65 +69,54 @@ const FlowList: React.FC<IProps> = ({
         key: 'editor',
         label: '编辑',
         onClick: () => {
-          // Modal.confirm({
-          //   title: '与该流程相关的未完成待办将会重置，是否确定编辑?',
-          //   icon: <ExclamationCircleOutlined />,
-          //   okText: '确认',
-          //   cancelText: '取消',
-          //   okType: 'danger',
-          //   onOk: () => {
-          //     onCurrentChaned(record);
-          //     setOperateOrgId(userCtrl.space.id);
-          //     setModalType('编辑流程设计');
-          //     onDesign();
-          //   },
-          // });
+          onCurrentChaned(undefined);
+          setModalType('编辑办事');
+          setDefineInfo(record);
+        },
+      },
+      {
+        key: 'design',
+        label: '设计',
+        onClick: () => {
           onCurrentChaned(record);
           setOperateOrgId(userCtrl.space.id);
-          setModalType('编辑流程设计');
+          setModalType('设计流程');
           onDesign();
         },
       },
       // {
-      //   key: 'bindOperation',
-      //   label: '绑定业务',
-      //   onClick: () => {
-      //     setOperationModal(record.id);
+      //   key: 'createInstance',
+      //   label: '发起测试流程',
+      //   onClick: async () => {
+      //     let res = await kernel.createInstance({
+      //       defineId: record.id,
+      //       SpaceId: userCtrl.space.id,
+      //       content: 'Text文本显示正常',
+      //       contentType: 'Text',
+      //       data: JSON.stringify({
+      //         id: '789171',
+      //         name: '测试流程的数据',
+      //         code: 'test',
+      //         // price: '0',
+      //         remark: '测试流程的数据',
+      //       }),
+      //       title: record.name,
+      //       hook: '',
+      //       thingIds: [],
+      //     });
+      //     if (res.success) {
+      //       message.success('发起测试流程成功');
+      //       setTestModel?.call(this, true);
+      //       setInstance(res.data);
+      //       onCurrentChaned(record);
+      //       setOperateOrgId(userCtrl.space.id);
+      //       setModalType('设计流程');
+      //       onDesign();
+      //     } else {
+      //       message.error('发起测试流程失败');
+      //     }
       //   },
       // },
-      {
-        key: 'createInstance',
-        label: '发起测试流程',
-        onClick: async () => {
-          let res = await kernel.createInstance({
-            defineId: record.id,
-            SpaceId: userCtrl.space.id,
-            content: 'Text文本显示正常',
-            contentType: 'Text',
-            data: JSON.stringify({
-              id: '789171',
-              name: '测试流程的数据',
-              code: 'test',
-              // price: '0',
-              remark: '测试流程的数据',
-            }),
-            title: record.name,
-            hook: '',
-            thingIds: [],
-          });
-          if (res.success) {
-            message.success('发起测试流程成功');
-            console.log('instance', res.data);
-            setInstance(res.data);
-            onCurrentChaned(record);
-            setOperateOrgId(userCtrl.space.id);
-            setModalType('编辑流程设计');
-            onDesign();
-          } else {
-            message.error('发起测试流程失败');
-          }
-        },
-      },
     ];
     if (isAdmin) {
       operations.push({
@@ -257,6 +252,29 @@ const FlowList: React.FC<IProps> = ({
           dataSource={[]}
         />
       </Modal>
+
+      {species && (
+        <DefineInfo
+          data={defineInfo}
+          title={modalType}
+          open={modalType.includes('新增办事') || modalType.includes('编辑办事')}
+          handleCancel={function (): void {
+            setDefineInfo(undefined);
+            setModalType('');
+          }}
+          handleOk={async (res: any) => {
+            if (res) {
+              setDefineInfo(undefined);
+              message.success('保存成功');
+              setModalType('');
+              tforceUpdate();
+            } else {
+              message.error('保存失败');
+            }
+          }}
+          current={species}
+        />
+      )}
     </div>
   );
 };

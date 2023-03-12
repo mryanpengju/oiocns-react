@@ -16,6 +16,7 @@ type IProps = {
   onSelected: Function;
   config: any;
   level: any;
+  defaultEditable: boolean;
   [key: string]: any;
 };
 
@@ -89,7 +90,7 @@ const ConditionNode: React.FC<IProps> = (props) => {
     return name;
   };
   const isEditable = (): boolean => {
-    let editable = true;
+    let editable = props.defaultEditable;
     if (
       props.config.belongId &&
       props.config.belongId != '' &&

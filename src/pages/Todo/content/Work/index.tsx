@@ -32,7 +32,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   const [flowDefines, setFlowDefines] = useState<XFlowDefine[]>([]);
   // const [key, forceUpdate] = useObjectUpdate(flowDefines);
   const [key, setKey] = useState<string>();
-  const [chooseThingModal, setChooseThingModal] = useState<ISpeciesItem>();
+  const [chooseThingModal, setChooseThingModal] = useState<ISpeciesItem[]>([]);
   const [operations, setOperations] = useState<any>([]);
   const [currentDefine, setCurrentDefine] = useState<any>();
   const [createThingByInputNumModal, setCreateThingByInputNumModal] =
@@ -43,18 +43,23 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   const [thingFreshKey, setThingFreshKey] = useState<string>();
   const formRef = useRef<ProFormInstance<any>>();
 
-  const getSpecies = (parent: INullSpeciesItem, id: string) => {
-    if (parent) {
-      if (parent.id == id) {
-        storeCtrl.addCheckedSpeciesList([parent], userCtrl.space.id);
-        setChooseThingModal(parent);
-      } else if (parent.children && parent.children.length > 0) {
-        for (let child of parent.children) {
-          getSpecies(child, id);
-        }
-      }
-    }
-  };
+  // const getSpecies = (
+  //   parent: INullSpeciesItem,
+  //   idArray: string[],
+  //   choosed: ISpeciesItem[],
+  // ) => {
+  //   if (parent) {
+  //     if (idArray.includes(parent.id)) {
+  //       storeCtrl.addCheckedSpeciesList([parent], userCtrl.space.id);
+  //       choosed.push(parent);
+  //       setChooseThingModal(choosed);
+  //     } else if (parent.children && parent.children.length > 0) {
+  //       for (let child of parent.children) {
+  //         getSpecies(child, idArray, choosed);
+  //       }
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     setSuccessPage(false);
@@ -74,6 +79,16 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
     };
     loadFlowDefine();
   }, [species?.id]);
+
+  const lookForAll = (data: any[], arr: any[]) => {
+    for (let item of data) {
+      arr.push(item);
+      if (item.children && item.children.length) {
+        lookForAll(item.children, arr);
+      }
+    }
+    return arr;
+  };
 
   const getRenderOperations = (data: XFlowDefine) => {
     const menus = [];
@@ -96,12 +111,20 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
         if (resource.operations && !chooseThingModal) {
           setOperations(resource.operations);
         }
-        const species = await thingCtrl.loadSpeciesTree();
-        storeCtrl.addCheckedSpeciesList([species], userCtrl.space.id);
-        if (data.sourceId && data.sourceId != '') {
-          getSpecies(species, data.sourceId);
+        const species_ = await thingCtrl.loadSpeciesTree();
+        storeCtrl.addCheckedSpeciesList([species_ as ISpeciesItem], userCtrl.space.id);
+        if (data.sourceIds && data.sourceIds != '') {
+          let idArray = data.sourceIds.split(',').filter((id) => id != '');
+          let allNodes: ISpeciesItem[] = lookForAll([species_], []);
+          // getSpecies(species, idArray, []);
+          let speciess = allNodes.filter((item) => idArray.includes(item.id));
+          console.log(speciess);
+          debugger;
+          setChooseThingModal(speciess);
         } else {
-          setChooseThingModal(species);
+          if (species_) {
+            setChooseThingModal([species_]);
+          }
         }
       },
     });
@@ -176,19 +199,19 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
         </>
       )}
 
-      {chooseThingModal && (
+      {chooseThingModal.length > 0 && (
         <Modal
           title={'选择操作对象'}
           width="92%"
-          open={chooseThingModal != undefined}
+          open={true}
           onCancel={() => {
             setOperations([]);
-            setChooseThingModal(undefined);
+            setChooseThingModal([]);
           }}
           onOk={() => {
             //获取表格选中的数据
             if (rows && rows.length > 0) {
-              setChooseThingModal(undefined);
+              setChooseThingModal([]);
             } else {
               message.warn('请至少选择一条操作对象');
             }
@@ -221,38 +244,44 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
               }}
             />
           </Modal>
-          <Thing
-            key={thingFreshKey}
-            current={chooseThingModal}
-            onSelectionChanged={(rows: any) => {
-              setRows(rows);
-            }}
-            height={600}
-            toolBarItems={
-              currentDefine.sourceId
-                ? []
-                : [
-                    <Item key={getUuid()}>
-                      <Button
-                        icon={<PlusOutlined></PlusOutlined>}
-                        onClick={() => {
-                          setCreateThingByInputNumModal(true);
-                        }}>
-                        创建对象
-                      </Button>
-                    </Item>,
-                  ]
-            }
-            editingTool={
-              <Editing
-                allowAdding={false}
-                allowUpdating={false}
-                allowDeleting={false}
-                selectTextOnEditStart={true}
-                useIcons={true}
-              />
-            }
-          />
+          {chooseThingModal.length > 0 && (
+            <Thing
+              key={thingFreshKey}
+              current={chooseThingModal[0]}
+              checkedList={chooseThingModal.map((e) => {
+                return { item: e };
+              })}
+              onSelectionChanged={(rows: any) => {
+                setRows(rows);
+              }}
+              height={600}
+              toolBarItems={
+                currentDefine.sourceIds
+                  ? []
+                  : [
+                      <Item key={getUuid()}>
+                        {' '}
+                        <Button
+                          icon={<PlusOutlined></PlusOutlined>}
+                          onClick={() => {
+                            setCreateThingByInputNumModal(true);
+                          }}>
+                          创建对象
+                        </Button>
+                      </Item>,
+                    ]
+              }
+              editingTool={
+                <Editing
+                  allowAdding={false}
+                  allowUpdating={false}
+                  allowDeleting={false}
+                  selectTextOnEditStart={true}
+                  useIcons={true}
+                />
+              }
+            />
+          )}
         </Modal>
       )}
     </Card>

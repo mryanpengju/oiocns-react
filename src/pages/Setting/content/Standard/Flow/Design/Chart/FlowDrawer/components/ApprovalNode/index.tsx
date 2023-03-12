@@ -10,7 +10,6 @@ import {
   Form,
   InputNumber,
   Modal,
-  Tag,
   message,
 } from 'antd';
 import IndentitySelect from '@/bizcomponents/IndentityManage';
@@ -21,6 +20,8 @@ import { ISpeciesItem } from '@/ts/core';
 import { XOperation } from '@/ts/base/schema';
 import ChooseOperation from '@/pages/App/chooseOperation';
 import ViewFormModal from '@/pages/Setting/components/viewFormModal';
+import ShareShowComp from '@/bizcomponents/IndentityManage/ShareShowComp';
+import SelectOperation from '@/pages/Setting/content/Standard/Flow/Comp/SelectOperation';
 interface IProps {
   current: NodeType;
   orgId?: string;
@@ -39,6 +40,7 @@ const ApprovalNode: React.FC<IProps> = (props) => {
   const [operationModal, setOperationModal] = useState<any>();
   const [viewFormOpen, setViewFormOpen] = useState<boolean>(false);
   const [editData, setEditData] = useState<XOperation>();
+  const [showData, setShowData] = useState<any[]>([]);
   // 操作内容渲染函数
   useEffect(() => {
     setOperations(props.current.props.operations || []);
@@ -55,18 +57,21 @@ const ApprovalNode: React.FC<IProps> = (props) => {
   const [nodeOperateOrgId, setNodeOperateOrgId] = useState<string>(
     props.current.belongId || props.orgId || userCtrl.space.id,
   );
-  const [currentData, setCurrentData] = useState({
-    title: '',
-    key: '',
-    data: { id: '', name: '' },
-  });
 
+  const [currentData, setCurrentData] = useState({
+    title: props.current.props.assignedUser[0]?.name,
+    key: props.current.props.assignedUser[0]?.id,
+    data: {
+      id: props.current.props.assignedUser[0]?.id,
+      name: props.current.props.assignedUser[0]?.name,
+    },
+  });
   useEffect(() => {
     if (!props.current.belongId) {
       setNodeOperateOrgId(props.orgId || userCtrl.space.id);
       props.current.belongId = props.orgId;
     }
-  });
+  }, []);
 
   return (
     <div className={cls[`app-roval-node`]}>
@@ -86,12 +91,21 @@ const ApprovalNode: React.FC<IProps> = (props) => {
             }}>
             选择身份
           </Button>
-          {currentData?.title ? (
-            <span>
-              当前选择：<a>{currentData?.title}</a>
-            </span>
-          ) : null}
         </Space>
+        <div>
+          {currentData?.title ? (
+            <ShareShowComp
+              departData={[currentData.data]}
+              deleteFuc={(id: string) => {
+                props.current.props.assignedUser = { id: '', name: '' };
+                setCurrentData({
+                  title: '',
+                  key: '',
+                  data: { id: '', name: '' },
+                });
+              }}></ShareShowComp>
+          ) : null}
+        </div>
         <Divider />
         <div className={cls['roval-node-select']}>
           <Col className={cls['roval-node-select-col']}>👩‍👦‍👦 审批方式</Col>
@@ -142,43 +156,52 @@ const ApprovalNode: React.FC<IProps> = (props) => {
       <div>
         {operations && operations.length > 0 && (
           <span>
-            点击预览：{' '}
-            <Space size={[0, 10]}>
-              {operations.map((item) => {
-                return (
-                  <a
-                    key={item.id}
-                    onClick={() => {
-                      setEditData(item);
-                      setViewFormOpen(true);
-                    }}>
-                    表单_{item.name}
-                  </a>
-                  // <Tag
-                  //   key={item.id}
-                  //   closable
-                  //   onClose={() => {
-                  //     let operations_ = operations.filter(
-                  //       (operation: XOperation) => operation.id !== item.id,
-                  //     );
-                  //     props.current.props.operations = operations_;
-                  //     setOperations(operations_);
-                  //   }}>
-                  //   {operations.filter((op) => op.id == item.id)[0]?.name}
-                  // </Tag>
+            {/* 点击预览：{' '}
+            <Space size={[0, 10]}> */}
+            <ShareShowComp
+              departData={operations}
+              onClick={(item: any) => {
+                setEditData(item);
+                setViewFormOpen(true);
+              }}
+              deleteFuc={(id: string) => {
+                props.current.props.operations = props.current.props.operations.filter(
+                  (op) => op.id != id,
                 );
-              })}
-            </Space>
+                setOperations(props.current.props.operations);
+              }}></ShareShowComp>
+            {/* </Space> */}
           </span>
         )}
-        <ChooseOperation
+        {/* <ChooseOperation
           open={operationModal != undefined}
           onOk={(item: any) => {
             props.current.props.operations = [item.operation];
             setOperations([item.operation]);
             setOperationModal(undefined);
           }}
-          onCancel={() => setOperationModal(undefined)}></ChooseOperation>
+          onCancel={() => setOperationModal(undefined)}></ChooseOperation> */}
+
+        <Modal
+          title={`选择表单`}
+          width={800}
+          destroyOnClose={true}
+          open={operationModal != undefined}
+          okText="确定"
+          onOk={() => {
+            if (showData?.length > 1) {
+              message.warn('只能选择一条数据');
+            } else {
+              props.current.props.operations = showData;
+              setOperations(showData);
+              setOperationModal(undefined);
+            }
+          }}
+          onCancel={() => setOperationModal(undefined)}>
+          <SelectOperation
+            showData={showData}
+            setShowData={setShowData}></SelectOperation>
+        </Modal>
       </div>
       <Modal
         width="650px"
@@ -186,9 +209,6 @@ const ApprovalNode: React.FC<IProps> = (props) => {
         open={isOpen}
         destroyOnClose={true}
         onOk={() => {
-          props.current.props.assignedUser = [
-            { name: currentData.title, id: currentData.data.id },
-          ];
           setIsOpen(false);
         }}
         onCancel={() => setIsOpen(false)}>
@@ -202,17 +222,17 @@ const ApprovalNode: React.FC<IProps> = (props) => {
             setCurrentData(params);
           }}
         />
-        <ViewFormModal
-          data={editData}
-          open={viewFormOpen}
-          handleCancel={() => {
-            setViewFormOpen(false);
-          }}
-          handleOk={() => {
-            setViewFormOpen(false);
-          }}
-        />
       </Modal>
+      <ViewFormModal
+        data={editData}
+        open={viewFormOpen}
+        handleCancel={() => {
+          setViewFormOpen(false);
+        }}
+        handleOk={() => {
+          setViewFormOpen(false);
+        }}
+      />
     </div>
   );
 };

@@ -406,7 +406,7 @@ export type XFlowDefine = {
   // 公开的
   public?: boolean;
   //数据源id
-  sourceId?: string;
+  sourceIds?: string;
 };
 
 export type XFlowNode = {
@@ -446,7 +446,7 @@ export type FlowNode = {
   // 节点审批操作人类型 暂只支持 '身份'
   destType: string;
   // 节点审批操作Id 如 '身份Id'
-  destId: number | undefined;
+  destId: string | undefined;
   // 节点审批操作名称 如 '身份名称'
   destName: string;
   // 子节点

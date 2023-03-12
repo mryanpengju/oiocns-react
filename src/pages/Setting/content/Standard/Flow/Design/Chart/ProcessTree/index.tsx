@@ -26,6 +26,7 @@ type IProps = {
   conditions?: FieldCondition[]; //内置条件选择器
   resource: FlowNode;
   onSelectedNode: (params: any) => void;
+  defaultEditable: boolean;
   [key: string]: any;
 };
 
@@ -39,6 +40,7 @@ const ProcessTree: React.FC<IProps> = ({
   resource,
   conditions,
   operateOrgId,
+  defaultEditable,
 }) => {
   const [key, setKey] = useState(0);
 
@@ -208,6 +210,7 @@ const ProcessTree: React.FC<IProps> = ({
         ...props,
         conditions,
         operateOrgId,
+        defaultEditable,
         //定义事件，插入节点，删除节点，选中节点，复制/移动
         onInsertNode: (type: any) => insertNode(type, node),
         onDelNode: () => delNode(node),

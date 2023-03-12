@@ -13,6 +13,7 @@ type ConcurrentNodeProps = {
   onSelected: Function;
   config: any;
   level: any;
+  defaultEditable: boolean;
   [key: string]: any;
   // config?: any,
   //  _disabled?: boolean,
@@ -37,7 +38,7 @@ const ConcurrentNode: React.FC<ConcurrentNodeProps> = (props: ConcurrentNodeProp
     props.onSelected();
   };
   const isEditable = (): boolean => {
-    let editable = true;
+    let editable = props.defaultEditable;
     if (
       props.config.belongId &&
       props.config.belongId != '' &&

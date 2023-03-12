@@ -7,6 +7,7 @@ type RootNodeProps = {
   onDelNode: Function;
   onSelected: Function;
   config: any;
+  defaultEditable: boolean;
   [key: string]: any;
 };
 
@@ -21,6 +22,7 @@ const RootNode: React.FC<RootNodeProps> = (props: RootNodeProps) => {
       isRoot={true}
       showError={false}
       content=""
+      defaultEditable={props.defaultEditable}
       onInsertNode={props.onInsertNode}
       onDelNode={props.onDelNode}
       onSelected={props.onSelected}

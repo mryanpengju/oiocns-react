@@ -350,7 +350,7 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
     dataIndex: 'name',
   },
   {
-    title: '共享组织',
+    title: '需求主体',
     dataIndex: 'belongId',
     key: 'belongId',
     width: 200,

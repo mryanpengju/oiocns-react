@@ -6,6 +6,7 @@ import { XOperation } from '@/ts/base/schema';
 import { ISpeciesItem } from '@/ts/core';
 import ChooseOperation from '@/pages/App/chooseOperation';
 import ViewFormModal from '@/pages/Setting/components/viewFormModal';
+import ShareShowComp from '@/bizcomponents/IndentityManage/ShareShowComp';
 interface IProps {
   current: NodeType;
   orgId?: string;
@@ -42,33 +43,18 @@ const RootNode: React.FC<IProps> = (props) => {
         <div>
           {operations && operations.length > 0 && (
             <span>
-              点击预览：{' '}
-              <Space size={[0, 10]} wrap>
-                {operations.map((item) => {
-                  return (
-                    <a
-                      key={item.id}
-                      onClick={() => {
-                        setEditData(item);
-                        setViewFormOpen(true);
-                      }}>
-                      表单_{item.name}
-                    </a>
-                    // <Tag
-                    //   key={item.id}
-                    //   closable
-                    //   onClose={() => {
-                    //     let operations_ = operations.filter(
-                    //       (operation: XOperation) => operation.id !== item.id,
-                    //     );
-                    //     props.current.props.operations = operations_;
-                    //     setOperations(operations_);
-                    //   }}>
-                    //   {operations.filter((op) => op.id == item.id)[0]?.name}
-                    // </Tag>
+              <ShareShowComp
+                departData={operations}
+                onClick={(item: any) => {
+                  setEditData(item);
+                  setViewFormOpen(true);
+                }}
+                deleteFuc={(id: string) => {
+                  props.current.props.operations = props.current.props.operations.filter(
+                    (op) => op.id != id,
                   );
-                })}
-              </Space>
+                  setOperations(props.current.props.operations);
+                }}></ShareShowComp>
             </span>
           )}
           <ChooseOperation

@@ -4,7 +4,9 @@ import React, { useEffect, useRef } from 'react';
 import { ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import SchemaForm from '@/components/SchemaForm';
 import thingCtrl from '@/ts/controller/thing';
-
+import { TreeSelect } from 'antd';
+import userCtrl from '@/ts/controller/setting';
+const { SHOW_PARENT } = TreeSelect;
 interface IProps {
   currentFormValue: any;
   operateOrgId?: string;
@@ -36,15 +38,30 @@ const FieldInfo: React.FC<IProps> = ({
       {
         title: '办事名称',
         dataIndex: 'name',
-        readonly: modalType == '编辑流程设计',
         formItemProps: {
           rules: [{ required: true, message: '办事名称为必填项' }],
         },
         colProps: { span: 12 },
       },
+
       {
-        title: '选择数据源',
-        dataIndex: 'sourceId',
+        title: '制定组织',
+        dataIndex: 'belongId',
+        valueType: 'treeSelect',
+        formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
+        request: async () => {
+          return await userCtrl.getTeamTree();
+        },
+        fieldProps: {
+          fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
+          showSearch: true,
+          filterTreeNode: true,
+          treeNodeFilterProp: 'teamName',
+        },
+      },
+      {
+        title: '操作对象',
+        dataIndex: 'sourceIds',
         valueType: 'treeSelect',
         request: async () => {
           const species = await thingCtrl.loadSpeciesTree();
@@ -52,28 +69,14 @@ const FieldInfo: React.FC<IProps> = ({
           return tree;
         },
         fieldProps: {
+          treeCheckable: true,
           showSearch: true,
           filterTreeNode: true,
+          allowClear: true,
+          showCheckedStrategy: SHOW_PARENT,
         },
-        colProps: { span: 12 },
+        colProps: { span: 24 },
       },
-      // {
-      //   title: '归属',
-      //   dataIndex: 'belongId',
-      //   // dataIndex: 'operateOrgId',
-      //   valueType: 'treeSelect',
-      //   readonly: true,
-      //   formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
-      //   request: async () => {
-      //     return await userCtrl.getTeamTree();
-      //   },
-      //   fieldProps: {
-      //     fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
-      //     showSearch: true,
-      //     filterTreeNode: true,
-      //     treeNodeFilterProp: 'teamName',
-      //   },
-      // },
 
       // {
       //   title: '选择管理职权',
@@ -131,7 +134,7 @@ const FieldInfo: React.FC<IProps> = ({
     //   });
     // }
     columns.push({
-      title: '事项描述',
+      title: '备注',
       dataIndex: 'remark',
       valueType: 'textarea',
       colProps: { span: 24 },
@@ -177,6 +180,7 @@ const FieldInfo: React.FC<IProps> = ({
         width={640}
         onValuesChange={async () => {
           const currentValue = await form.getFieldsValue();
+          currentValue.sourceIds = currentValue.sourceIds.join(',');
           onChange(currentValue);
         }}
         rowProps={{
@@ -184,6 +188,7 @@ const FieldInfo: React.FC<IProps> = ({
         }}
         layoutType="Form"
         onFinish={async (values) => {
+          values.sourceIds = values.sourceIds.join(',');
           nextStep(values);
         }}
         columns={getFromColumns()}></SchemaForm>

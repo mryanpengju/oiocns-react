@@ -43,6 +43,7 @@ type NodeProps = {
   //默认操作组织id
   operateOrgId?: string;
   config?: any;
+  defaultEditable: boolean;
 };
 
 /**
@@ -77,7 +78,7 @@ const Node: React.FC<NodeProps> = (props: NodeProps) => {
 
   const [key, setKey] = useState<number>(0);
   const isEditable = (): boolean => {
-    let editable = true;
+    let editable = props.defaultEditable;
     if (props.belongId && props.belongId != '' && props.belongId != userCtrl.space.id) {
       editable = false;
     }
@@ -87,7 +88,6 @@ const Node: React.FC<NodeProps> = (props: NodeProps) => {
     setEditable(isEditable());
   }, []);
   const delNode = (e: React.MouseEvent) => {
-    e.preventDefault();
     props.onDelNode();
   };
   const select = () => {
@@ -140,9 +140,12 @@ const Node: React.FC<NodeProps> = (props: NodeProps) => {
   const nodeContent = (
     <>
       {props.isRoot && (
-        <div className={cls['node-root-body-right']} onClick={select}>
-          {/* <div style={{ paddingLeft: '40%' }}>开始</div> */}
-          <div style={{ width: '100%', height: '100%' }}>
+        <div
+          className={cls['node-root-body-right']}
+          onClick={(e) => {
+            select();
+          }}>
+          <div style={{ width: '86%', height: '100%', paddingLeft: '7%' }}>
             <SelectAuth
               onChange={onChange}
               readonly={!editable}
@@ -152,17 +155,28 @@ const Node: React.FC<NodeProps> = (props: NodeProps) => {
       )}
       {!props.isRoot && (
         <div className={cls['node-body-right']}>
-          <div onClick={select}>
+          <div
+            onClick={(e) => {
+              select();
+            }}>
             <span className={cls['name-title']}>{props.title}</span>
           </div>
           <div>
             {!props.content && (
-              <span onClick={select} className={cls['placeholder']}>
+              <span
+                onClick={(e) => {
+                  select();
+                }}
+                className={cls['placeholder']}>
                 {props.placeholder}
               </span>
             )}
             {props.content && (
-              <span onClick={select} className={cls['name-select-title']}>
+              <span
+                onClick={(e) => {
+                  select();
+                }}
+                className={cls['name-select-title']}>
                 {props.content}
               </span>
             )}

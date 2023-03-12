@@ -39,6 +39,7 @@ interface IProps {
  * 仓库-物
  */
 const Thing: React.FC<IProps> = (props: IProps) => {
+  debugger;
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
   const getSortedList = (

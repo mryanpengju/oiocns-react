@@ -6,6 +6,7 @@ type EmptyNodeProps = {
   onDelNode: Function;
   onSelected: Function;
   config: any;
+  defaultEditable: boolean;
   [key: string]: any;
 };
 
@@ -28,6 +29,7 @@ const EmptyNode: React.FC<EmptyNodeProps> = (props: EmptyNodeProps) => {
       onDelNode={props.onDelNode}
       onSelected={props.onSelected}
       belongId={props.config.belongId}
+      defaultEditable={props.defaultEditable}
       type={AddNodeType.EMPTY}
     />
   );

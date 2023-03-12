@@ -25,8 +25,8 @@ export function createProxy() {
     //   ws: true,
     // },
     '/orginone': {
-      target: 'http://anyinone.com:888', // 后台接口
-      // target: 'http://localhost:7000', // 后台接口
+      // target: 'http://anyinone.com:888', // 后台接口
+      target: 'http://localhost:7000', // 后台接口
       changeOrigin: true, // 是否允许跨域
       ws: true,
     },

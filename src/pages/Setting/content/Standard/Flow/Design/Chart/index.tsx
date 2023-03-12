@@ -12,6 +12,7 @@ interface IProps {
   resource: any;
   conditions?: FieldCondition[]; //内置条件选择器
   species?: ISpeciesItem;
+  defaultEditable: boolean;
 }
 
 const ChartDesign: React.FC<IProps> = (props) => {
@@ -30,6 +31,7 @@ const ChartDesign: React.FC<IProps> = (props) => {
           <div className={cls['design']} style={{ transform: `scale(${scale / 100})` }}>
             {/* 树结构展示 */}
             <ProcessTree
+              defaultEditable={props.defaultEditable}
               operateOrgId={props.operateOrgId}
               conditions={props.conditions}
               resource={props.resource}

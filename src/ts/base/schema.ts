@@ -709,7 +709,7 @@ export type XFlowTaskHistory = {
   // 更新时间
   updateTime: string;
   // 流程节点记录
-  flowRecords: XFlowRecord[] | undefined;
+  records: XFlowRecord[] | undefined;
   // 任务审批的身份
   identity: XIdentity | undefined;
   // 流程的定义

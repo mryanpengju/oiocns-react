@@ -161,7 +161,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
                   data: JSON.stringify(values),
                   title: currentDefine.name,
                   hook: '',
-                  thingIds: rows.map((row: any) => row['416237430006484992']),
+                  thingIds: rows.map((row: any) => row['Id']),
                 });
                 console.log('instance', instance);
                 setOperations([]);

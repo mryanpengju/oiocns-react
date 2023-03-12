@@ -525,6 +525,8 @@ export type XFlowInstance = {
   updateTime: string;
   // 流程的定义
   define: XFlowDefine | undefined;
+  // 审批任务
+  historyTasks: XFlowTaskHistory[] | undefined;
   // 归属
   belongId: string;
   // 填写的表单Id集合

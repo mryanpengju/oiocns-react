@@ -16,6 +16,7 @@ import { Editing, Item } from 'devextreme-react/data-grid';
 import { getUuid } from '@/utils/tools';
 import OioForm from '@/pages/Setting/components/render';
 import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { FooterToolbar } from '@ant-design/pro-components';
 
 // 卡片渲染
 interface IProps {
@@ -37,10 +38,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   const [createThingByInputNumModal, setCreateThingByInputNumModal] =
     useState<boolean>(false);
   const [createThingNum, setCreateThingNum] = useState<number>();
-
-  const submit = () => {
-    message.warn('submit');
-  };
+  const [rows, setRows] = useState<any>([]);
 
   const getSpecies = (parent: INullSpeciesItem, id: string) => {
     if (parent) {
@@ -56,6 +54,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
   };
 
   useEffect(() => {
+    setRows([]);
     setCreateThingNum(1);
     setOperations([]);
     const loadFlowDefine = async () => {
@@ -120,23 +119,32 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
       {operations.length > 0 && (
         <>
           {operations.map((operation: any) => (
-            <Card key={operation.id} title={operation?.name}>
-              <OioForm
-                operation={operation}
-                onValuesChange={(changedValues, values) => {
-                  data[operation.id] = values;
-                  setData(data);
-                }}
-              />
-            </Card>
+            <OioForm
+              key={operation.id}
+              operation={operation}
+              submitter={{
+                render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
+              }}
+              onFinished={async (values: any) => {
+                //发起流程
+                let instance = await kernel.createInstance({
+                  defineId: currentDefine.id,
+                  SpaceId: userCtrl.space.id,
+                  content: '',
+                  contentType: 'Text',
+                  data: JSON.stringify(values),
+                  title: currentDefine.name,
+                  hook: '',
+                  thingIds: rows.map((row: any) => row['416237430006484992']),
+                });
+                message.success('提交成功');
+              }}
+              onValuesChange={(changedValues, values) => {
+                data[operation.id] = values;
+                setData(data);
+              }}
+            />
           ))}
-          <Button
-            icon={<SaveOutlined />}
-            type="primary"
-            className={cls['bootom_right']}
-            onClick={() => submit()}>
-            提交
-          </Button>
         </>
       )}
 
@@ -150,7 +158,12 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             setChooseThingModal(undefined);
           }}
           onOk={() => {
-            setChooseThingModal(undefined);
+            //获取表格选中的数据
+            if (rows && rows.length > 0) {
+              setChooseThingModal(undefined);
+            } else {
+              message.warn('请至少选择一条数据');
+            }
           }}>
           <Modal
             title="创建物"
@@ -165,7 +178,6 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
               } else {
                 message.error('创建失败');
               }
-              console.log('createThing', res);
               setCreateThingByInputNumModal(false);
             }}>
             请输入数量：
@@ -178,8 +190,13 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             />
           </Modal>
           <Thing
-            dataSource={[]}
+            dataSource={[
+              { key: 111, '416237430006484992': 111, '422398957721882624': 222 },
+            ]}
             current={chooseThingModal}
+            onSelectionChanged={(rows: any) => {
+              setRows(rows);
+            }}
             height={600}
             toolBarItems={
               currentDefine.sourceId

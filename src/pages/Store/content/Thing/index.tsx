@@ -36,6 +36,7 @@ interface IProps {
   buttonList?: any[];
   toolBarItems?: any[];
   dataSource?: any;
+  onSelectionChanged?: Function;
 }
 // function isNotEmpty(value: any) {
 //   return value !== undefined && value !== null && value !== '';
@@ -192,7 +193,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             dataField={attr.id}
             caption={attr.name}
             dataType="number"
-            format="current"
+            // format="current"
           />
         );
       default:
@@ -224,6 +225,10 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             showRowLines={true}
             rowAlternationEnabled={true}
             hoverStateEnabled={true}
+            onSelectionChanged={(e) => {
+              console.log(e.selectedRowsData);
+              props.onSelectionChanged?.call(this, e.selectedRowsData);
+            }}
             height={props.height || 'calc(100vh - 175px)'}
             width={'calc(100vw - 320px)'}
             showBorders={true}>

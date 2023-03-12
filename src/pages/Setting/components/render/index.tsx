@@ -1,16 +1,19 @@
 import { kernel } from '@/ts/base';
 import { XOperation, XOperationItem } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
-import { ProForm } from '@ant-design/pro-components';
-import { Col, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { ProForm, ProFormInstance } from '@ant-design/pro-components';
+import { Col, message, Row } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import OioFormItem from './FormItems';
 import SpeciesTabs from './SpeciesTabs';
 
 type OioFormProps = {
   operation: XOperation;
   operationItems?: any[];
+  submitter?: any;
   onValuesChange?: (changedValues: any, values: Record<string, any>) => void;
+  onFinished?: Function;
+  fieldsValue?: any;
 };
 
 /**
@@ -19,13 +22,22 @@ type OioFormProps = {
 const OioForm: React.FC<OioFormProps> = ({
   operation,
   operationItems,
+  submitter,
   onValuesChange,
+  onFinished,
+  fieldsValue,
 }) => {
   const [items, setItems] = useState<XOperationItem[]>([]);
+  const formRef = useRef<ProFormInstance<any>>();
   let config: any = { col: 12, layout: 'horizontal' };
   if (operation?.remark) {
     config = JSON.parse(operation.remark);
   }
+  useEffect(() => {
+    if (fieldsValue) {
+      formRef?.current?.setFieldsValue(fieldsValue);
+    }
+  }, [fieldsValue]);
   useEffect(() => {
     if (operationItems) {
       setItems(operationItems);
@@ -46,17 +58,27 @@ const OioForm: React.FC<OioFormProps> = ({
 
   return (
     <ProForm
-      submitter={{
-        searchConfig: {
-          resetText: '重置',
-          submitText: '提交',
-        },
-        resetButtonProps: {
-          style: { display: 'none' },
-        },
-        submitButtonProps: {
-          style: { display: 'none' },
-        },
+      submitter={
+        submitter || {
+          searchConfig: {
+            resetText: '重置',
+            submitText: '提交',
+          },
+          resetButtonProps: {
+            style: { display: 'none' },
+          },
+          submitButtonProps: {
+            style: { display: 'none' },
+          },
+        }
+      }
+      formRef={formRef}
+      onFinish={async (values) => {
+        const val1 = await formRef.current?.validateFields();
+        console.log('validateFields:', val1);
+        const val2 = await formRef.current?.validateFieldsReturnFormatValue?.();
+        console.log('validateFieldsReturnFormatValue:', val2);
+        onFinished?.call(this, values);
       }}
       onValuesChange={onValuesChange}
       layout={config.layout}

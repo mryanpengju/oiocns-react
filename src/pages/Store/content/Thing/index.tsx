@@ -4,8 +4,6 @@ import storeCtrl from '@/ts/controller/store';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 import userCtrl from '@/ts/controller/setting';
 import { XAttribute } from '@/ts/base/schema';
-import 'devextreme/dist/css/dx.common.css';
-import 'devextreme/dist/css/dx.light.css';
 import DataGrid, {
   Column,
   ColumnChooser,
@@ -21,9 +19,6 @@ import DataGrid, {
   Toolbar,
   Item,
 } from 'devextreme-react/data-grid';
-import config from 'devextreme/core/config';
-import { loadMessages, locale } from 'devextreme/localization';
-import zhMessage from 'devextreme/localization/messages/zh.json';
 import { ISpeciesItem } from '@/ts/core';
 import CustomStore from 'devextreme/data/custom_store';
 import { kernel } from '@/ts/base';
@@ -40,27 +35,12 @@ interface IProps {
 // function isNotEmpty(value: any) {
 //   return value !== undefined && value !== null && value !== '';
 // }
-export const store = new CustomStore({
-  key: 'Id',
-  async load(loadOptions) {
-    const result = await kernel.anystore.loadThing(
-      loadOptions,
-      userCtrl.isCompanySpace ? 'company' : 'user',
-    );
-    console.log(result);
-    if (result.success) {
-      return result.data;
-    }
-    return [];
-  },
-});
 /**
  * 仓库-物
  */
 const Thing: React.FC<IProps> = (props: IProps) => {
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
-  const allowedPageSizes = [10, 20, 50];
   const getSortedList = (
     speciesArray: ISpeciesItem[],
     array: any[],
@@ -94,9 +74,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
     for (let instance of instances) {
       for (let attr of instance.attrs || []) {
         if (!attrArray.map((item) => item.id).includes(attr.id)) {
-          if (attr.belongId) {
-            attrArray.push(attr);
-          }
+          attrArray.push(attr);
         }
       }
     }
@@ -116,9 +94,6 @@ const Thing: React.FC<IProps> = (props: IProps) => {
   };
 
   useEffect(() => {
-    config({ defaultCurrency: 'zh' });
-    loadMessages(zhMessage);
-    locale('zh');
     if (storeCtrl.checkedSpeciesList.length > 0) {
       if (props.checkedList && props.checkedList.length > 0) {
         loadAttrs(props.checkedList.map((item) => item.item));
@@ -128,14 +103,20 @@ const Thing: React.FC<IProps> = (props: IProps) => {
     }
   }, [props.current, props.checkedList, storeCtrl.checkedSpeciesList]);
 
-  const getColumn = (attr: XAttribute) => {
-    switch (attr.valueType) {
+  const getColumn = (
+    id: string,
+    caption: string,
+    valueType: string,
+    dataField: string,
+    dictItems?: any[],
+  ) => {
+    switch (valueType) {
       case '时间型':
         return (
           <Column
-            key={attr.id}
-            dataField={`S${attr.speciesId}.T${attr.id}`}
-            caption={attr.name}
+            key={id}
+            dataField={dataField}
+            caption={caption}
             dataType="datetime"
             width={250}
             format="yyyy年MM月dd日 HH:mm:ss"
@@ -144,9 +125,9 @@ const Thing: React.FC<IProps> = (props: IProps) => {
       case '日期型':
         return (
           <Column
-            key={attr.id}
-            dataField={`S${attr.speciesId}.T${attr.id}`}
-            caption={attr.name}
+            key={id}
+            dataField={dataField}
+            caption={caption}
             dataType="date"
             width={180}
             format="yyyy年MM月dd日"
@@ -154,34 +135,27 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         );
       case '选择型':
         return (
-          <Column
-            key={attr.id}
-            dataField={`S${attr.speciesId}.T${attr.id}`}
-            caption={attr.name}
-            width={150}>
-            <Lookup
-              dataSource={attr.dict?.dictItems || []}
-              displayExpr="name"
-              valueExpr="value"
-            />
+          <Column key={id} dataField={dataField} caption={caption} width={150}>
+            <Lookup dataSource={dictItems || []} displayExpr="name" valueExpr="value" />
           </Column>
         );
       case '数值型':
         return (
           <Column
-            key={attr.id}
-            dataField={`S${attr.speciesId}.T${attr.id}`}
-            caption={attr.name}
+            key={id}
+            fixed={id === 'Id'}
+            dataField={dataField}
+            caption={caption}
             dataType="number"
-            // format="current"
+            width={150}
           />
         );
       default:
         return (
           <Column
-            key={attr.id}
-            dataField={`S${attr.speciesId}.T${attr.id}`}
-            caption={attr.name}
+            key={id}
+            dataField={dataField}
+            caption={caption}
             dataType="string"
             width={180}
           />
@@ -192,7 +166,30 @@ const Thing: React.FC<IProps> = (props: IProps) => {
   const getComponent = () => {
     return (
       <DataGrid
-        dataSource={props.dataSource || store}
+        dataSource={
+          props.dataSource ||
+          new CustomStore({
+            key: 'Id',
+            async load(loadOptions) {
+              const species = [
+                ...(props.checkedList || []).map((item) => item.item.target),
+                props.current.target,
+              ];
+              console.log(species);
+              loadOptions.userData = species
+                .filter((item) => item.code != 'anything')
+                .map((item) => `S${item.id}`);
+              const result = await kernel.anystore.loadThing(
+                loadOptions,
+                userCtrl.isCompanySpace ? 'company' : 'user',
+              );
+              if (result.success) {
+                return result.data;
+              }
+              return [];
+            },
+          })
+        }
         columnMinWidth={80}
         focusedRowEnabled={true}
         allowColumnReordering={true}
@@ -203,7 +200,6 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         rowAlternationEnabled={true}
         hoverStateEnabled={true}
         onSelectionChanged={(e) => {
-          console.log(e.selectedRowsData);
           props.onSelectionChanged?.call(this, e.selectedRowsData);
         }}
         height={props.height || 'calc(100vh - 175px)'}
@@ -230,11 +226,11 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         )}
         <Pager
           visible={true}
-          allowedPageSizes={allowedPageSizes}
+          allowedPageSizes={[10, 20, 50]}
           showPageSizeSelector={true}
           showNavigationButtons={true}
           showInfo={true}
-          infoText={'共{2}条'}
+          infoText={'共{2}项'}
           displayMode={'full'}
         />
         <Sorting mode="multiple" />
@@ -246,35 +242,17 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           <Item name="columnChooserButton" locateInMenu="auto" location="after" />
         </Toolbar>
         <SearchPanel visible={true} highlightCaseSensitive={true} />
-
-        <Column
-          key="Id"
-          dataField="Id"
-          caption="唯一标识"
-          dataType="number"
-          // format="current"
-        />
-        <Column
-          key="Creater"
-          dataField="Creater"
-          caption="创建人"
-          dataType="number"
-          // format="current"
-        />
-        <Column
-          width={200}
-          key="CreateTime"
-          dataField="CreateTime"
-          caption="创建时间"
-          dataType="datetime"
-          format="yyyy年MM月dd日 HH:mm:ss"
-        />
-        <Column key="Status" dataField="Status" caption="状态" dataType="string">
-          <Lookup dataSource={['正常', '一销毁']} />
-        </Column>
         {thingAttrs.map((parentHeader: any) => (
           <Column key={parentHeader.caption} caption={parentHeader.caption}>
-            {parentHeader.children.map((attr: XAttribute) => getColumn(attr))}
+            {parentHeader.children.map((attr: XAttribute) =>
+              getColumn(
+                attr.id,
+                attr.name,
+                attr.valueType,
+                attr.belongId ? `S${attr.speciesId}.T${attr.id}` : attr.code,
+                attr.dict?.dictItems,
+              ),
+            )}
           </Column>
         ))}
         <Column type="buttons">{props.buttonList}</Column>

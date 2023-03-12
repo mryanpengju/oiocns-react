@@ -1,4 +1,3 @@
-import { kernel } from '@/ts/base';
 import { Emitter } from '@/ts/base/common';
 import { XAttribute } from '@/ts/base/schema';
 import {
@@ -7,8 +6,8 @@ import {
   getFileSysItemRoot,
   IFileSystemItem,
   IObjectItem,
+  ISpeciesItem,
 } from '@/ts/core';
-import { ISpeciesItem } from '@/ts/core/target/species/ispecies';
 /**
  * 仓库控制器
  */
@@ -68,21 +67,6 @@ class StoreController extends Emitter {
           targetAttr.species = this._checkedSpeciesList.filter(
             (item) => item.id == targetAttr.speciesId,
           )[0].target;
-        }
-
-        if (targetAttr.dictId) {
-          targetAttr.dictItems =
-            (
-              await kernel.queryDictItems({
-                id: targetAttr.dictId,
-                spaceId: spaceId,
-                page: {
-                  offset: 0,
-                  limit: 1000,
-                  filter: '',
-                },
-              })
-            ).data?.result || [];
         }
       }
       speciesItem.attrs = targetAttrs;

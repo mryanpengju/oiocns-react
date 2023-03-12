@@ -18,6 +18,12 @@ type ProxyTargetList = Record<
  */
 export function createProxy() {
   const ProxyList: ProxyTargetList = {
+    // '/orginone/anydata': {
+    //   target: 'http://172.19.64.1', // 后台接口
+    //   // target: 'http://localhost:7000', // 后台接口
+    //   changeOrigin: true, // 是否允许跨域
+    //   ws: true,
+    // },
     '/orginone': {
       target: 'http://anyinone.com:888', // 后台接口
       // target: 'http://localhost:7000', // 后台接口

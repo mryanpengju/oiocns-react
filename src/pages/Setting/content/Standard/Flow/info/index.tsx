@@ -103,6 +103,7 @@ const FlowList: React.FC<IProps> = ({
             }),
             title: record.name,
             hook: '',
+            thingIds: [],
           });
           if (res.success) {
             message.success('发起测试流程成功');

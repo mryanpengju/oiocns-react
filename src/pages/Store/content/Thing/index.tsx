@@ -17,15 +17,69 @@ import DataGrid, {
   SearchPanel,
   Sorting,
   FilterRow,
+  Selection,
+  Toolbar,
+  Item,
 } from 'devextreme-react/data-grid';
 import config from 'devextreme/core/config';
 import { loadMessages, locale } from 'devextreme/localization';
 import zhMessage from 'devextreme/localization/messages/zh.json';
 import { ISpeciesItem } from '@/ts/core';
+import CustomStore from 'devextreme/data/custom_store';
+import { getUuid } from '@/utils/tools';
+import { kernel } from '@/ts/base';
 interface IProps {
   current: ISpeciesItem;
+  height?: any;
+  editingTool?: any;
   checkedList?: any[];
+  buttonList?: any[];
+  toolBarItems?: any[];
+  dataSource?: any;
+  onSelectionChanged?: Function;
 }
+// function isNotEmpty(value: any) {
+//   return value !== undefined && value !== null && value !== '';
+// }
+export const store = new CustomStore({
+  key: getUuid(),
+  load(loadOptions) {
+    // let params = '?';
+    // [
+    //   'skip',
+    //   'take',
+    //   'requireTotalCount',
+    //   'requireGroupCount',
+    //   'sort',
+    //   'filter',
+    //   'totalSummary',
+    //   'group',
+    //   'groupSummary',
+    // ].forEach((i) => {
+    //   if (i in loadOptions && isNotEmpty(loadOptions[i])) {
+    //     params += `${i}=${JSON.stringify(loadOptions[i])}&`;
+    //   }
+    // });
+    // params = params.slice(0, -1);
+    let result = kernel.anystore.loadThing(loadOptions).then((data) => {
+      console.log(data);
+    });
+    return result;
+    // return fetch(
+    //   `https://js.devexpress.com/Demos/WidgetsGalleryDataService/api/orders${params}`,
+    // )
+    //   .then((response) => response.json())
+    //   .then((data) => ({
+    //     data: data.data,
+    //     totalCount: data.totalCount,
+    //     summary: data.summary,
+    //     groupCount: data.groupCount,
+    //   }))
+    //   .catch(() => {
+    //     throw new Error('Data Loading Error');
+    //   });
+  },
+});
 /**
  * 仓库-物
  */
@@ -139,7 +193,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             dataField={attr.id}
             caption={attr.name}
             dataType="number"
-            format="current"
+            // format="current"
           />
         );
       default:
@@ -160,7 +214,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
       <>
         {thingAttrs && thingAttrs.length > 0 && (
           <DataGrid
-            dataSource={[]}
+            dataSource={props.dataSource || store}
             keyExpr="key"
             columnMinWidth={80}
             focusedRowEnabled={true}
@@ -171,7 +225,11 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             showRowLines={true}
             rowAlternationEnabled={true}
             hoverStateEnabled={true}
-            height={'calc(100vh - 175px)'}
+            onSelectionChanged={(e) => {
+              console.log(e.selectedRowsData);
+              props.onSelectionChanged?.call(this, e.selectedRowsData);
+            }}
+            height={props.height || 'calc(100vh - 175px)'}
             width={'calc(100vw - 320px)'}
             showBorders={true}>
             <ColumnChooser
@@ -183,12 +241,16 @@ const Thing: React.FC<IProps> = (props: IProps) => {
               sortOrder={'asc'}
             />
             <ColumnFixing enabled={true} />
-            <Editing
-              allowUpdating={true}
-              allowDeleting={true}
-              selectTextOnEditStart={true}
-              useIcons={true}
-            />
+            <Selection mode="multiple" selectAllMode="allPages" />
+            {props.editingTool || (
+              <Editing
+                allowAdding={false}
+                allowUpdating={false}
+                allowDeleting={false}
+                selectTextOnEditStart={true}
+                useIcons={true}
+              />
+            )}
             <Pager
               visible={true}
               allowedPageSizes={allowedPageSizes}
@@ -201,12 +263,18 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             <Sorting mode="multiple" />
             <Paging defaultPageSize={10} />
             <FilterRow visible={true} />
+            <Toolbar>
+              {props.toolBarItems}
+              <Item name="searchPanel" />
+              <Item name="columnChooserButton" locateInMenu="auto" location="after" />
+            </Toolbar>
             <SearchPanel visible={true} highlightCaseSensitive={true} />
             {thingAttrs.map((parentHeader: any) => (
               <Column key={parentHeader.caption} caption={parentHeader.caption}>
                 {parentHeader.children.map((attr: XAttribute) => getColumn(attr))}
               </Column>
             ))}
+            <Column type="buttons">{props.buttonList}</Column>
           </DataGrid>
         )}
       </>

@@ -344,7 +344,9 @@ const Design: React.FC<DesignProps> = ({
       const attrIds = operateItems.map((item) => item.attrId);
       items['operationItems'] = operateItems;
       // 过滤出特性
-      items['attrs'] = attrs.filter((attr) => !attrIds.includes(attr.id));
+      items['attrs'] = attrs
+        .filter((attr) => !attrIds.includes(attr.id))
+        .filter((attr) => attr.belongId);
       setItems(items);
       tforceUpdate();
     };

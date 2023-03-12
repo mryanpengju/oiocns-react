@@ -4,7 +4,7 @@ import { kernel } from '@/ts/base';
 import { XFlowTaskHistory } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
 import { SpeciesItem } from '@/ts/core/thing/species';
-import { Card } from 'antd';
+import { Card, Tabs, TabsProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import { WorkColumns } from '../../config/columns';
@@ -50,31 +50,84 @@ const TaskList: React.FC<IProps> = ({ selectMenu, setTabKey, setFlowTask }) => {
     loadTasks();
   }, [species?.id]);
 
-  /**
-   * 获取操作按钮
-   */
-  const getOperations = (task: XFlowTaskHistory) => {
-    const menus = [];
-    menus.push({
-      key: 'approve',
-      label: '审核',
-      onClick: async () => {
-        setFlowTask(task);
-        setTabKey(1);
-      },
-    });
-    return menus;
-  };
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: `待办`,
+      children: (
+        <CardOrTableComp<XFlowTaskHistory>
+          key={key}
+          rowKey={(record) => record?.id}
+          columns={WorkColumns}
+          dataSource={approveTasks}
+          operation={(item) => {
+            return [
+              {
+                key: 'approve',
+                label: '审批',
+                onClick: async () => {
+                  setFlowTask(item);
+                  setTabKey(1);
+                },
+              },
+            ];
+          }}
+        />
+      ),
+    },
+    {
+      key: '2',
+      label: `已办`,
+      children: (
+        <CardOrTableComp<XFlowTaskHistory>
+          key={key}
+          rowKey={(record) => record?.id}
+          columns={WorkColumns}
+          dataSource={approveTasks}
+          operation={(item) => {
+            return [
+              {
+                key: 'view',
+                label: '查看',
+                onClick: async () => {
+                  setFlowTask(item);
+                  setTabKey(1);
+                },
+              },
+            ];
+          }}
+        />
+      ),
+    },
+    {
+      key: '3',
+      label: `抄送`,
+      children: (
+        <CardOrTableComp<XFlowTaskHistory>
+          key={key}
+          rowKey={(record) => record?.id}
+          columns={WorkColumns}
+          dataSource={approveTasks}
+          operation={(item) => {
+            return [
+              {
+                key: 'view',
+                label: '查看',
+                onClick: async () => {
+                  setFlowTask(item);
+                  setTabKey(1);
+                },
+              },
+            ];
+          }}
+        />
+      ),
+    },
+  ];
 
   return (
-    <Card title={selectMenu?.item?.name}>
-      <CardOrTableComp<XFlowTaskHistory>
-        key={key}
-        rowKey={(record) => record?.id}
-        columns={WorkColumns}
-        dataSource={approveTasks}
-        operation={(item) => getOperations(item)}
-      />
+    <Card>
+      <Tabs items={items}></Tabs>
     </Card>
   );
 };

@@ -121,7 +121,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
                     target: undefined,
                   });
                 }}>
-                {'新增流程'}
+                {'新增办事流程'}
               </Button>
             )}
             {(modalType == '新增流程设计' || modalType == '编辑流程设计') && (

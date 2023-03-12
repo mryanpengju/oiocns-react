@@ -27,8 +27,8 @@ const TypeSetting = ({ selectMenu, reflashMenu }: IProps) => {
           columns={OrgColumns as ProColumns<IApprovalItem>[]}
           reflashMenu={reflashMenu}
           tabList={[
-            { key: 'todo', tab: '我的待办' },
-            { key: 'complete', tab: '我的已办' },
+            { key: 'todo', tab: '待办' },
+            { key: 'complete', tab: '已办' },
           ]}
         />
       );
@@ -37,8 +37,8 @@ const TypeSetting = ({ selectMenu, reflashMenu }: IProps) => {
         <CommonTodo
           todoGroup={selectMenu.item}
           tabList={[
-            { key: 'todo', tab: '我的待办' },
-            { key: 'complete', tab: '我的已办' },
+            { key: 'todo', tab: '待办' },
+            { key: 'complete', tab: '已办' },
           ]}
           columns={MarketColumns as ProColumns<IApprovalItem>[]}
           reflashMenu={reflashMenu}
@@ -49,8 +49,8 @@ const TypeSetting = ({ selectMenu, reflashMenu }: IProps) => {
         <CommonTodo
           todoGroup={selectMenu.item}
           tabList={[
-            { key: 'todo', tab: '我的待办' },
-            { key: 'complete', tab: '我的已办' },
+            { key: 'todo', tab: '待办' },
+            { key: 'complete', tab: '已办' },
           ]}
           columns={MerchandiseColumns as ProColumns<IApprovalItem>[]}
           reflashMenu={reflashMenu}

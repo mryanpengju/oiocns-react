@@ -114,7 +114,7 @@ const FlowList: React.FC<IProps> = (props) => {
                     props.onCurrentChaned(undefined);
                     props.onDesign();
                   }}>
-                  新建流程
+                  新建办事流程
                 </Button>,
               ]}
             />

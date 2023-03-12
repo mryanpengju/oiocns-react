@@ -85,7 +85,6 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         let attrs =
           attrArray?.filter((attr: XAttribute) => attr.speciesId == species.id) || [];
         parentHeaders.push({
-          id: attrs[0].species?.id || species.id,
           caption: attrs[0].species?.name || species.name,
           children: attrs,
         });
@@ -142,7 +141,14 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         );
       case '数值型':
         return (
-          <Column key={id} dataField={dataField} caption={caption} dataType="number" />
+          <Column
+            key={id}
+            fixed={id === 'Id'}
+            dataField={dataField}
+            caption={caption}
+            dataType="number"
+            width={150}
+          />
         );
       default:
         return (
@@ -165,7 +171,14 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           new CustomStore({
             key: 'Id',
             async load(loadOptions) {
-              loadOptions.userData = thingAttrs.map((item) => `S${item.id}`);
+              const species = [
+                ...(props.checkedList || []).map((item) => item.item.target),
+                props.current.target,
+              ];
+              console.log(species);
+              loadOptions.userData = species
+                .filter((item) => item.code != 'anything')
+                .map((item) => `S${item.id}`);
               const result = await kernel.anystore.loadThing(
                 loadOptions,
                 userCtrl.isCompanySpace ? 'company' : 'user',
@@ -217,7 +230,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           showPageSizeSelector={true}
           showNavigationButtons={true}
           showInfo={true}
-          infoText={'共{2}条'}
+          infoText={'共{2}项'}
           displayMode={'full'}
         />
         <Sorting mode="multiple" />

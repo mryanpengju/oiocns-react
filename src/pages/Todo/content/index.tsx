@@ -10,7 +10,6 @@ import { ProColumns } from '@ant-design/pro-components';
 import BuyOrder from './Common/Order/Buy';
 import userCtrl from '@/ts/controller/setting';
 import WorkTodo from './WorkTodo';
-import FlowInstance from '@/pages/Todo/content/FlowInstance';
 
 interface IProps {
   reflashMenu: () => void;

@@ -1,11 +1,16 @@
 import OioForm from '@/pages/Setting/components/render';
 import Design from '@/pages/Setting/content/Standard/Flow/Design';
 import { kernel } from '@/ts/base';
-import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
-import userCtrl from '@/ts/controller/setting';
-import { Card, Tabs, TabsProps } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { XFlowDefine, XFlowInstance, XFlowTaskHistory } from '@/ts/base/schema';
+import { ProFormInstance } from '@ant-design/pro-form';
+import { Button, Card, Collapse, Input, Tabs, TabsProps, Timeline } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
+import cls from './index.module.less';
+import userCtrl from '@/ts/controller/setting';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+
+const { Panel } = Collapse;
 
 interface IApproveProps {
   flowTask?: XFlowTaskHistory;
@@ -13,18 +18,21 @@ interface IApproveProps {
 }
 
 const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
-  const [operations, setOperations] = useState<any>([]);
+  const formRef = useRef<ProFormInstance<any>>();
+  const [nodes, setNodes] = useState<XFlowInstance[]>([]);
 
   useEffect(() => {
     const loadNodes = async () => {
       if (flowTask) {
-        const res = await kernel.queryNodes({
-          id: flowTask.flowInstance?.defineId as string,
-          spaceId: userCtrl.space.id,
+        const res = await kernel.queryInstance({
+          id: flowTask.instanceId,
           page: { offset: 0, limit: 100000, filter: '' },
         });
-        const node = res.data;
-        setOperations(node.operations || []);
+        const instances = res.data.result || [];
+        if (instances.length > 0) {
+          console.log(instances[0].historyTasks);
+          setNodes(instances[0].historyTasks);
+        }
       }
     };
     loadNodes();
@@ -33,40 +41,95 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
   const items: TabsProps['items'] = [
     {
       key: '1',
-      label: `流程审批`,
+      label: `办事详情`,
       children: (
         <>
-          {operations.length > 0 && (
-            <>
-              {operations.map((operation: any) => (
-                <OioForm
-                  key={operation.id}
-                  operation={operation}
-                  //   submitter={{
-                  //     render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
-                  //   }}
-                  onFinished={async (values: any) => {
-                    // 还原显示之前节点表单的信息
-                    // Todo 提交
-                  }}
-                  onValuesChange={(changedValues, values) => {
-                    console.log('values', values);
-                  }}
-                />
-              ))}
-            </>
-          )}
+          <Timeline>
+            {nodes.map((node, index) => {
+              const color = node.status == 100 ? 'green' : 'red';
+              const activeKey = node.status == 100 ? undefined : node.id;
+              const title = index == 0 ? '发起人' : '审批人';
+              return (
+                <Timeline.Item key={node.id} color={color}>
+                  <Card>
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ paddingRight: '18px' }}>{node.createTime}</div>
+                      <div>
+                        {title}：{userCtrl.findTeamInfoById(node.createUser).name}
+                      </div>
+                    </div>
+                    <Collapse ghost activeKey={activeKey}>
+                      <Panel header="表单信息" key={node.id}>
+                        {node.bindOperations.map(operation => {
+                          return (
+                            <OioForm
+                              key={operation.id}
+                              operation={operation}
+                              formRef={undefined}></OioForm>
+                          );
+                        })}
+                      </Panel>
+                    </Collapse>
+                  </Card>
+                </Timeline.Item>
+              );
+            })}
+          </Timeline>
+          {flowTask?.node?.bindOperations.map((operation: any) => (
+            <OioForm
+              key={operation.id}
+              operation={operation}
+              formRef={formRef}
+              submitter={{
+                resetButtonProps: {
+                  style: { display: 'none' },
+                },
+                render: (_: any, dom: any) => (
+                  <div className={cls['bootom_right']}>
+                    <Input.TextArea
+                      size="small"
+                      placeholder="请填写审批意见"></Input.TextArea>
+                    <div style={{ paddingTop: '8px', display: 'flex' }}>
+                      <Button
+                        type="primary"
+                        style={{ marginRight: '8px', marginLeft: '12px' }}
+                        icon={<CloseOutlined />}
+                        onClick={() => {
+                          console.log(200);
+                        }}>
+                        驳回
+                      </Button>
+                      <Button
+                        type="primary"
+                        icon={<CheckOutlined />}
+                        onClick={() => {
+                          console.log(100);
+                        }}>
+                        同意
+                      </Button>
+                    </div>
+                  </div>
+                ),
+              }}
+              onFinished={async (values: any) => {
+                console.log('values', values);
+              }}
+              onValuesChange={(changedValues, values) => {
+                console.log('values', values);
+              }}
+            />
+          ))}
         </>
       ),
     },
     {
       key: '2',
-      label: `审批记录`,
+      label: `流程图`,
       children: (
         <Design
-          current={flowTask?.flowInstance?.flowDefine as XFlowDefine}
+          current={flowTask?.instance?.define as XFlowDefine}
           species={undefined}
-          instance={flowTask?.flowInstance}
+          instance={flowTask?.instance}
           modalType={'编辑流程设计'}
           setInstance={() => {}}
           operateOrgId={undefined}

@@ -131,7 +131,7 @@ const FieldInfo: React.FC<IProps> = ({
     //   });
     // }
     columns.push({
-      title: '备注信息',
+      title: '事项描述',
       dataIndex: 'remark',
       valueType: 'textarea',
       colProps: { span: 24 },

@@ -688,6 +688,7 @@ const Design: React.FC<IProps> = ({
               id: task.id,
               status: 100,
               comment: '经评审讨论通过',
+              data: '',
             });
             if (approvalResult.success) {
               message.success('审核成功');

@@ -982,6 +982,8 @@ export type ApprovalTaskReq = {
   status: number;
   // 评论
   comment: string;
+  // 数据
+  data: string;
 };
 /**
  * 文件系统项分享数据

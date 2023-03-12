@@ -194,6 +194,10 @@ const buildSpeciesTree = async (
       menuType: isWork ? 'checkbox' : undefined,
       menus: [],
       children: await buildSpeciesTree(item.children, itemType, isWork),
+      count:
+        itemType.indexOf('todo') > -1
+          ? todoCtrl.getWorkTodoBySpeciesId(item.id).length
+          : undefined,
     });
   }
   return result;

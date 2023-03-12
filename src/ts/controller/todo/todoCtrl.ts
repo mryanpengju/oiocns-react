@@ -2,7 +2,6 @@ import {
   loadOrderTodo,
   loadMarketTodo,
   loadOrgTodo,
-  loadOrgApply,
   loadPublishTodo,
   ITodoGroup,
   DomainTypes,
@@ -13,7 +12,8 @@ import {
 } from '@/ts/core';
 import { Emitter } from '@/ts/base/common';
 import userCtrl from '../setting';
-import { XTarget } from '@/ts/base/schema';
+import { XFlowTaskHistory, XTarget } from '@/ts/base/schema';
+import { kernel } from '@/ts/base';
 
 /** 待办控制器 */
 class TodoController extends Emitter {
@@ -28,6 +28,7 @@ class TodoController extends Emitter {
   private _marketApply: ITodoGroup | undefined;
   private _marketTodo: ITodoGroup[] = [];
   private _curAppTodo: ITodoGroup | undefined;
+  private _workTodo: XFlowTaskHistory[] = [];
   constructor() {
     super();
     emitter.subscribePart(DomainTypes.User, () => {
@@ -61,6 +62,8 @@ class TodoController extends Emitter {
         this._orderTodo = await loadOrderTodo();
         this._marketTodo = await loadMarketTodo();
         this._marketApply = await loadMarketApply();
+        this._workTodo =
+          (await kernel.queryApproveTask({ id: userCtrl.space.id })).data?.result || [];
         this.changCallback();
       }, 800);
     });
@@ -100,6 +103,22 @@ class TodoController extends Emitter {
   /** 当前选中的应用待办 */
   public get CurAppTodo(): ITodoGroup | undefined {
     return this._curAppTodo;
+  }
+  /** 事待办 */
+  public get WorkTodo(): XFlowTaskHistory[] {
+    return this._workTodo;
+  }
+  /** 强制刷新待办事项 */
+  public async refreshWorkTodo(): Promise<XFlowTaskHistory[]> {
+    this._workTodo =
+      (await kernel.queryApproveTask({ id: userCtrl.space.id })).data?.result || [];
+    return this._workTodo;
+  }
+  /** 获取事类别的待办 */
+  public getWorkTodoBySpeciesId(speciesId: string): XFlowTaskHistory[] {
+    return this._workTodo.filter((todo) => {
+      return speciesId === todo.instance?.define?.speciesId;
+    });
   }
   /** 获取总的待办数量 */
   public async getTaskCount(): Promise<number> {

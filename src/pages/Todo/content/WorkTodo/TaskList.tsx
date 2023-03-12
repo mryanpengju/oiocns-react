@@ -5,8 +5,10 @@ import { SpeciesItem } from '@/ts/core/thing/species';
 import { Card, Tabs, TabsProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
-import { WorkTodoColumns } from '../../config/columns';
+import { WorkReocrdColumns, WorkTodoColumns } from '../../config/columns';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
+import userCtrl from '@/ts/controller/setting';
+import { kernel } from '@/ts/base';
 
 // 卡片渲染
 interface IProps {
@@ -73,20 +75,33 @@ const TaskList: React.FC<IProps> = ({ tabKey, selectMenu, setTabKey, setFlowTask
         <CardOrTableComp<XFlowTaskHistory>
           key={key}
           rowKey={(record) => record?.id}
-          columns={WorkTodoColumns}
-          dataSource={csTasks}
-          operation={(item) => {
-            return [
-              {
-                key: 'view',
-                label: '查看',
-                onClick: async () => {
-                  setFlowTask(item);
-                  setTabKey(1);
-                },
-              },
-            ];
+          columns={WorkReocrdColumns}
+          dataSource={[]}
+          request={async (params) => {
+            const res = await kernel.queryRecord({
+              id: species.id,
+              spaceId: userCtrl.space.id,
+              page: { offset: params.offset, limit: params.limit, filter: params.filter },
+            });
+            return {
+              result: res.data.result,
+              total: res.data.total,
+              offset: res.data.offset,
+              limit: res.data.limit,
+            };
           }}
+          // operation={(item) => {
+          //   return [
+          //     {
+          //       key: 'view',
+          //       label: '查看',
+          //       onClick: async () => {
+          //         setFlowTask(item);
+          //         setTabKey(1);
+          //       },
+          //     },
+          //   ];
+          // }}
         />
       ),
     },

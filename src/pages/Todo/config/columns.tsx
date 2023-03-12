@@ -408,6 +408,38 @@ export const ApplicationApplyColumns: ProColumns<IApplyItem>[] = [
   { title: '创建时间', dataIndex: ['Data', 'createTime'], valueType: 'dateTime' },
 ];
 
+export const WorkReocrdColumns: ProColumns[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'index',
+    width: 60,
+  },
+  {
+    title: '审批人',
+    dataIndex: 'createUser',
+    render: (_, record) => {
+      const team = userCtrl.findTeamInfoById(record.createUser);
+      if (team) {
+        return team.name;
+      }
+    },
+  },
+  {
+    title: '审批时间',
+    dataIndex: ['historyTask', 'createTime'],
+    valueType: 'dateTime',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    render: (_, record) => {
+      const status = statusMap[record.status];
+      return <Tag color={status.color}>{status.text}</Tag>;
+    },
+  },
+];
+
 export const WorkTodoColumns: ProColumns[] = [
   {
     title: '序号',

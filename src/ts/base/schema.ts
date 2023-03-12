@@ -409,6 +409,29 @@ export type XFlowDefine = {
   sourceId?: string;
 };
 
+export type XFlowNode = {
+  // 雪花ID
+  id: string;
+  // 前端定义的编码 代替原先的NodeId
+  code: string;
+  // 节点类型
+  nodeType: string;
+  // 节点名称
+  name: string;
+  // 审批数量
+  count: number;
+  // 节点审批操作人类型 暂只支持 '身份'
+  destType: string;
+  // 节点审批操作Id 如 '身份Id'
+  destId: number | undefined;
+  // 节点审批操作名称 如 '身份名称'
+  destName: string;
+  // 节点归属
+  belongId: string;
+  // 节点绑定的表单
+  bindOperations: XOperation[];
+};
+
 export type FlowNode = {
   // 雪花ID
   id: string;
@@ -647,6 +670,8 @@ export type XFlowTask = {
   identity: XIdentity | undefined;
   // 流程的定义
   flowInstance: XFlowInstance | undefined;
+  // 流程节点
+  node: XFlowNode | undefined;
 };
 
 //流程任务查询返回集合
@@ -689,6 +714,8 @@ export type XFlowTaskHistory = {
   identity: XIdentity | undefined;
   // 流程的定义
   flowInstance: XFlowInstance | undefined;
+  // 流程节点
+  node: XFlowNode | undefined;
 };
 
 //流程任务查询返回集合

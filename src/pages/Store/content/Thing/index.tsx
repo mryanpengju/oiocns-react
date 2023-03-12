@@ -31,6 +31,7 @@ interface IProps {
   toolBarItems?: any[];
   dataSource?: any;
   onSelectionChanged?: Function;
+  selectable: boolean;
 }
 // function isNotEmpty(value: any) {
 //   return value !== undefined && value !== null && value !== '';
@@ -39,7 +40,6 @@ interface IProps {
  * 仓库-物
  */
 const Thing: React.FC<IProps> = (props: IProps) => {
-  debugger;
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
   const getSortedList = (
@@ -91,6 +91,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         });
       }
     }
+
     setThingAttrs(parentHeaders);
   };
 
@@ -167,6 +168,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
   const getComponent = () => {
     return (
       <DataGrid
+        keyExpr="Id"
         dataSource={
           props.dataSource ||
           new CustomStore({
@@ -215,7 +217,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           sortOrder={'asc'}
         />
         <ColumnFixing enabled={true} />
-        <Selection mode="multiple" selectAllMode="allPages" />
+        {props.selectable && <Selection mode="multiple" selectAllMode="allPages" />}
         {props.editingTool || (
           <Editing
             allowAdding={false}

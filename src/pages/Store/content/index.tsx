@@ -22,6 +22,7 @@ const ContentIndex = (props: IProps) => {
         key={props.checkedList?.length}
         current={props.selectMenu.item}
         checkedList={props.checkedList}
+        selectable={true}
       />
     );
   }
@@ -35,7 +36,13 @@ const ContentIndex = (props: IProps) => {
       return <Asset />;
     case GroupMenuType.Thing:
     case GroupMenuType.Wel:
-      return <Thing current={props.selectMenu.item} checkedList={props.checkedList} />;
+      return (
+        <Thing
+          current={props.selectMenu.item}
+          checkedList={props.checkedList}
+          selectable={true}
+        />
+      );
     default:
       return <></>;
   }

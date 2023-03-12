@@ -103,12 +103,12 @@
 
 // export default DefineInfo;
 
-import { FlowNode } from '@/ts/base/schema';
+import { Branche, FlowNode } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
 import { ISpeciesItem } from '@/ts/core';
 import thingCtrl from '@/ts/controller/thing';
 import { ProForm, ProFormText, ProFormTreeSelect } from '@ant-design/pro-components';
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React from 'react';
 import { TreeSelect } from 'antd';
@@ -158,6 +158,46 @@ const DefineInfo = (props: Iprops) => {
     }
     form.setFieldsValue(data);
   }
+  const loadResource = (resource: any): any => {
+    let obj: any;
+    if (resource) {
+      switch (resource.type) {
+        case '起始':
+          resource.type = 'ROOT';
+          break;
+        case '审批':
+          resource.type = 'APPROVAL';
+          break;
+        case '抄送':
+          resource.type = 'CC';
+          break;
+        case '条件':
+          resource.type = 'CONDITIONS';
+          break;
+        case '全部':
+          resource.type = 'CONCURRENTS';
+          break;
+        case '组织':
+          resource.type = 'ORGANIZATIONAL';
+          break;
+        //如果是空结点（下个流程的起始节点）
+        case '空':
+        case 'EMPTY':
+          resource.type = 'EMPTY';
+          break;
+        default:
+          break;
+      }
+    }
+    obj = resource;
+    if (obj.branches) {
+      obj.branches = obj.branches.map((item: any) => loadResource(item));
+    }
+    if (obj.children) {
+      obj.children = loadResource(obj.children);
+    }
+    return obj;
+  };
 
   return (
     <Modal
@@ -169,6 +209,12 @@ const DefineInfo = (props: Iprops) => {
           ...data,
           ...form.getFieldsValue(),
         };
+        if (value.name && value.belongId && value.sourceIds) {
+          console.log(value.sourceIds);
+        } else {
+          message.warn('请先完成表单');
+          return;
+        }
         if (title.includes('新增')) {
           // handleOk(await current.createOperation(value));
           let resource_: FlowNode = {
@@ -206,6 +252,7 @@ const DefineInfo = (props: Iprops) => {
               page: { offset: 0, limit: 1000, filter: '' },
             })
           ).data;
+          let resourceData = loadResource(resource_);
           let define = await current?.updateFlowDefine({
             id: value.id,
             code: value.name,
@@ -213,7 +260,7 @@ const DefineInfo = (props: Iprops) => {
             sourceIds: value.sourceIds?.join(','),
             fields: undefined,
             remark: value.remark,
-            resource: resource_,
+            resource: resourceData,
             belongId: value.belongId,
           });
           if (define) {

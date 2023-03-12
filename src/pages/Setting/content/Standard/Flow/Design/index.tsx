@@ -676,7 +676,7 @@ const Design: React.FC<IProps> = ({
     let instance: any = res.data.result ? res.data.result[0] : undefined;
     if (freshed) {
       setInstance(instance);
-      debugger;
+
       showTask(instance, resource);
     }
     // let node: FlowNode = nodeRes.data;

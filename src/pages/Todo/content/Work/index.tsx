@@ -1,6 +1,6 @@
 import { kernel } from '@/ts/base';
 import { SpeciesItem } from '@/ts/core/thing/species';
-import { Button, Card, InputNumber, message, Modal, Result } from 'antd';
+import { Button, Card, InputNumber, message, Modal, Result, Tabs } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import userCtrl from '@/ts/controller/setting';
@@ -17,6 +17,9 @@ import OioForm from '@/pages/Setting/components/render';
 import { PlusOutlined } from '@ant-design/icons';
 import cls from './index.module.less';
 import { ProFormInstance } from '@ant-design/pro-components';
+import useMenuUpdate from '../../hooks/useMenuUpdate';
+import todoCtrl from '@/ts/controller/todo/todoCtrl';
+import TabPane from 'antd/lib/tabs/TabPane';
 
 // 卡片渲染
 interface IProps {
@@ -27,11 +30,16 @@ interface IProps {
  * @returns
  */
 const Work: React.FC<IProps> = ({ selectMenu }) => {
+  const [key, menus, refreshMenu] = useMenuUpdate();
+  // useEffect(() => {
+  //   refreshMenu();
+  //   todoCtrl.refreshWorkTodo();
+  // }, [userCtrl.space.id]);
   const [data, setData] = useState<any>({});
   const species: SpeciesItem = selectMenu.item;
   const [flowDefines, setFlowDefines] = useState<XFlowDefine[]>([]);
   // const [key, forceUpdate] = useObjectUpdate(flowDefines);
-  const [key, setKey] = useState<string>();
+  const [defineKey, setDefineKey] = useState<string>();
   const [chooseThingModal, setChooseThingModal] = useState<ISpeciesItem[]>([]);
   const [operations, setOperations] = useState<any>([]);
   const [currentDefine, setCurrentDefine] = useState<any>();
@@ -74,7 +82,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
           page: { offset: 0, limit: 1000000, filter: '' },
         });
         setFlowDefines(res.data?.result || []);
-        setKey(getUuid());
+        setDefineKey(getUuid());
       }
     };
     loadFlowDefine();
@@ -108,7 +116,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
           })
         ).data;
         //设置起始节点绑定的表单
-        if (resource.operations && !chooseThingModal) {
+        if (resource.operations && chooseThingModal.length == 0) {
           setOperations(resource.operations);
         }
         const species_ = await thingCtrl.loadSpeciesTree();
@@ -118,8 +126,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
           let allNodes: ISpeciesItem[] = lookForAll([species_], []);
           // getSpecies(species, idArray, []);
           let speciess = allNodes.filter((item) => idArray.includes(item.id));
-          console.log(speciess);
-          debugger;
+          storeCtrl.addCheckedSpeciesList(speciess, userCtrl.space.id);
           setChooseThingModal(speciess);
         } else {
           if (species_) {
@@ -151,7 +158,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
       )}
       {operations.length == 0 && !successPage && (
         <CardOrTableComp<XFlowDefine>
-          key={key}
+          key={defineKey}
           rowKey={(record) => record?.id}
           columns={FlowColumn}
           dataSource={flowDefines}
@@ -162,39 +169,76 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
       {operations.length > 0 && (
         <>
           {operations.map((operation: any) => (
-            <OioForm
-              key={operation.id}
-              operation={operation}
-              formRef={formRef}
-              submitter={{
-                resetButtonProps: {
-                  style: { display: 'none' },
-                },
-                render: (_: any, dom: any) => (
-                  <div className={cls['bootom_right']}>{dom}</div>
-                ),
-              }}
-              onFinished={async (values: any) => {
-                //发起流程
-                let instance = await kernel.createInstance({
-                  defineId: currentDefine.id,
-                  SpaceId: userCtrl.space.id,
-                  content: '',
-                  contentType: 'Text',
-                  data: JSON.stringify(values),
-                  title: currentDefine.name,
-                  hook: '',
-                  thingIds: rows.map((row: any) => row['Id']),
-                });
-                console.log('instance', instance);
-                setOperations([]);
-                setSuccessPage(true);
-              }}
-              onValuesChange={(changedValues, values) => {
-                data[operation.id] = values;
-                setData(data);
-              }}
-            />
+            <>
+              <OioForm
+                key={operation.id}
+                operation={operation}
+                formRef={formRef}
+                submitter={{
+                  resetButtonProps: {
+                    style: { display: 'none' },
+                  },
+                  render: (_: any, dom: any) => (
+                    <div className={cls['bootom_right']}>{dom}</div>
+                  ),
+                }}
+                onFinished={async (values: any) => {
+                  //发起流程
+                  let instance = await kernel.createInstance({
+                    defineId: currentDefine.id,
+                    SpaceId: userCtrl.space.id,
+                    content: '',
+                    contentType: 'Text',
+                    data: JSON.stringify(values),
+                    title: currentDefine.name,
+                    hook: '',
+                    thingIds: rows.map((row: any) => row['Id']),
+                  });
+                  console.log('instance', instance);
+                  if (instance) {
+                    setOperations([]);
+                    setSuccessPage(true);
+                  }
+                  setTimeout(() => {
+                    refreshMenu();
+                    todoCtrl.refreshWorkTodo();
+                  }, 1000);
+                }}
+                onValuesChange={(changedValues, values) => {
+                  data[operation.id] = values;
+                  setData(data);
+                }}
+              />
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="数据" key="1">
+                  <Thing
+                    // key={Id}
+                    dataSource={rows.map((item: any) => {
+                      item.key = getUuid();
+                      return item;
+                    })}
+                    current={chooseThingModal[0]}
+                    checkedList={chooseThingModal.map((e) => {
+                      return { item: e };
+                    })}
+                    selectable={false}
+                    // onSelectionChanged={(rows: any) => {}}
+                    // height={600}
+                    // height={'calc(80vh - 175px)'}
+                    editingTool={
+                      <Editing
+                        allowAdding={false}
+                        allowUpdating={false}
+                        allowDeleting={false}
+                        selectTextOnEditStart={true}
+                        useIcons={true}
+                      />
+                    }
+                  />
+                </TabPane>
+              </Tabs>
+              ,
+            </>
           ))}
         </>
       )}
@@ -254,11 +298,12 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
               onSelectionChanged={(rows: any) => {
                 setRows(rows);
               }}
-              height={600}
+              selectable={true}
+              // height={600}
+              height={'calc(80vh - 175px)'}
               toolBarItems={
-                currentDefine.sourceIds
-                  ? []
-                  : [
+                chooseThingModal[0].name == '道'
+                  ? [
                       <Item key={getUuid()}>
                         {' '}
                         <Button
@@ -270,6 +315,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
                         </Button>
                       </Item>,
                     ]
+                  : []
               }
               editingTool={
                 <Editing

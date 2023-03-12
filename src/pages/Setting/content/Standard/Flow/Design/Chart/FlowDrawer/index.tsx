@@ -23,6 +23,7 @@ interface IProps {
   conditions?: FieldCondition[];
   onClose: () => void;
   species?: ISpeciesItem;
+  defaultEditable: boolean;
 }
 
 const FlowDrawer: React.FC<IProps> = ({
@@ -33,6 +34,7 @@ const FlowDrawer: React.FC<IProps> = ({
   operateOrgId,
   designOrgId,
   species,
+  defaultEditable,
 }) => {
   const [key, setKey] = useState<string>();
   const Component = (current: any) => {

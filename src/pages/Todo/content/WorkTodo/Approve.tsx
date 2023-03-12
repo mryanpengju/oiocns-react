@@ -3,6 +3,7 @@ import Design from '@/pages/Setting/content/Standard/Flow/Design';
 import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
 import { ProFormInstance } from '@ant-design/pro-form';
+import thingCtrl from '@/ts/controller/thing';
 import {
   Button,
   Card,
@@ -23,6 +24,7 @@ import Thing from '@/pages/Store/content/Thing';
 import { SpeciesItem } from '@/ts/core/thing/species';
 import { MenuItemType } from 'typings/globelType';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
+import { ISpeciesItem } from '@/ts/core';
 
 const { Panel } = Collapse;
 
@@ -43,9 +45,19 @@ const Approve: React.FC<IApproveProps> = ({
   const [taskHistory, setTaskHistorys] = useState<XFlowTaskHistory[]>([]);
   const [comment, setComment] = useState<string>('');
   const species: SpeciesItem = selectMenu.item;
+  const [instance, setInstance] = useState<any>();
+  const [speciesItem, setSpeciesItem] = useState<any>();
 
   console.log('flowTask?.instance===', flowTask?.instance);
-
+  const lookForAll = (data: any[], arr: any[]) => {
+    for (let item of data) {
+      arr.push(item);
+      if (item.children && item.children.length) {
+        lookForAll(item.children, arr);
+      }
+    }
+    return arr;
+  };
   useEffect(() => {
     const loadNodes = async () => {
       if (flowTask) {
@@ -55,6 +67,13 @@ const Approve: React.FC<IApproveProps> = ({
         });
         const instances = res.data.result || [];
         if (instances.length > 0) {
+          const species_ = await thingCtrl.loadSpeciesTree();
+          let allNodes: ISpeciesItem[] = lookForAll([species_], []);
+          setInstance(instances[0]);
+          let speciesItem = allNodes.filter(
+            (item) => item.id == instances[0].define?.speciesId,
+          )[0];
+          setSpeciesItem(speciesItem);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
         }
       }
@@ -133,7 +152,7 @@ const Approve: React.FC<IApproveProps> = ({
                     )}
                     {isCur && (
                       <>
-                        {th.node?.bindOperations.map((operation, i) => {
+                        {th.node?.bindOperations?.map((operation, i) => {
                           const record =
                             th.records && th.records.length > 0
                               ? th.records[i]
@@ -227,18 +246,34 @@ const Approve: React.FC<IApproveProps> = ({
       key: '2',
       label: `流程图`,
       children: (
-        <Design
-          current={flowTask?.instance?.define as XFlowDefine}
-          species={undefined}
-          instance={flowTask?.instance}
-          modalType={'编辑流程设计'}
-          setInstance={() => {}}
-          operateOrgId={undefined}
-          setOperateOrgId={() => {}}
-          defaultEditable={false}
-          onBack={() => {}}
-          setModalType={() => {}}
-        />
+        // <Design
+        //   current={flowTask?.instance?.define as XFlowDefine}
+        //   species={undefined}
+        //   instance={flowTask?.instance}
+        //   modalType={'编辑流程设计'}
+        //   setInstance={() => {}}
+        //   operateOrgId={undefined}
+        //   setOperateOrgId={() => {}}
+        //   defaultEditable={false}
+        //   onBack={() => {}}
+        //   setModalType={() => {}}
+        // />
+        <>
+          {speciesItem && (
+            <Design
+              current={flowTask?.instance?.define as XFlowDefine}
+              species={speciesItem}
+              instance={instance}
+              setInstance={setInstance}
+              operateOrgId={userCtrl.space.id}
+              defaultEditable={false}
+              setOperateOrgId={() => {}}
+              onBack={() => {}}
+              modalType={'设计流程'}
+              setModalType={() => {}}
+            />
+          )}
+        </>
       ),
     },
   ];

@@ -53,10 +53,13 @@ const ChartDesign: React.FC<IProps> = (props) => {
       </div>
       {/* 侧边数据填充 */}
       <FlowDrawer
+        defaultEditable={props.defaultEditable}
         species={props.species}
         operateOrgId={props.operateOrgId}
         designOrgId={props.designOrgId}
-        isOpen={isOpen}
+        isOpen={
+          isOpen && (props.defaultEditable || currentNode?.task?.records?.length > 0)
+        }
         current={currentNode}
         conditions={props.conditions}
         onClose={() => {

@@ -18,7 +18,6 @@ import { NodeType } from '../../processType';
 import userCtrl from '@/ts/controller/setting';
 import { ISpeciesItem } from '@/ts/core';
 import { XOperation } from '@/ts/base/schema';
-import ChooseOperation from '@/pages/App/chooseOperation';
 import ViewFormModal from '@/pages/Setting/components/viewFormModal';
 import ShareShowComp from '@/bizcomponents/IndentityManage/ShareShowComp';
 import SelectOperation from '@/pages/Setting/content/Standard/Flow/Comp/SelectOperation';

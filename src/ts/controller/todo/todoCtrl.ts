@@ -31,7 +31,7 @@ class TodoController extends Emitter {
   private _workTodo: XFlowTaskHistory[] = [];
   constructor() {
     super();
-    emitter.subscribePart(DomainTypes.User, () => {
+    emitter.subscribePart([DomainTypes.Company, DomainTypes.User], () => {
       setTimeout(async () => {
         let group: XTarget[] = [];
         let companys = await userCtrl.user.getJoinedCompanys(false);

@@ -26,7 +26,6 @@ import { loadMessages, locale } from 'devextreme/localization';
 import zhMessage from 'devextreme/localization/messages/zh.json';
 import { ISpeciesItem } from '@/ts/core';
 import CustomStore from 'devextreme/data/custom_store';
-import { getUuid } from '@/utils/tools';
 import { kernel } from '@/ts/base';
 interface IProps {
   current: ISpeciesItem;
@@ -42,42 +41,14 @@ interface IProps {
 //   return value !== undefined && value !== null && value !== '';
 // }
 export const store = new CustomStore({
-  key: getUuid(),
-  load(loadOptions) {
-    // let params = '?';
-    // [
-    //   'skip',
-    //   'take',
-    //   'requireTotalCount',
-    //   'requireGroupCount',
-    //   'sort',
-    //   'filter',
-    //   'totalSummary',
-    //   'group',
-    //   'groupSummary',
-    // ].forEach((i) => {
-    //   if (i in loadOptions && isNotEmpty(loadOptions[i])) {
-    //     params += `${i}=${JSON.stringify(loadOptions[i])}&`;
-    //   }
-    // });
-    // params = params.slice(0, -1);
-    let result = kernel.anystore.loadThing(loadOptions).then((data) => {
-      console.log(data);
-    });
-    return result;
-    // return fetch(
-    //   `https://js.devexpress.com/Demos/WidgetsGalleryDataService/api/orders${params}`,
-    // )
-    //   .then((response) => response.json())
-    //   .then((data) => ({
-    //     data: data.data,
-    //     totalCount: data.totalCount,
-    //     summary: data.summary,
-    //     groupCount: data.groupCount,
-    //   }))
-    //   .catch(() => {
-    //     throw new Error('Data Loading Error');
-    //   });
+  key: 'Id',
+  async load(loadOptions) {
+    const result = await kernel.anystore.loadThing(loadOptions, 'company');
+    console.log(result);
+    if (result.success) {
+      return result.data;
+    }
+    return [];
   },
 });
 /**
@@ -120,7 +91,9 @@ const Thing: React.FC<IProps> = (props: IProps) => {
     for (let instance of instances) {
       for (let attr of instance.attrs || []) {
         if (!attrArray.map((item) => item.id).includes(attr.id)) {
-          attrArray.push(attr);
+          if (attr.belongId) {
+            attrArray.push(attr);
+          }
         }
       }
     }
@@ -158,7 +131,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         return (
           <Column
             key={attr.id}
-            dataField={attr.id}
+            dataField={`S${attr.speciesId}.T${attr.id}`}
             caption={attr.name}
             dataType="datetime"
             width={250}
@@ -169,7 +142,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         return (
           <Column
             key={attr.id}
-            dataField={attr.id}
+            dataField={`S${attr.speciesId}.T${attr.id}`}
             caption={attr.name}
             dataType="date"
             width={180}
@@ -178,7 +151,11 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         );
       case '选择型':
         return (
-          <Column key={attr.id} dataField={attr.id} caption={attr.name} width={150}>
+          <Column
+            key={attr.id}
+            dataField={`S${attr.speciesId}.T${attr.id}`}
+            caption={attr.name}
+            width={150}>
             <Lookup
               dataSource={attr.dict?.dictItems || []}
               displayExpr="name"
@@ -190,7 +167,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         return (
           <Column
             key={attr.id}
-            dataField={attr.id}
+            dataField={`S${attr.speciesId}.T${attr.id}`}
             caption={attr.name}
             dataType="number"
             // format="current"
@@ -200,7 +177,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         return (
           <Column
             key={attr.id}
-            dataField={attr.id}
+            dataField={`S${attr.speciesId}.T${attr.id}`}
             caption={attr.name}
             dataType="string"
             width={180}
@@ -211,73 +188,94 @@ const Thing: React.FC<IProps> = (props: IProps) => {
 
   const getComponent = () => {
     return (
-      <>
-        {thingAttrs && thingAttrs.length > 0 && (
-          <DataGrid
-            dataSource={props.dataSource || store}
-            keyExpr="key"
-            columnMinWidth={80}
-            focusedRowEnabled={true}
-            allowColumnReordering={true}
-            allowColumnResizing={true}
-            columnAutoWidth={true}
-            showColumnLines={true}
-            showRowLines={true}
-            rowAlternationEnabled={true}
-            hoverStateEnabled={true}
-            onSelectionChanged={(e) => {
-              console.log(e.selectedRowsData);
-              props.onSelectionChanged?.call(this, e.selectedRowsData);
-            }}
-            height={props.height || 'calc(100vh - 175px)'}
-            width={'calc(100vw - 320px)'}
-            showBorders={true}>
-            <ColumnChooser
-              enabled={true}
-              title={'列选择器'}
-              height={'500px'}
-              allowSearch={true}
-              mode={'select'}
-              sortOrder={'asc'}
-            />
-            <ColumnFixing enabled={true} />
-            <Selection mode="multiple" selectAllMode="allPages" />
-            {props.editingTool || (
-              <Editing
-                allowAdding={false}
-                allowUpdating={false}
-                allowDeleting={false}
-                selectTextOnEditStart={true}
-                useIcons={true}
-              />
-            )}
-            <Pager
-              visible={true}
-              allowedPageSizes={allowedPageSizes}
-              showPageSizeSelector={true}
-              showNavigationButtons={true}
-              showInfo={true}
-              infoText={'共{2}条'}
-              displayMode={'full'}
-            />
-            <Sorting mode="multiple" />
-            <Paging defaultPageSize={10} />
-            <FilterRow visible={true} />
-            <Toolbar>
-              {props.toolBarItems}
-              <Item name="searchPanel" />
-              <Item name="columnChooserButton" locateInMenu="auto" location="after" />
-            </Toolbar>
-            <SearchPanel visible={true} highlightCaseSensitive={true} />
-            {thingAttrs.map((parentHeader: any) => (
-              <Column key={parentHeader.caption} caption={parentHeader.caption}>
-                {parentHeader.children.map((attr: XAttribute) => getColumn(attr))}
-              </Column>
-            ))}
-            <Column type="buttons">{props.buttonList}</Column>
-          </DataGrid>
+      <DataGrid
+        dataSource={props.dataSource || store}
+        columnMinWidth={80}
+        focusedRowEnabled={true}
+        allowColumnReordering={true}
+        allowColumnResizing={true}
+        columnAutoWidth={true}
+        showColumnLines={true}
+        showRowLines={true}
+        rowAlternationEnabled={true}
+        hoverStateEnabled={true}
+        onSelectionChanged={(e) => {
+          console.log(e.selectedRowsData);
+          props.onSelectionChanged?.call(this, e.selectedRowsData);
+        }}
+        height={props.height || 'calc(100vh - 175px)'}
+        width={'calc(100vw - 320px)'}
+        showBorders={true}>
+        <ColumnChooser
+          enabled={true}
+          title={'列选择器'}
+          height={'500px'}
+          allowSearch={true}
+          mode={'select'}
+          sortOrder={'asc'}
+        />
+        <ColumnFixing enabled={true} />
+        <Selection mode="multiple" selectAllMode="allPages" />
+        {props.editingTool || (
+          <Editing
+            allowAdding={false}
+            allowUpdating={false}
+            allowDeleting={false}
+            selectTextOnEditStart={true}
+            useIcons={true}
+          />
         )}
-      </>
+        <Pager
+          visible={true}
+          allowedPageSizes={allowedPageSizes}
+          showPageSizeSelector={true}
+          showNavigationButtons={true}
+          showInfo={true}
+          infoText={'共{2}条'}
+          displayMode={'full'}
+        />
+        <Sorting mode="multiple" />
+        <Paging defaultPageSize={10} />
+        <FilterRow visible={true} />
+        <Toolbar>
+          {props.toolBarItems}
+          <Item name="searchPanel" />
+          <Item name="columnChooserButton" locateInMenu="auto" location="after" />
+        </Toolbar>
+        <SearchPanel visible={true} highlightCaseSensitive={true} />
+
+        <Column
+          key="Id"
+          dataField="Id"
+          caption="唯一标识"
+          dataType="number"
+          // format="current"
+        />
+        <Column
+          key="Creater"
+          dataField="Creater"
+          caption="创建人"
+          dataType="number"
+          // format="current"
+        />
+        <Column
+          width={200}
+          key="CreateTime"
+          dataField="CreateTime"
+          caption="创建时间"
+          dataType="datetime"
+          format="yyyy年MM月dd日 HH:mm:ss"
+        />
+        <Column key="Status" dataField="Status" caption="状态" dataType="string">
+          <Lookup dataSource={['正常', '一销毁']} />
+        </Column>
+        {thingAttrs.map((parentHeader: any) => (
+          <Column key={parentHeader.caption} caption={parentHeader.caption}>
+            {parentHeader.children.map((attr: XAttribute) => getColumn(attr))}
+          </Column>
+        ))}
+        <Column type="buttons">{props.buttonList}</Column>
+      </DataGrid>
     );
   };
 

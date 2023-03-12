@@ -82,6 +82,7 @@ export enum WorkType {
   PublishApply = '上架申请',
   JoinStoreApply = '加入市场申请',
   WorkItem = 'work事',
+  WorkTodo = 'todo事',
 }
 
 export const companyTypes = [

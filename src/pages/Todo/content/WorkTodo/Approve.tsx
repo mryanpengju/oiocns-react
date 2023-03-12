@@ -2,25 +2,39 @@ import OioForm from '@/pages/Setting/components/render';
 import Design from '@/pages/Setting/content/Standard/Flow/Design';
 import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
-import { ProFormInstance, ProFormTextArea } from '@ant-design/pro-form';
+import { ProFormInstance } from '@ant-design/pro-form';
 import { Button, Card, Collapse, Input, message, Tabs, TabsProps, Timeline } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
 import cls from './index.module.less';
 import userCtrl from '@/ts/controller/setting';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import Thing from '@/pages/Store/content/Thing';
+import { SpeciesItem } from '@/ts/core/thing/species';
+import { MenuItemType } from 'typings/globelType';
+import todoCtrl from '@/ts/controller/todo/todoCtrl';
 
 const { Panel } = Collapse;
 
 interface IApproveProps {
+  selectMenu: MenuItemType;
   flowTask?: XFlowTaskHistory;
   setTabKey: (tabKey: number) => void;
+  reflashMenu: () => void;
 }
 
-const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
+const Approve: React.FC<IApproveProps> = ({
+  selectMenu,
+  flowTask,
+  setTabKey,
+  reflashMenu,
+}) => {
   const formRef = useRef<ProFormInstance<any>>();
   const [taskHistory, setTaskHistorys] = useState<XFlowTaskHistory[]>([]);
   const [comment, setComment] = useState<string>('');
+  const species: SpeciesItem = selectMenu.item;
+
+  console.log('flowTask===', flowTask);
 
   useEffect(() => {
     const loadNodes = async () => {
@@ -31,11 +45,15 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
         });
         const instances = res.data.result || [];
         if (instances.length > 0) {
-          console.log(instances[0].historyTasks);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
         }
       }
     };
+    // const loadThings = () => {
+    //   const thingIds = flowTask?.instance?.thingIds;
+    //   console.log('thingIds==', JSON.parse(thingIds));
+    // };
+    // loadThings();
     loadNodes();
   }, [flowTask]);
 
@@ -51,6 +69,8 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
     });
     if (res.success) {
       message.success('审批成功!');
+      await todoCtrl.refreshWorkTodo();
+      reflashMenu();
       setTabKey(0);
     } else {
       message.error('审批失败!');
@@ -79,7 +99,7 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
                     </div>
                     {!isCur && (
                       <Collapse ghost>
-                        {th.node?.bindOperations.map((operation, i) => {
+                        {(th.node?.bindOperations || []).map((operation, i) => {
                           const record =
                             th.records && th.records.length > 0
                               ? th.records[i]
@@ -130,6 +150,9 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
               );
             })}
           </Timeline>
+
+          <Thing current={species} height={'400px'} />
+
           <div className={cls['bootom_right']}>
             <Input.TextArea
               size="small"
@@ -138,7 +161,7 @@ const Approve: React.FC<IApproveProps> = ({ flowTask, setTabKey }) => {
               onChange={(e) => {
                 setComment(e.target.value);
               }}></Input.TextArea>
-            <div style={{ paddingTop: '8px', display: 'flex' }}>
+            <div style={{ paddingTop: '12px', display: 'flex' }}>
               <Button
                 type="primary"
                 style={{ marginRight: '8px', marginLeft: '12px' }}

@@ -233,7 +233,6 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
                 ? []
                 : [
                     <Item key={getUuid()}>
-                      {' '}
                       <Button
                         icon={<PlusOutlined></PlusOutlined>}
                         onClick={() => {

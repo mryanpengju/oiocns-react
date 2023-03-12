@@ -10,6 +10,7 @@ import todoCtrl from '@/ts/controller/todo/todoCtrl';
 
 // 卡片渲染
 interface IProps {
+  tabKey: number;
   selectMenu: MenuItemType;
   setTabKey: (tabKey: number) => void;
   setFlowTask: (flowTask: XFlowTaskHistory) => void;
@@ -18,22 +19,27 @@ interface IProps {
  * 事--待办
  * @returns
  */
-const TaskList: React.FC<IProps> = ({ selectMenu, setTabKey, setFlowTask }) => {
+const TaskList: React.FC<IProps> = ({ tabKey, selectMenu, setTabKey, setFlowTask }) => {
   const [key, forceUpdate] = useObjectUpdate(selectMenu);
   const species: SpeciesItem = selectMenu.item;
   const [todoTasks, setTodoTasks] = useState<XFlowTaskHistory[]>([]);
   const [csTasks, setCsTasks] = useState<XFlowTaskHistory[]>([]);
 
+  // 查询待办任务
+  const loadTasks = async () => {
+    const tasks = (await todoCtrl.getWorkTodoBySpeciesId(species?.id)) || [];
+    setTodoTasks(tasks.filter((t) => t.node?.nodeType == '审批'));
+    setCsTasks(tasks.filter((t) => t.node?.nodeType == '抄送'));
+    forceUpdate();
+  };
+
   useEffect(() => {
-    // 查询待办任务
-    const loadTasks = async () => {
-      const tasks = (await todoCtrl.getWorkTodoBySpeciesId(species?.id)) || [];
-      setTodoTasks(tasks.filter((t) => t.node?.nodeType == '审批'));
-      setCsTasks(tasks.filter((t) => t.node?.nodeType == '抄送'));
-      forceUpdate();
-    };
     loadTasks();
   }, [species?.id]);
+
+  useEffect(() => {
+    loadTasks();
+  }, [tabKey]);
 
   const items: TabsProps['items'] = [
     {

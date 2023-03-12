@@ -90,7 +90,7 @@ const TypeSetting = ({ selectMenu, reflashMenu }: IProps) => {
     case WorkType.WorkItem:
       return <Work selectMenu={selectMenu}></Work>;
     case WorkType.WorkTodo:
-      return <WorkTodo selectMenu={selectMenu}></WorkTodo>;
+      return <WorkTodo selectMenu={selectMenu} reflashMenu={reflashMenu}></WorkTodo>;
     default:
       return <></>;
   }

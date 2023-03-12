@@ -531,6 +531,8 @@ export type XFlowInstance = {
   belongId: string;
   // 填写的表单Id集合
   operationIds: string;
+  // 物的Id集合
+  thingIds: string;
 };
 
 //流程实例查询返回集合

@@ -3,7 +3,17 @@ import Design from '@/pages/Setting/content/Standard/Flow/Design';
 import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
 import { ProFormInstance } from '@ant-design/pro-form';
-import { Button, Card, Collapse, Input, message, Tabs, TabsProps, Timeline } from 'antd';
+import {
+  Button,
+  Card,
+  Collapse,
+  Input,
+  message,
+  Table,
+  Tabs,
+  TabsProps,
+  Timeline,
+} from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
 import cls from './index.module.less';
@@ -34,7 +44,7 @@ const Approve: React.FC<IApproveProps> = ({
   const [comment, setComment] = useState<string>('');
   const species: SpeciesItem = selectMenu.item;
 
-  console.log('flowTask===', flowTask);
+  console.log('flowTask?.instance===', flowTask?.instance);
 
   useEffect(() => {
     const loadNodes = async () => {
@@ -150,8 +160,37 @@ const Approve: React.FC<IApproveProps> = ({
               );
             })}
           </Timeline>
-
-          <Thing current={species} height={'400px'} />
+          {/* <Thing current={species} height={'400px'} /> */}
+          <Table
+            dataSource={[]}
+            columns={[
+              {
+                title: '唯一标识',
+                dataIndex: '416237430006484992',
+                key: '416237430006484992',
+              },
+              {
+                title: '状态',
+                dataIndex: '422406362727845888',
+                key: '422406362727845888',
+              },
+              {
+                title: '创建人',
+                dataIndex: '422398957721882624',
+                key: '422398957721882624',
+              },
+              {
+                title: '创建时间',
+                dataIndex: '422399137753993216',
+                key: '422399137753993216',
+              },
+              {
+                title: '修改时间',
+                dataIndex: '422436687172472832',
+                key: '422436687172472832',
+              },
+            ]}
+          />
 
           <div className={cls['bootom_right']}>
             <Input.TextArea
@@ -196,6 +235,7 @@ const Approve: React.FC<IApproveProps> = ({
           setInstance={() => {}}
           operateOrgId={undefined}
           setOperateOrgId={() => {}}
+          defaultEditable={false}
           onBack={() => {}}
           setModalType={() => {}}
         />

@@ -241,7 +241,7 @@ const DefineInfo = (props: Iprops) => {
             filterTreeNode: true,
             allowClear: true,
             showCheckedStrategy: SHOW_PARENT,
-            treeCheckStrictly: false,
+            treeCheckStrictly: true,
           }}
         />
         {/* <ProFormTextArea

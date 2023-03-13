@@ -11,7 +11,6 @@ interface IThingCardProps {
  * 仓库-物-卡片
  */
 const ThingCard: React.FC<IThingCardProps> = ({ thingId }) => {
-  const [thing, setThing] = useState();
   useEffect(() => {
     const findThing = async () => {
       const res = await kernel.anystore.loadThing<any>(
@@ -27,11 +26,22 @@ const ThingCard: React.FC<IThingCardProps> = ({ thingId }) => {
         },
         userCtrl.isCompanySpace ? 'company' : 'user',
       );
+      let thing: any;
       const data = res.data?.data;
       if (data && data.length > 0) {
-        setThing(data[0]);
+        thing = data[0];
       }
-      console.log('data[0]', data[0]);
+      if (thing) {
+        // kernel.querySpeciesAttrs()
+        for (const key in thing) {
+          if (Object.prototype.hasOwnProperty.call(thing, key)) {
+            const element = thing[key];
+            if (key.startsWith('S')) {
+              console.log(key);
+            }
+          }
+        }
+      }
     };
     findThing();
   }, [thingId]);

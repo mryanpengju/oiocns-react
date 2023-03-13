@@ -47,24 +47,6 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
   const [gridInstance, setGridInstance] = useState<any>();
   const formRef = useRef<ProFormInstance<any>>();
 
-  // const getSpecies = (
-  //   parent: INullSpeciesItem,
-  //   idArray: string[],
-  //   choosed: ISpeciesItem[],
-  // ) => {
-  //   if (parent) {
-  //     if (idArray.includes(parent.id)) {
-  //       storeCtrl.addCheckedSpeciesList([parent], userCtrl.space.id);
-  //       choosed.push(parent);
-  //       setChooseThingModal(choosed);
-  //     } else if (parent.children && parent.children.length > 0) {
-  //       for (let child of parent.children) {
-  //         getSpecies(child, idArray, choosed);
-  //       }
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
     setSuccessPage(false);
     setRows([]);
@@ -188,12 +170,11 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
                   SpaceId: userCtrl.space.id,
                   content: '',
                   contentType: 'Text',
-                  data: JSON.stringify(values),
+                  data: JSON.stringify({ ...data, ...values }),
                   title: currentDefine.name,
                   hook: '',
                   thingIds: rows.map((row: any) => row['Id']),
                 });
-                console.log('instance', instance);
                 if (instance) {
                   setOperations([]);
                   setSuccessPage(true);
@@ -204,8 +185,7 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
                 }, 1000);
               }}
               onValuesChange={(changedValues, values) => {
-                data[operation.id] = values;
-                setData(data);
+                setData({ ...data, ...values });
               }}
             />
           ))}
@@ -218,9 +198,6 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
                   return { item: e };
                 })}
                 selectable={false}
-                // onSelectionChanged={(rows: any) => {}}
-                // height={600}
-                // height={'calc(80vh - 175px)'}
                 editingTool={
                   <Editing
                     allowAdding={false}

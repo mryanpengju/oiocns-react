@@ -141,8 +141,9 @@ const Approve: React.FC<IApproveProps> = ({
                                 if (record?.data) {
                                   formValue = JSON.parse(record?.data);
                                 }
+                                console.log('formValue=====', formValue);
                                 return (
-                                  <Panel header={operation.name} key={th.id}>
+                                  <Panel header={operation.name} key={operation.id}>
                                     <OioForm
                                       key={operation.id}
                                       operation={operation}

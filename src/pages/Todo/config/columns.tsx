@@ -431,8 +431,12 @@ export const WorkReocrdColumns: ProColumns[] = [
   },
   {
     title: '审批时间',
-    dataIndex: ['historyTask', 'createTime'],
+    dataIndex: ['createTime'],
     valueType: 'dateTime',
+  },
+  {
+    title: '审批意见',
+    dataIndex: 'comment',
   },
   {
     title: '状态',

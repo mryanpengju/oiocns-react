@@ -32,12 +32,10 @@ const Approve: React.FC<IApproveProps> = ({
 }) => {
   const formRef = useRef<ProFormInstance<any>>();
   const [taskHistory, setTaskHistorys] = useState<XFlowTaskHistory[]>([]);
-  const [comment, setComment] = useState<string>('');
+  let comment = '';
   const [instance, setInstance] = useState<any>();
   const [speciesItem, setSpeciesItem] = useState<any>();
-  const [rootSpecies, setRootSpecies] = useState<any>();
 
-  console.log('flowTask?.instance===', flowTask?.instance);
   const lookForAll = (data: any[], arr: any[]) => {
     for (let item of data) {
       arr.push(item);
@@ -57,7 +55,7 @@ const Approve: React.FC<IApproveProps> = ({
         const instances = res.data.result || [];
         if (instances.length > 0) {
           const species_ = await thingCtrl.loadSpeciesTree();
-          setRootSpecies(species_);
+
           let allNodes: ISpeciesItem[] = lookForAll([species_], []);
           setInstance(instances[0]);
           let speciesIds = instances[0].define?.sourceIds?.split(',');
@@ -79,12 +77,13 @@ const Approve: React.FC<IApproveProps> = ({
   const approvalTask = async (status: number) => {
     const result = await formRef.current?.validateFields();
     console.log(result);
-    const res = await kernel.approvalTask({
+    const params = {
       id: flowTask?.id as string,
       status,
       comment,
       data: JSON.stringify(formRef.current?.getFieldsValue()),
-    });
+    };
+    const res = await kernel.approvalTask(params);
     if (res.success) {
       message.success('审批成功!');
       await todoCtrl.refreshWorkTodo();
@@ -110,7 +109,7 @@ const Approve: React.FC<IApproveProps> = ({
                 <Timeline.Item key={th.id} color={color}>
                   <Card>
                     <div style={{ display: 'flex' }}>
-                      <div style={{ paddingRight: '18px' }}>{th.createTime}</div>
+                      <div style={{ paddingRight: '24px' }}>{th.createTime}</div>
                       <div>
                         {title}：{userCtrl.findTeamInfoById(th.createUser).name}
                       </div>
@@ -183,9 +182,8 @@ const Approve: React.FC<IApproveProps> = ({
               <div style={{ width: '84%' }}>
                 <Input.TextArea
                   placeholder="请填写审批意见"
-                  value={comment}
                   onChange={(e) => {
-                    setComment(e.target.value);
+                    comment = e.target.value;
                   }}></Input.TextArea>
               </div>
               <div style={{ width: '16%', display: 'flex', marginTop: '18px' }}>

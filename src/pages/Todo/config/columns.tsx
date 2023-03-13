@@ -416,6 +416,10 @@ export const WorkReocrdColumns: ProColumns[] = [
     width: 60,
   },
   {
+    title: '事项',
+    dataIndex: ['historyTask', 'instance', 'title'],
+  },
+  {
     title: '审批人',
     dataIndex: 'createUser',
     render: (_, record) => {

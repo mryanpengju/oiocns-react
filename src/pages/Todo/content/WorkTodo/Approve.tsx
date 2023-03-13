@@ -7,10 +7,11 @@ import thingCtrl from '@/ts/controller/thing';
 import {
   Button,
   Card,
+  Col,
   Collapse,
   Input,
   message,
-  Table,
+  Row,
   Tabs,
   TabsProps,
   Timeline,
@@ -182,34 +183,40 @@ const Approve: React.FC<IApproveProps> = ({
             selectable={false}
           />
 
-          <div className={cls['bootom_right']}>
-            <Input.TextArea
-              size="small"
-              placeholder="请填写审批意见"
-              value={comment}
-              onChange={(e) => {
-                setComment(e.target.value);
-              }}></Input.TextArea>
-            <div style={{ paddingTop: '12px', display: 'flex' }}>
-              <Button
-                type="primary"
-                style={{ marginRight: '8px', marginLeft: '12px' }}
-                icon={<CloseOutlined />}
-                onClick={() => {
-                  approvalTask(200);
-                }}>
-                驳回
-              </Button>
-              <Button
-                type="primary"
-                icon={<CheckOutlined />}
-                onClick={() => {
-                  approvalTask(100);
-                }}>
-                同意
-              </Button>
-            </div>
-          </div>
+          <Card className={cls['bootom_right']}>
+            <Row>
+              <Col span={20}>
+                <Input.TextArea
+                  size="small"
+                  placeholder="请填写审批意见"
+                  value={comment}
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                  }}></Input.TextArea>
+              </Col>
+              <Col span={4}>
+                <div style={{ paddingTop: '12px', display: 'flex' }}>
+                  <Button
+                    type="primary"
+                    style={{ marginRight: '8px', marginLeft: '12px' }}
+                    icon={<CloseOutlined />}
+                    onClick={() => {
+                      approvalTask(200);
+                    }}>
+                    驳回
+                  </Button>
+                  <Button
+                    type="primary"
+                    icon={<CheckOutlined />}
+                    onClick={() => {
+                      approvalTask(100);
+                    }}>
+                    同意
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </Card>
         </>
       ),
     },

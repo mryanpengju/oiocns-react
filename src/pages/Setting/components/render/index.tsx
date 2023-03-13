@@ -5,7 +5,7 @@ import { ProForm } from '@ant-design/pro-components';
 import { Col, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OioFormItem from './FormItems';
-import SpeciesTabs from './SpeciesTabs';
+// import SpeciesTabs from './SpeciesTabs';
 
 type OioFormProps = {
   operation: XOperation;
@@ -100,13 +100,13 @@ const OioForm: React.FC<OioFormProps> = ({
               <OioFormItem item={item} />
             </Col>
           ))}
-        {items.filter((i: XOperationItem) => !i.attrId).length > 0 && (
+        {/* {items.filter((i: XOperationItem) => !i.attrId).length > 0 && (
           <Col span={24}>
             <SpeciesTabs
               operationItems={items.filter((i: XOperationItem) => !i.attrId)}
             />
           </Col>
-        )}
+        )} */}
       </Row>
     </ProForm>
   );

@@ -56,12 +56,19 @@ const OperationModal = (props: Iprops) => {
           ...form.getFieldsValue(),
         };
         if (title.includes('新增')) {
-          handleOk(await current.createOperation(value));
+          const result = await current.createOperation(value);
+          form.resetFields();
+          handleOk(result);
         } else {
-          handleOk(await current.updateOperation(value));
+          const result = await current.updateOperation(value);
+          form.resetFields();
+          handleOk(result);
         }
       }}
-      onCancel={handleCancel}
+      onCancel={() => {
+        form.resetFields();
+        handleCancel();
+      }}
       destroyOnClose={true}
       cancelText={'关闭'}
       width={640}>

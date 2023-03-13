@@ -32,11 +32,11 @@ const ThingCard: React.FC<IThingCardProps> = ({ thingId }) => {
         thing = data[0];
       }
       if (thing) {
-        // kernel.querySpeciesAttrs()
         for (const key in thing) {
           if (Object.prototype.hasOwnProperty.call(thing, key)) {
             const element = thing[key];
             if (key.startsWith('S')) {
+              // const res = await kernel.querySpeciesAttrs({id: })
               console.log(key);
             }
           }

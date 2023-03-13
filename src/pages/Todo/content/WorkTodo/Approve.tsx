@@ -1,20 +1,20 @@
 import OioForm from '@/pages/Setting/components/render';
 import Design from '@/pages/Setting/content/Standard/Flow/Design';
+import Thing from '@/pages/Store/content/Thing/Thing';
 import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
-import { ProFormInstance } from '@ant-design/pro-form';
+import userCtrl from '@/ts/controller/setting';
+import storeCtrl from '@/ts/controller/store';
 import thingCtrl from '@/ts/controller/thing';
+import todoCtrl from '@/ts/controller/todo/todoCtrl';
+import { ISpeciesItem } from '@/ts/core';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { ProFormInstance } from '@ant-design/pro-form';
 import { Button, Card, Collapse, Input, message, Tabs, TabsProps, Timeline } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
-import cls from './index.module.less';
-import userCtrl from '@/ts/controller/setting';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import Thing from '@/pages/Store/content/Thing/Thing';
 import { MenuItemType } from 'typings/globelType';
-import todoCtrl from '@/ts/controller/todo/todoCtrl';
-import { ISpeciesItem } from '@/ts/core';
-import storeCtrl from '@/ts/controller/store';
+import cls from './index.module.less';
 const { Panel } = Collapse;
 
 interface IApproveProps {
@@ -36,7 +36,7 @@ const Approve: React.FC<IApproveProps> = ({
   const [instance, setInstance] = useState<any>();
   const [speciesItem, setSpeciesItem] = useState<any>();
   const [flowSpeciesItem, setFlowSpeciesItem] = useState<any>();
-  // const [rootSpecies, setRootSpecies] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const lookForAll = (data: any[], arr: any[]) => {
     for (let item of data) {
@@ -71,6 +71,7 @@ const Approve: React.FC<IApproveProps> = ({
           );
           setSpeciesItem(speciesItem);
           setFlowSpeciesItem(flowSpeciesItem);
+          console.log('instances[0]', instances[0]);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
         }
       }
@@ -88,6 +89,7 @@ const Approve: React.FC<IApproveProps> = ({
       comment,
       data: JSON.stringify(formRef.current?.getFieldsValue()),
     };
+    setLoading(true);
     const res = await kernel.approvalTask(params);
     if (res.success) {
       message.success('审批成功!');
@@ -97,6 +99,7 @@ const Approve: React.FC<IApproveProps> = ({
     } else {
       message.error('审批失败!');
     }
+    setLoading(false);
   };
 
   const items: TabsProps['items'] = [
@@ -110,70 +113,75 @@ const Approve: React.FC<IApproveProps> = ({
               const isCur = th.status != 100;
               const color = isCur ? 'red' : 'green';
               const title = index == 0 ? '发起人' : '审批人';
+              const records = th.records || [];
               return (
-                <Timeline.Item key={th.id} color={color}>
-                  <Card>
-                    <div style={{ display: 'flex' }}>
-                      <div style={{ paddingRight: '24px' }}>
-                        {th.createTime.substring(0, th.createTime.length - 4)}
-                      </div>
-                      {!isCur && (
-                        <div>
-                          {title}：{userCtrl.findTeamInfoById(th.createUser).name}
+                <div key={th.id}>
+                  {!isCur &&
+                    records.map((record) => {
+                      return (
+                        <Timeline.Item key={record.id} color={color}>
+                          <Card>
+                            <div style={{ display: 'flex' }}>
+                              <div style={{ paddingRight: '24px' }}>
+                                {th.node?.nodeType}
+                              </div>
+                              <div style={{ paddingRight: '24px' }}>
+                                {th.createTime.substring(0, th.createTime.length - 4)}
+                              </div>
+                              <div style={{ paddingRight: '24px' }}>
+                                {title}：{userCtrl.findTeamInfoById(th.createUser).name}
+                              </div>
+                              <div>
+                                {record.comment && <div>审批意见：{record.comment}</div>}
+                              </div>
+                            </div>
+                            <Collapse ghost>
+                              {(th.node?.bindOperations || []).map((operation) => {
+                                let formValue = {};
+                                if (record?.data) {
+                                  formValue = JSON.parse(record?.data);
+                                }
+                                return (
+                                  <Panel header={operation.name} key={th.id}>
+                                    <OioForm
+                                      key={operation.id}
+                                      operation={operation}
+                                      formRef={undefined}
+                                      fieldsValue={formValue}
+                                      disabled={th.status == 100}></OioForm>
+                                  </Panel>
+                                );
+                              })}
+                            </Collapse>
+                          </Card>
+                        </Timeline.Item>
+                      );
+                    })}
+                  {isCur && (
+                    <Timeline.Item color={color}>
+                      <Card>
+                        <div style={{ display: 'flex' }}>
+                          <div style={{ paddingRight: '24px' }}>{th.node?.nodeType}</div>
+                          <div style={{ paddingRight: '24px' }}>
+                            {th.createTime.substring(0, th.createTime.length - 4)}
+                          </div>
+                          <div style={{ color: 'red' }}>待审批</div>
                         </div>
-                      )}
-                      {isCur && <div style={{ color: 'red' }}>待审批</div>}
-                    </div>
-                    {!isCur && (
-                      <Collapse ghost>
-                        {(th.node?.bindOperations || []).map((operation, i) => {
-                          const record =
-                            th.records && th.records.length > 0
-                              ? th.records[i]
-                              : undefined;
-                          let formValue = {};
-                          if (record?.data) {
-                            formValue = JSON.parse(record?.data);
-                          }
-                          return (
-                            <Panel header={operation.name} key={th.id}>
-                              <OioForm
-                                key={operation.id}
-                                operation={operation}
-                                formRef={undefined}
-                                fieldsValue={formValue}
-                                disabled={th.status == 100}></OioForm>
-                            </Panel>
-                          );
-                        })}
-                      </Collapse>
-                    )}
-                    {isCur && (
-                      <>
-                        {th.node?.bindOperations?.map((operation, i) => {
-                          const record =
-                            th.records && th.records.length > 0
-                              ? th.records[i]
-                              : undefined;
-                          let formValue = {};
-                          if (record?.data) {
-                            formValue = JSON.parse(record?.data);
-                          }
+                        {th.node?.bindOperations?.map((operation) => {
                           return (
                             <Card title={operation.name} key={th.id} bordered={false}>
                               <OioForm
                                 key={operation.id}
                                 operation={operation}
-                                fieldsValue={formValue}
                                 formRef={formRef}
                                 disabled={th.status == 100}></OioForm>
                             </Card>
                           );
                         })}
-                      </>
-                    )}
-                  </Card>
-                </Timeline.Item>
+                      </Card>
+                    </Timeline.Item>
+                  )}
+                </div>
               );
             })}
           </Timeline>
@@ -201,6 +209,7 @@ const Approve: React.FC<IApproveProps> = ({
                   type="primary"
                   style={{ marginRight: '8px', marginLeft: '12px' }}
                   icon={<CloseOutlined />}
+                  disabled={loading}
                   onClick={() => {
                     approvalTask(200);
                   }}>
@@ -209,6 +218,7 @@ const Approve: React.FC<IApproveProps> = ({
                 <Button
                   type="primary"
                   icon={<CheckOutlined />}
+                  disabled={loading}
                   onClick={() => {
                     approvalTask(100);
                   }}>

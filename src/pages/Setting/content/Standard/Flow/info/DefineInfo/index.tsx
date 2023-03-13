@@ -6,7 +6,6 @@ import { ProForm, ProFormText, ProFormTreeSelect } from '@ant-design/pro-compone
 import { message, Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React from 'react';
-import { TreeSelect } from 'antd';
 import { kernel } from '@/ts/base';
 import { getUuid } from '@/utils/tools';
 
@@ -35,13 +34,11 @@ export const toTreeData = (species: any[]): any[] => {
     return {
       label: t.name,
       value: t.id,
-      // {value: string, label: ReactNode, halfChecked(treeCheckStrictly 时有效): string[] }
       children: toTreeData(t.children),
     };
   });
 };
 
-const { SHOW_PARENT } = TreeSelect;
 /*
   业务标准编辑模态框
 */
@@ -105,6 +102,7 @@ const DefineInfo = (props: Iprops) => {
           ...data,
           ...form.getFieldsValue(),
         };
+        value.sourceIds = value.sourceIds.map((i: any) => i.value);
         if (
           value.name &&
           value.belongId &&
@@ -117,7 +115,6 @@ const DefineInfo = (props: Iprops) => {
           return;
         }
         if (title.includes('新增')) {
-          // handleOk(await current.createOperation(value));
           let resource_: FlowNode = {
             id: '0',
             code: getUuid(),
@@ -242,12 +239,6 @@ const DefineInfo = (props: Iprops) => {
             allowClear: true,
           }}
         />
-        {/* <ProFormTextArea
-          width="md"
-          name="remark"
-          label="备注"
-          placeholder="请输入备注信息"
-          colProps={{ span: 24 }}></ProFormTextArea> */}
       </ProForm>
     </Modal>
   );

@@ -132,11 +132,11 @@ const AttributeModal = (props: Iprops) => {
             },
             {
               value: '分类',
-              label: '分类',
+              label: '分类型',
             },
             {
               value: '附件',
-              label: '附件',
+              label: '附件型',
             },
             {
               value: '日期型',
@@ -147,12 +147,8 @@ const AttributeModal = (props: Iprops) => {
               label: '时间型',
             },
             {
-              value: '人员',
-              label: '人员',
-            },
-            {
-              value: '部门',
-              label: '部门',
+              value: '组织/人员',
+              label: '组织型',
             },
           ],
           onSelect: (select: string) => {

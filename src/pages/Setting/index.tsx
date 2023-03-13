@@ -132,7 +132,7 @@ const TeamSetting: React.FC = () => {
         typeNames={operateKeys.slice(1)}
       />
       {/** 分类模态框 */}
-      {selectMenu.itemType !== '职权' && (
+      {selectMenu.itemType !== '权限' && (
         <SpeciesModal
           title={operateKeys[0]}
           open={['新增', '修改'].includes(operateKeys[0])}
@@ -149,8 +149,8 @@ const TeamSetting: React.FC = () => {
           current={species}
         />
       )}
-      {/** 职权模态框 */}
-      {selectMenu.itemType == '职权' && (
+      {/** 权限模态框 */}
+      {selectMenu.itemType == '权限' && (
         <AuthorityModal
           title={operateKeys[0] + selectMenu.itemType}
           open={['新增', '修改'].includes(operateKeys[0])}

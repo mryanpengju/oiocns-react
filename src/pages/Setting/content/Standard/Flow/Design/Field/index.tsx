@@ -79,10 +79,10 @@ const FieldInfo: React.FC<IProps> = ({
       },
 
       // {
-      //   title: '选择管理职权',
+      //   title: '选择管理权限',
       //   dataIndex: 'authId',
       //   valueType: 'treeSelect',
-      //   // formItemProps: { rules: [{ required: true, message: '管理职权为必填项' }] },
+      //   // formItemProps: { rules: [{ required: true, message: '管理权限为必填项' }] },
       //   request: async () => {
       //     const data = await userCtrl.company.loadAuthorityTree(false);
       //     return data ? [data] : [];

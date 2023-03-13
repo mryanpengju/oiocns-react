@@ -420,8 +420,8 @@ export default class BaseTarget implements ITarget {
   }
 
   /**
-   * 判断是否拥有该职权对应身份
-   * @param codes 职权编号集合
+   * 判断是否拥有该权限对应角色
+   * @param codes 权限编号集合
    */
   async judgeHasIdentity(codes: string[]): Promise<boolean> {
     if (this.ownIdentitys.length == 0) {
@@ -444,7 +444,7 @@ export default class BaseTarget implements ITarget {
   }
 
   /**
-   * 查询组织职权树
+   * 查询组织权限树
    * @param id
    * @returns
    */

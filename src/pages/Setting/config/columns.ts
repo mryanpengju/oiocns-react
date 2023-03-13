@@ -160,11 +160,11 @@ export const IdentityColumn: ProColumns<schema.XIdentity>[] = [
     dataIndex: 'id',
   },
   {
-    title: '身份名称',
+    title: '角色名称',
     dataIndex: 'name',
   },
   {
-    title: '职权',
+    title: '权限',
     dataIndex: 'name',
   },
   {

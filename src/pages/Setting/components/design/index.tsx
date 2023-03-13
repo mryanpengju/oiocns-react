@@ -137,7 +137,7 @@ export const regexpOpts: SelectProps['options'] = [
     value: '[1-9]\\d{5}',
   },
   {
-    label: '身份证号(15位或18位)',
+    label: '角色证号(15位或18位)',
     value: '\\d{15}(\\d\\d[0-9xX])?',
   },
   { label: '网址', value: '[a-zA-z]+://[^s]*' },

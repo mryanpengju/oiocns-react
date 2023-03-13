@@ -28,6 +28,7 @@ import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 interface IProps {
   current: ISpeciesItem;
   height?: any;
+  width?: any;
   editingTool?: any;
   checkedList?: any[];
   buttonList?: any[];
@@ -254,7 +255,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         }}
         columnResizingMode={'widget'}
         height={props.height || 'calc(100vh - 175px)'}
-        width={'calc(100vw - 320px)'}
+        width="100%"
         showBorders={true}>
         <ColumnChooser
           enabled={true}

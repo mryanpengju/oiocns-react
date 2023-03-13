@@ -24,7 +24,7 @@ export default class Station extends BaseTarget implements IStation {
   public async searchPerson(code: string): Promise<schema.XTargetArray> {
     return await this.searchTargetByName(code, [TargetType.Person]);
   }
-  /** 加载岗位下的身份 */
+  /** 加载岗位下的角色 */
   public async loadIdentitys(reload: boolean = false): Promise<XIdentity[]> {
     if (!reload && this._identitys) {
       return this._identitys;

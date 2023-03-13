@@ -5,7 +5,7 @@ import { DefaultOptionType } from 'antd/lib/select';
 import React, { useEffect, useState } from 'react';
 
 /**
- * 职权组件
+ * 权限组件
  */
 const ProFormAuth = (props: any) => {
   const [treeData, setTreeData] = useState<any[]>([]);

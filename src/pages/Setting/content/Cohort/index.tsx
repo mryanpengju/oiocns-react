@@ -52,7 +52,7 @@ const CohortSetting: React.FC<IProps> = ({ current }: IProps) => {
     return (
       <>
         <Button type="link" onClick={() => setActiveModal('indentity')}>
-          身份设置
+          角色设置
         </Button>
         {isRelationAdmin && (
           <Button type="link" onClick={() => setActiveModal('addOne')}>

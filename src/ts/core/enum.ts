@@ -30,7 +30,7 @@ export enum MessageType {
   Readed = '已读',
 }
 
-/** 职权类型 */
+/** 权限类型 */
 export enum AuthorityType {
   SuperAdmin = 'super-admin',
   RelationAdmin = 'relation-admin',

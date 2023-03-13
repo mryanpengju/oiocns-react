@@ -9,7 +9,7 @@ interface IProps {
   current: ITarget;
 }
 /**
- * 职权设定
+ * 权限设定
  * @returns
  */
 const AuthorityStandrad: React.FC<IProps> = ({ current }: IProps) => {
@@ -24,12 +24,12 @@ const AuthorityStandrad: React.FC<IProps> = ({ current }: IProps) => {
     {
       label: `基本信息`,
       key: '基本信息',
-      children: <Description current={current} title={'职权'} extra={undefined} />,
+      children: <Description current={current} title={'权限'} extra={undefined} />,
     },
     // {
-    //   label: `身份管理`,
-    //   key: '身份管理',
-    //   children: <div>身份</div>,
+    //   label: `角色管理`,
+    //   key: '角色管理',
+    //   children: <div>角色</div>,
     // },
   ];
 

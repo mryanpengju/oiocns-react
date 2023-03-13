@@ -60,7 +60,7 @@ export const buildSpeciesTree = (species: ISpeciesItem) => {
   return result;
 };
 
-/** 编译职权树 */
+/** 编译权限树 */
 export const buildAuthorityTree = (authoritys: IAuthority) => {
   const result: MenuItemType = {
     key: authoritys.id,
@@ -135,9 +135,9 @@ export const loadStandardSetting = async () => {
   if (authors) {
     result.push({
       children: [buildAuthorityTree(authors)],
-      key: '职权标准',
-      label: '职权标准',
-      itemType: '职权标准',
+      key: '权限标准',
+      label: '权限标准',
+      itemType: '权限标准',
       item: userCtrl.space,
       icon: <im.ImNewspaper />,
     });
@@ -273,7 +273,7 @@ export const loadAuthorityMenus = (item: IAuthority) => {
     {
       key: '新增',
       icon: <im.ImPlus />,
-      label: '新增职权',
+      label: '新增权限',
     },
   ];
   if (item.belongId) {
@@ -281,12 +281,12 @@ export const loadAuthorityMenus = (item: IAuthority) => {
       {
         key: '修改',
         icon: <im.ImCog />,
-        label: '编辑职权',
+        label: '编辑权限',
       },
       {
         key: '移除',
         icon: <im.ImBin />,
-        label: '删除职权',
+        label: '删除权限',
       },
     );
   }

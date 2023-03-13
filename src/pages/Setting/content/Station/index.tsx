@@ -28,8 +28,8 @@ const Station: React.FC<IProps> = (props) => {
   const [isSuperAdmin, SetIsSuperAdmin] = useState(false);
   const [isOpenPerson, setIsOpenPerson] = useState<boolean>(false);
   const [selectPersons, setSelectPersons] = useState<schema.XTarget[]>(); //选中的待指派人员列表
-  const [selectIdentitys, setSelectIdentitys] = useState<XIdentity[]>(); //待添加的身份数据集
-  const [isOpenSelectIdentityModal, setIsOpenIdentityModal] = useState<boolean>(false); //身份选择模态框
+  const [selectIdentitys, setSelectIdentitys] = useState<XIdentity[]>(); //待添加的角色数据集
+  const [isOpenSelectIdentityModal, setIsOpenIdentityModal] = useState<boolean>(false); //角色选择模态框
 
   useEffect(() => {
     setTimeout(async () => {
@@ -56,7 +56,7 @@ const Station: React.FC<IProps> = (props) => {
     ];
   };
 
-  // 身份表格操作内容渲染函数
+  // 角色表格操作内容渲染函数
   const identityOperation = (item: XIdentity): any[] => {
     return [
       isSuperAdmin ? (
@@ -65,7 +65,7 @@ const Station: React.FC<IProps> = (props) => {
           label: <span style={{ color: 'red' }}>移除</span>,
           onClick: async () => {
             Modal.confirm({
-              content: '是否移除该身份？',
+              content: '是否移除该角色？',
               okText: '确认',
               cancelText: '取消',
               onOk: async () => {
@@ -109,7 +109,7 @@ const Station: React.FC<IProps> = (props) => {
                 onClick={() => {
                   setIsOpenIdentityModal(true);
                 }}>
-                添加身份
+                添加角色
               </Button>
             )}
           </div>
@@ -220,7 +220,7 @@ const Station: React.FC<IProps> = (props) => {
       {header}
       {personCount}
       <Modal
-        title="添加身份"
+        title="添加角色"
         open={isOpenSelectIdentityModal}
         destroyOnClose={true}
         onOk={async () => {

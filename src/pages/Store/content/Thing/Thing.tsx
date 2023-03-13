@@ -37,6 +37,8 @@ interface IProps {
   toolBarItems?: any[];
   dataSource?: any;
   byIds?: string[];
+  deferred?: boolean;
+  setGridInstance?: Function;
   onSelectionChanged?: Function;
   setTabKey?: (tabKey: number) => void;
   setThingId?: (thingId: string) => void;
@@ -46,6 +48,7 @@ interface IProps {
  * 仓库-物
  */
 const Thing: React.FC<IProps> = (props: IProps) => {
+  const { selectable = true, deferred = false } = props;
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
   const getSortedList = (
@@ -193,7 +196,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
               if (data) {
                 return (
                   <>
-                    <TeamIcon share={share} />
+                    <TeamIcon share={share} size={15} />
                     <span style={{ marginLeft: 10 }}>{share.name}</span>
                   </>
                 );
@@ -254,6 +257,9 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             },
           })
         }
+        onInitialized={(e) => {
+          props.setGridInstance?.call(this, e.component);
+        }}
         columnMinWidth={80}
         focusedRowEnabled={true}
         allowColumnReordering={true}
@@ -279,11 +285,12 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           sortOrder={'asc'}
         />
         <ColumnFixing enabled={true} />
-        {props.selectable && (
+        {selectable && (
           <Selection
             mode="multiple"
             selectAllMode="allPages"
             showCheckBoxesMode="always"
+            deferred={deferred}
           />
         )}
         {props.editingTool || (

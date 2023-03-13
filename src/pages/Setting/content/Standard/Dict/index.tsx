@@ -122,6 +122,7 @@ const DictInfo: React.FC<IProps> = ({
     <div style={{ display: 'flex', height: '75vh' }}>
       <div style={{ width: '25vw', height: '75vh' }}>
         <CustomTreeComp
+          key={key}
           title={
             <div style={{ display: 'flex' }}>
               {/* {'分类字典'} */}

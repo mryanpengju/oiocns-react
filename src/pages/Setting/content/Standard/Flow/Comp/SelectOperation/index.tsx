@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Input, TreeProps } from 'antd';
+import { Input, Radio, RadioChangeEvent, Tree, TreeProps } from 'antd';
 import React, { useState, useEffect, Key } from 'react';
 import ShareShowComp from '@/bizcomponents/IndentityManage/ShareShowComp';
 import cls from './index.module.less';
@@ -7,6 +7,7 @@ import CustomTree from '@/components/CustomTreeComp';
 import thingCtrl from '@/ts/controller/thing';
 import { kernel } from '@/ts/base';
 import userCtrl from '@/ts/controller/setting';
+let originalSelected: any[] = []; //存储当前选择 以获分配数据
 interface IProps {
   showData: any[];
   setShowData: Function;
@@ -49,7 +50,28 @@ const SelectOperation: React.FC<IProps> = ({ showData, setShowData }) => {
     if (Array.isArray(checkedKeys)) {
       setCenterCheckedKeys(checkedKeys);
     }
-    setShowData(info.checkedNodes.map((node: any) => node.item));
+    const isOriginal = originalSelected.includes(info.node.id);
+    let newArr = showData.filter((v: any) => {
+      return v.id !== info.node.item.id;
+    });
+    let obj = {
+      id: info.node.item.id,
+      name: info.node.item.name,
+      type: 'has',
+    };
+
+    let newShowData = [...newArr];
+    if (info.checked) {
+      obj.type = isOriginal ? 'has' : 'add';
+      newShowData = [...newArr, obj];
+    } else {
+      if (isOriginal) {
+        obj.type = 'del';
+        newShowData = [...newArr, obj];
+      }
+    }
+    setShowData(newShowData);
+    // setShowData(info.checkedNodes.map((node: any) => node.item));
   };
 
   const buildSpeciesChildrenTree = (parent: any[]): any[] => {

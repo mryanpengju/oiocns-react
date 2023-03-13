@@ -115,7 +115,6 @@ const DefineInfo = (props: Iprops) => {
           return;
         }
         if (title.includes('新增')) {
-          // handleOk(await current.createOperation(value));
           let resource_: FlowNode = {
             id: '0',
             code: getUuid(),
@@ -235,17 +234,11 @@ const DefineInfo = (props: Iprops) => {
             return tree;
           }}
           fieldProps={{
-            treeCheckable: true,
             showSearch: true,
-            treeCheckStrictly: true,
+            multiple: true,
+            allowClear: true,
           }}
         />
-        {/* <ProFormTextArea
-          width="md"
-          name="remark"
-          label="备注"
-          placeholder="请输入备注信息"
-          colProps={{ span: 24 }}></ProFormTextArea> */}
       </ProForm>
     </Modal>
   );

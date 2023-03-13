@@ -73,6 +73,7 @@ const Approve: React.FC<IApproveProps> = ({
           let speciesItem = allNodes.filter(
             (item) => item.id == instances[0].define?.speciesId,
           )[0];
+          console.log('speciesItem===', speciesItem);
           setSpeciesItem(speciesItem);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
         }
@@ -175,7 +176,7 @@ const Approve: React.FC<IApproveProps> = ({
             })}
           </Timeline>
           <Thing
-            current={species}
+            current={speciesItem}
             height={'400px'}
             byIds={JSON.parse(flowTask?.instance?.thingIds ?? '')}
             selectable={false}
@@ -216,18 +217,6 @@ const Approve: React.FC<IApproveProps> = ({
       key: '2',
       label: `流程图`,
       children: (
-        // <Design
-        //   current={flowTask?.instance?.define as XFlowDefine}
-        //   species={undefined}
-        //   instance={flowTask?.instance}
-        //   modalType={'编辑流程设计'}
-        //   setInstance={() => {}}
-        //   operateOrgId={undefined}
-        //   setOperateOrgId={() => {}}
-        //   defaultEditable={false}
-        //   onBack={() => {}}
-        //   setModalType={() => {}}
-        // />
         <>
           {speciesItem && (
             <Design

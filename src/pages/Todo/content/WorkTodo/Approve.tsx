@@ -132,7 +132,7 @@ const Approve: React.FC<IApproveProps> = ({
                                 {th.createTime.substring(0, th.createTime.length - 4)}
                               </div>
                               <div style={{ paddingRight: '24px' }}>
-                                {title}：{userCtrl.findTeamInfoById(th.createUser).name}
+                                {title}：{userCtrl.findTeamInfoById(record.createUser).name}
                               </div>
                               <div>
                                 {record.comment && <div>审批意见：{record.comment}</div>}
@@ -144,7 +144,6 @@ const Approve: React.FC<IApproveProps> = ({
                                 if (record?.data) {
                                   formValue = JSON.parse(record?.data);
                                 }
-                                console.log('formValue=====', formValue);
                                 return (
                                   <Panel header={operation.name} key={operation.id}>
                                     <OioForm

@@ -18,10 +18,13 @@ import DataGrid, {
   Selection,
   Toolbar,
   Item,
+  Button,
+  HeaderFilter,
 } from 'devextreme-react/data-grid';
 import { ISpeciesItem } from '@/ts/core';
 import CustomStore from 'devextreme/data/custom_store';
 import { kernel } from '@/ts/base';
+import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 interface IProps {
   current: ISpeciesItem;
   height?: any;
@@ -121,6 +124,9 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             caption={caption}
             dataType="datetime"
             width={250}
+            headerFilter={{
+              groupInterval: 'day',
+            }}
             format="yyyy年MM月dd日 HH:mm:ss"
           />
         );
@@ -132,13 +138,30 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             caption={caption}
             dataType="date"
             width={180}
+            headerFilter={{
+              groupInterval: 'day',
+            }}
             format="yyyy年MM月dd日"
           />
         );
       case '选择型':
+        var dataSource =
+          dictItems?.map((item) => {
+            return {
+              text: item.name,
+              value: item.value,
+            };
+          }) || [];
         return (
-          <Column key={id} dataField={dataField} caption={caption} width={150}>
-            <Lookup dataSource={dictItems || []} displayExpr="name" valueExpr="value" />
+          <Column
+            key={id}
+            dataField={dataField}
+            caption={caption}
+            width={150}
+            headerFilter={{
+              dataSource: dataSource,
+            }}>
+            <Lookup dataSource={dataSource} displayExpr="text" valueExpr="value" />
           </Column>
         );
       case '数值型':
@@ -150,6 +173,30 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             caption={caption}
             dataType="number"
             width={150}
+            allowHeaderFiltering={false}
+          />
+        );
+      case '组织型':
+        return (
+          <Column
+            key={id}
+            dataField={dataField}
+            caption={caption}
+            dataType="string"
+            width={150}
+            allowFiltering={false}
+            cellRender={(data: any) => {
+              var share = userCtrl.findTeamInfoById(data.value);
+              if (data) {
+                return (
+                  <>
+                    <TeamIcon share={share} />
+                    <span style={{ marginLeft: 10 }}>{share.name}</span>
+                  </>
+                );
+              }
+              return <span>{share.name}</span>;
+            }}
           />
         );
       default:
@@ -160,6 +207,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             caption={caption}
             dataType="string"
             width={180}
+            allowHeaderFiltering={false}
           />
         );
     }
@@ -178,7 +226,6 @@ const Thing: React.FC<IProps> = (props: IProps) => {
                 ...(props.checkedList || []).map((item) => item.item.target),
                 props.current.target,
               ];
-              console.log(species);
               loadOptions.userData = species
                 .filter((item) => item.code != 'anything')
                 .map((item) => `S${item.id}`);
@@ -205,6 +252,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         onSelectionChanged={(e) => {
           props.onSelectionChanged?.call(this, e.selectedRowsData);
         }}
+        columnResizingMode={'widget'}
         height={props.height || 'calc(100vh - 175px)'}
         width={'calc(100vw - 320px)'}
         showBorders={true}>
@@ -217,7 +265,13 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           sortOrder={'asc'}
         />
         <ColumnFixing enabled={true} />
-        {props.selectable && <Selection mode="multiple" selectAllMode="allPages" />}
+        {props.selectable && (
+          <Selection
+            mode="multiple"
+            selectAllMode="allPages"
+            showCheckBoxesMode="always"
+          />
+        )}
         {props.editingTool || (
           <Editing
             allowAdding={false}
@@ -239,6 +293,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
         <Sorting mode="multiple" />
         <Paging defaultPageSize={10} />
         <FilterRow visible={true} />
+        <HeaderFilter visible={true} />
         <Toolbar>
           {props.toolBarItems}
           <Item name="searchPanel" />
@@ -258,7 +313,11 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             )}
           </Column>
         ))}
-        <Column type="buttons">{props.buttonList}</Column>
+        <Column type="buttons" width={((props.buttonList?.length || 0) + 2) * 40}>
+          <Button hint="信息卡片" icon="paste" />
+          <Button hint="归档记录" icon="bulletlist" />
+          {props.buttonList}
+        </Column>
       </DataGrid>
     );
   };

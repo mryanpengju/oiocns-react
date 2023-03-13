@@ -40,7 +40,7 @@ const ContentIndex = (props: IProps) => {
         <Thing
           current={props.selectMenu.item}
           checkedList={props.checkedList}
-          selectable={true}
+          selectable={false}
         />
       );
     default:

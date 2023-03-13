@@ -34,6 +34,7 @@ interface IProps {
   buttonList?: any[];
   toolBarItems?: any[];
   dataSource?: any;
+  byIds?: string[];
   onSelectionChanged?: Function;
   selectable: boolean;
 }
@@ -230,8 +231,18 @@ const Thing: React.FC<IProps> = (props: IProps) => {
               loadOptions.userData = species
                 .filter((item) => item.code != 'anything')
                 .map((item) => `S${item.id}`);
+              let request: any = { ...loadOptions };
+              if (props.byIds) {
+                request.options = {
+                  match: {
+                    _id: {
+                      _in_: props.byIds,
+                    },
+                  },
+                };
+              }
               const result = await kernel.anystore.loadThing(
-                loadOptions,
+                request,
                 userCtrl.isCompanySpace ? 'company' : 'user',
               );
               if (result.success) {

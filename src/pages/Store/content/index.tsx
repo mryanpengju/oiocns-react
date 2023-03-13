@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import { GroupMenuType } from '../config/menuType';
 import FileSystem from './FileSystem';
-import Thing from '@/pages/Store/content/Thing';
+import ThingIndex from '@/pages/Store/content/Thing';
 import Application from './App';
 import TaskListComp from '../components/TaskListComp';
 import { Badge, Typography } from 'antd';
@@ -18,9 +18,9 @@ interface IProps {
 const ContentIndex = (props: IProps) => {
   if (props.checkedList && props.checkedList.length) {
     return (
-      <Thing
+      <ThingIndex
         key={props.checkedList?.length}
-        current={props.selectMenu.item}
+        species={props.selectMenu.item}
         checkedList={props.checkedList}
         selectable={true}
       />
@@ -37,8 +37,8 @@ const ContentIndex = (props: IProps) => {
     case GroupMenuType.Thing:
     case GroupMenuType.Wel:
       return (
-        <Thing
-          current={props.selectMenu.item}
+        <ThingIndex
+          species={props.selectMenu.item}
           checkedList={props.checkedList}
           selectable={false}
         />

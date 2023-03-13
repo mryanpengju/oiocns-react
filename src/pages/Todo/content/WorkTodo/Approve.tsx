@@ -10,7 +10,7 @@ import { ImUndo2 } from 'react-icons/im';
 import cls from './index.module.less';
 import userCtrl from '@/ts/controller/setting';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import Thing from '@/pages/Store/content/Thing';
+import Thing from '@/pages/Store/content/Thing/Thing';
 import { MenuItemType } from 'typings/globelType';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
 import { ISpeciesItem } from '@/ts/core';
@@ -114,10 +114,15 @@ const Approve: React.FC<IApproveProps> = ({
                 <Timeline.Item key={th.id} color={color}>
                   <Card>
                     <div style={{ display: 'flex' }}>
-                      <div style={{ paddingRight: '24px' }}>{th.createTime}</div>
-                      <div>
-                        {title}：{userCtrl.findTeamInfoById(th.createUser).name}
+                      <div style={{ paddingRight: '24px' }}>
+                        {th.createTime.substring(0, th.createTime.length - 4)}
                       </div>
+                      {!isCur && (
+                        <div>
+                          {title}：{userCtrl.findTeamInfoById(th.createUser).name}
+                        </div>
+                      )}
+                      {isCur && <div style={{ color: 'red' }}>待审批</div>}
                     </div>
                     {!isCur && (
                       <Collapse ghost>

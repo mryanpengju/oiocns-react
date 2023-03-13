@@ -1,7 +1,7 @@
 import CardOrTableComp from '@/components/CardOrTableComp';
 import OioForm from '@/pages/Setting/components/render';
 import { FlowColumn } from '@/pages/Setting/config/columns';
-import Thing from '@/pages/Store/content/Thing';
+import Thing from '@/pages/Store/content/Thing/Thing';
 import { kernel } from '@/ts/base';
 import { XFlowDefine } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';

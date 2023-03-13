@@ -60,7 +60,7 @@ const FieldInfo: React.FC<IProps> = ({
         },
       },
       {
-        title: '操作对象',
+        title: '限定操作实体分类',
         dataIndex: 'sourceIds',
         valueType: 'treeSelect',
         request: async () => {

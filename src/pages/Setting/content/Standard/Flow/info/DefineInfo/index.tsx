@@ -325,8 +325,8 @@ const DefineInfo = (props: Iprops) => {
         <ProFormTreeSelect
           width="md"
           name="sourceIds"
-          label="操作对象"
-          placeholder="请选择操作对象"
+          label="操作实体"
+          placeholder="请选择操作实体"
           required={true}
           colProps={{ span: 12 }}
           request={async () => {

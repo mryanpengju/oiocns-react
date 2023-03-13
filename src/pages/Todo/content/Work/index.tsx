@@ -245,7 +245,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
 
       {chooseThingModal.length > 0 && (
         <Modal
-          title={'选择操作对象'}
+          title={'选择操作实体'}
           width="92%"
           open={true}
           onCancel={() => {
@@ -257,11 +257,11 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             if (rows && rows.length > 0) {
               setChooseThingModal([]);
             } else {
-              message.warn('请至少选择一条操作对象');
+              message.warn('请至少选择一条操作实体');
             }
           }}>
           <Modal
-            title="创建操作对象"
+            title="创建操作实体"
             open={createThingByInputNumModal}
             onCancel={() => {
               setCreateThingByInputNumModal(false);
@@ -311,7 +311,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
                           onClick={() => {
                             setCreateThingByInputNumModal(true);
                           }}>
-                          创建对象
+                          创建实体
                         </Button>
                       </Item>,
                     ]

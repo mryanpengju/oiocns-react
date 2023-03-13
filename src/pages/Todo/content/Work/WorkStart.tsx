@@ -30,7 +30,7 @@ interface IProps {
  * @returns
  */
 const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
-  const [refreshMenu] = useMenuUpdate();
+  const [key, menus, refreshMenu] = useMenuUpdate();
   const [data, setData] = useState<any>({});
   const species: SpeciesItem = selectMenu.item;
   const [flowDefines, setFlowDefines] = useState<XFlowDefine[]>([]);

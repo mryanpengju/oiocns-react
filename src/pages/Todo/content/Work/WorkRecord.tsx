@@ -17,7 +17,7 @@ interface IProps {
  * 已发起记录
  */
 const WorkRecord: React.FC<IProps> = ({ selectMenu }) => {
-  const [key, forceUpdate] = useObjectUpdate(selectMenu);
+  const [key] = useObjectUpdate(selectMenu);
   const species: SpeciesItem = selectMenu.item;
 
   return (

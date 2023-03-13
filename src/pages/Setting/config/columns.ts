@@ -307,17 +307,6 @@ export const OperationColumns: ProColumns<schema.XOperation>[] = [
       }
     },
   },
-  {
-    title: '角色',
-    dataIndex: 'beginAuthId',
-    key: 'beginAuthId',
-    render: (_, record) => {
-      return findAuthName(
-        [userCtrl.space.authorityTree as IAuthority],
-        record.beginAuthId,
-      );
-    },
-  },
 ];
 
 export const OperationItemColumns: ProColumns<schema.XOperationItem>[] = [

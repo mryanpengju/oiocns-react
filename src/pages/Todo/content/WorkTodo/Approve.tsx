@@ -126,6 +126,9 @@ const Approve: React.FC<IApproveProps> = ({
                                 {th.node?.nodeType}
                               </div>
                               <div style={{ paddingRight: '24px' }}>
+                                {userCtrl.findTeamInfoById(th.node?.belongId!).name}
+                              </div>
+                              <div style={{ paddingRight: '24px' }}>
                                 {th.createTime.substring(0, th.createTime.length - 4)}
                               </div>
                               <div style={{ paddingRight: '24px' }}>

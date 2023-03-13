@@ -35,6 +35,7 @@ export const toTreeData = (species: any[]): any[] => {
     return {
       label: t.name,
       value: t.id,
+      // {value: string, label: ReactNode, halfChecked(treeCheckStrictly 时有效): string[] }
       children: toTreeData(t.children),
     };
   });
@@ -236,12 +237,9 @@ const DefineInfo = (props: Iprops) => {
             return tree;
           }}
           fieldProps={{
-            treeCheckable: true,
             showSearch: true,
-            filterTreeNode: true,
+            multiple: true,
             allowClear: true,
-            showCheckedStrategy: SHOW_PARENT,
-            treeCheckStrictly: true,
           }}
         />
         {/* <ProFormTextArea

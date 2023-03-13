@@ -64,6 +64,7 @@ class TodoController extends Emitter {
         this._marketApply = await loadMarketApply();
         this._workTodo =
           (await kernel.queryApproveTask({ id: userCtrl.space.id })).data?.result || [];
+
         this.changCallback();
       }, 800);
     });

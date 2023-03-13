@@ -373,9 +373,6 @@ const ProcessTree: React.FC<IProps> = ({
   };
   //处理节点插入逻辑
   const insertNode = (type: any, parentNode: any) => {
-    // ;
-    // console.log('处理节点插入逻辑', type, parentNode);
-
     // ctx.refs['_root'].click()
     //缓存一下后面的节点
 

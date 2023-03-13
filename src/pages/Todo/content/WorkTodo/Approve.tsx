@@ -35,6 +35,8 @@ const Approve: React.FC<IApproveProps> = ({
   let comment = '';
   const [instance, setInstance] = useState<any>();
   const [speciesItem, setSpeciesItem] = useState<any>();
+  const [flowSpeciesItem, setFlowSpeciesItem] = useState<any>();
+  // const [rootSpecies, setRootSpecies] = useState<any>();
 
   const lookForAll = (data: any[], arr: any[]) => {
     for (let item of data) {
@@ -55,17 +57,20 @@ const Approve: React.FC<IApproveProps> = ({
         const instances = res.data.result || [];
         if (instances.length > 0) {
           const species_ = await thingCtrl.loadSpeciesTree();
-
+          // setRootSpecies(species_);
           let allNodes: ISpeciesItem[] = lookForAll([species_], []);
           setInstance(instances[0]);
           let speciesIds = instances[0].define?.sourceIds?.split(',');
           let speciesItem = allNodes.filter((item) => speciesIds?.includes(item.id))[0];
+          let flowSpeciesItem = allNodes.filter(
+            (item) => item.id == instances[0].define?.speciesId,
+          )[0];
           storeCtrl.addCheckedSpeciesList(
-            [species_ as ISpeciesItem, speciesItem],
+            [species_ as ISpeciesItem, speciesItem, flowSpeciesItem],
             userCtrl.space.id,
           );
-          console.log('speciesItem===', speciesItem);
           setSpeciesItem(speciesItem);
+          setFlowSpeciesItem(flowSpeciesItem);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
         }
       }
@@ -215,10 +220,10 @@ const Approve: React.FC<IApproveProps> = ({
       label: `流程图`,
       children: (
         <>
-          {speciesItem && (
+          {flowSpeciesItem && (
             <Design
               current={flowTask?.instance?.define as XFlowDefine}
-              species={speciesItem}
+              species={flowSpeciesItem}
               instance={instance}
               setInstance={setInstance}
               operateOrgId={userCtrl.space.id}

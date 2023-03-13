@@ -104,7 +104,12 @@ const DefineInfo = (props: Iprops) => {
           ...data,
           ...form.getFieldsValue(),
         };
-        if (value.name && value.belongId && value.sourceIds) {
+        if (
+          value.name &&
+          value.belongId &&
+          value.sourceIds &&
+          value.sourceIds.length > 0
+        ) {
           console.log(value.sourceIds);
         } else {
           message.warn('请先完成表单');

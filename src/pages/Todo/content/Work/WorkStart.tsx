@@ -169,73 +169,70 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
       {operations.length > 0 && (
         <>
           {operations.map((operation: any) => (
-            <>
-              <OioForm
-                key={operation.id}
-                operation={operation}
-                formRef={formRef}
-                submitter={{
-                  resetButtonProps: {
-                    style: { display: 'none' },
-                  },
-                  render: (_: any, dom: any) => (
-                    <div className={cls['bootom_right']}>{dom}</div>
-                  ),
-                }}
-                onFinished={async (values: any) => {
-                  //发起流程
-                  let instance = await kernel.createInstance({
-                    defineId: currentDefine.id,
-                    SpaceId: userCtrl.space.id,
-                    content: '',
-                    contentType: 'Text',
-                    data: JSON.stringify(values),
-                    title: currentDefine.name,
-                    hook: '',
-                    thingIds: rows.map((row: any) => row['Id']),
-                  });
-                  console.log('instance', instance);
-                  if (instance) {
-                    setOperations([]);
-                    setSuccessPage(true);
-                  }
-                  setTimeout(() => {
-                    refreshMenu();
-                    todoCtrl.refreshWorkTodo();
-                  }, 1000);
-                }}
-                onValuesChange={(changedValues, values) => {
-                  data[operation.id] = values;
-                  setData(data);
-                }}
-              />
-              <Tabs defaultActiveKey="1">
-                <TabPane tab="实体" key="1">
-                  <Thing
-                    dataSource={rows}
-                    current={chooseThingModal[0]}
-                    checkedList={chooseThingModal.map((e) => {
-                      return { item: e };
-                    })}
-                    selectable={false}
-                    // onSelectionChanged={(rows: any) => {}}
-                    // height={600}
-                    // height={'calc(80vh - 175px)'}
-                    editingTool={
-                      <Editing
-                        allowAdding={false}
-                        allowUpdating={false}
-                        allowDeleting={false}
-                        selectTextOnEditStart={true}
-                        useIcons={true}
-                      />
-                    }
-                  />
-                </TabPane>
-              </Tabs>
-              ,
-            </>
+            <OioForm
+              key={operation.id}
+              operation={operation}
+              formRef={formRef}
+              submitter={{
+                resetButtonProps: {
+                  style: { display: 'none' },
+                },
+                render: (_: any, dom: any) => (
+                  <div className={cls['bootom_right']}>{dom}</div>
+                ),
+              }}
+              onFinished={async (values: any) => {
+                //发起流程
+                let instance = await kernel.createInstance({
+                  defineId: currentDefine.id,
+                  SpaceId: userCtrl.space.id,
+                  content: '',
+                  contentType: 'Text',
+                  data: JSON.stringify(values),
+                  title: currentDefine.name,
+                  hook: '',
+                  thingIds: rows.map((row: any) => row['Id']),
+                });
+                console.log('instance', instance);
+                if (instance) {
+                  setOperations([]);
+                  setSuccessPage(true);
+                }
+                setTimeout(() => {
+                  refreshMenu();
+                  todoCtrl.refreshWorkTodo();
+                }, 1000);
+              }}
+              onValuesChange={(changedValues, values) => {
+                data[operation.id] = values;
+                setData(data);
+              }}
+            />
           ))}
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="实体" key="1">
+              <Thing
+                dataSource={rows}
+                current={chooseThingModal[0]}
+                checkedList={chooseThingModal.map((e) => {
+                  return { item: e };
+                })}
+                selectable={false}
+                // onSelectionChanged={(rows: any) => {}}
+                // height={600}
+                // height={'calc(80vh - 175px)'}
+                editingTool={
+                  <Editing
+                    allowAdding={false}
+                    allowUpdating={false}
+                    allowDeleting={false}
+                    selectTextOnEditStart={true}
+                    useIcons={true}
+                  />
+                }
+              />
+            </TabPane>
+          </Tabs>
         </>
       )}
 
@@ -295,12 +292,7 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
               checkedList={chooseThingModal.map((e) => {
                 return { item: e };
               })}
-              onSelectionChanged={(rows: any) => {
-                // ;
-                // setRows(rows);
-              }}
-              // selectable={true}
-              // height={600}
+              onSelectionChanged={(rows: any) => {}}
               height={'calc(80vh - 175px)'}
               toolBarItems={
                 chooseThingModal[0].name == '道'

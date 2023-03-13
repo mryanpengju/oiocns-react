@@ -20,6 +20,7 @@ import DataGrid, {
   Item,
   Button,
   HeaderFilter,
+  Scrolling,
 } from 'devextreme-react/data-grid';
 import { ISpeciesItem } from '@/ts/core';
 import CustomStore from 'devextreme/data/custom_store';
@@ -28,7 +29,7 @@ import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 
 interface IProps {
   current: ISpeciesItem;
-  selectable: boolean;
+  selectable?: boolean;
   checkedList?: any[];
   height?: any;
   width?: any;
@@ -42,6 +43,7 @@ interface IProps {
   onSelectionChanged?: Function;
   setTabKey?: (tabKey: number) => void;
   setThingId?: (thingId: string) => void;
+  scrolling?: any;
 }
 
 /**
@@ -285,6 +287,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
           sortOrder={'asc'}
         />
         <ColumnFixing enabled={true} />
+        {props.scrolling || <Scrolling showScrollbar="always" useNative="false" />}
         {selectable && (
           <Selection
             mode="multiple"
@@ -339,6 +342,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             hint="信息卡片"
             icon="paste"
             onClick={(e: any) => {
+              debugger;
               if (props.setThingId) {
                 props.setThingId(e.row.key);
               }

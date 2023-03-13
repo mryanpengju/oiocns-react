@@ -188,13 +188,9 @@ const ApprovalNode: React.FC<IProps> = (props) => {
           open={operationModal != undefined}
           okText="确定"
           onOk={() => {
-            if (showData?.length > 1) {
-              message.warn('只能选择一条数据');
-            } else {
-              props.current.props.operations = showData;
-              setOperations(showData);
-              setOperationModal(undefined);
-            }
+            props.current.props.operations = showData;
+            setOperations(showData);
+            setOperationModal(undefined);
           }}
           onCancel={() => setOperationModal(undefined)}>
           <SelectOperation

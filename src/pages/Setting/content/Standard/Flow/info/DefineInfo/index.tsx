@@ -1,4 +1,4 @@
-import { Branche, FlowNode } from '@/ts/base/schema';
+import { FlowNode } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
 import { ISpeciesItem } from '@/ts/core';
 import thingCtrl from '@/ts/controller/thing';

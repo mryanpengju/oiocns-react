@@ -4,17 +4,7 @@ import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
 import { ProFormInstance } from '@ant-design/pro-form';
 import thingCtrl from '@/ts/controller/thing';
-import {
-  Button,
-  Card,
-  Collapse,
-  Input,
-  message,
-  Table,
-  Tabs,
-  TabsProps,
-  Timeline,
-} from 'antd';
+import { Button, Card, Collapse, Input, message, Tabs, TabsProps, Timeline } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
 import cls from './index.module.less';
@@ -25,7 +15,7 @@ import { SpeciesItem } from '@/ts/core/thing/species';
 import { MenuItemType } from 'typings/globelType';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
 import { ISpeciesItem } from '@/ts/core';
-
+import storeCtrl from '@/ts/controller/store';
 const { Panel } = Collapse;
 
 interface IApproveProps {
@@ -47,6 +37,7 @@ const Approve: React.FC<IApproveProps> = ({
   const species: SpeciesItem = selectMenu.item;
   const [instance, setInstance] = useState<any>();
   const [speciesItem, setSpeciesItem] = useState<any>();
+  const [rootSpecies, setRootSpecies] = useState<any>();
 
   console.log('flowTask?.instance===', flowTask?.instance);
   const lookForAll = (data: any[], arr: any[]) => {
@@ -68,11 +59,15 @@ const Approve: React.FC<IApproveProps> = ({
         const instances = res.data.result || [];
         if (instances.length > 0) {
           const species_ = await thingCtrl.loadSpeciesTree();
+          setRootSpecies(species_);
           let allNodes: ISpeciesItem[] = lookForAll([species_], []);
           setInstance(instances[0]);
-          let speciesItem = allNodes.filter(
-            (item) => item.id == instances[0].define?.speciesId,
-          )[0];
+          let speciesIds = instances[0].define?.sourceIds?.split(',');
+          let speciesItem = allNodes.filter((item) => speciesIds?.includes(item.id))[0];
+          storeCtrl.addCheckedSpeciesList(
+            [species_ as ISpeciesItem, speciesItem],
+            userCtrl.space.id,
+          );
           console.log('speciesItem===', speciesItem);
           setSpeciesItem(speciesItem);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
@@ -175,10 +170,13 @@ const Approve: React.FC<IApproveProps> = ({
               );
             })}
           </Timeline>
+
           <Thing
             current={speciesItem}
             height={'400px'}
-            byIds={JSON.parse(flowTask?.instance?.thingIds ?? '')}
+            byIds={(flowTask?.instance?.thingIds ?? '')
+              .split(',')
+              .filter((id) => id != '')}
             selectable={false}
           />
 

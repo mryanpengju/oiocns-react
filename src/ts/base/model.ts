@@ -965,8 +965,8 @@ export type FlowRelationModel = {
 export type FlowReq = {
   // 流程实例Id
   id?: string;
-  // 流程定义Id
-  defineId?: string;
+  // 类别Id
+  speciesId?: string;
   // 空间Id
   spaceId?: string;
   // 状态

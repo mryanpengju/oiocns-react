@@ -448,6 +448,32 @@ export const WorkReocrdColumns: ProColumns[] = [
   },
 ];
 
+export const WorkStartReocrdColumns: ProColumns[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'index',
+    width: 60,
+  },
+  {
+    title: '事项',
+    dataIndex: 'title',
+  },
+  {
+    title: '发起时间',
+    dataIndex: ['createTime'],
+    valueType: 'dateTime',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    render: (_, record) => {
+      const status = statusMap[record.status];
+      return <Tag color={status.color}>{status.text}</Tag>;
+    },
+  },
+];
+
 export const WorkTodoColumns: ProColumns[] = [
   {
     title: '序号',

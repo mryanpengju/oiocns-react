@@ -1,7 +1,7 @@
 import { Card, Tabs, TabsProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
-import WorkRecord from './WorkRecord';
+import WorkStartRecord from './WorkStartRecord';
 import WorkStart from './WorkStart';
 
 // 卡片渲染
@@ -23,7 +23,7 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
     {
       key: '2',
       label: `已发起`,
-      children: <WorkRecord selectMenu={selectMenu} />,
+      children: <WorkStartRecord selectMenu={selectMenu} />,
     },
   ];
 

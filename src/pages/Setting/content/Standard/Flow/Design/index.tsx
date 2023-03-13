@@ -569,7 +569,7 @@ const Design: React.FC<IProps> = ({
         type: resource.type,
         name: resource.name,
         num: resource.props == undefined ? 0 : resource.props.num,
-        destType: resource.type == 'ROOT' ? '角色' : '身份',
+        destType: resource.type == 'ROOT' ? '角色' : '角色',
         operations: resource.props.operations,
         destId:
           resource.props != undefined &&

@@ -99,7 +99,7 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
     return (
       <>
         <Button type="link" onClick={() => setActiveModal('indentity')}>
-          身份设置
+          角色设置
         </Button>
         {isRelationAdmin && (
           <>

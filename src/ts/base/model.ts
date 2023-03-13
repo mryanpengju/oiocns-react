@@ -106,7 +106,7 @@ export type IdOperationReq = {
   id: string;
   // 工作空间ID
   spaceId: string;
-  // 是否职权过滤
+  // 是否权限过滤
   filterAuth: boolean;
   // 是否递归组织
   recursionOrg: boolean;
@@ -132,7 +132,7 @@ export type QueryDefineReq = {
 };
 
 export type SpaceAuthReq = {
-  // 职权ID
+  // 权限ID
   authId: string;
   // 工作空间ID
   spaceId: string;
@@ -335,7 +335,7 @@ export type SpeciesModel = {
   parentId: string;
   // 创建组织/个人
   belongId: string;
-  // 工作职权Id
+  // 工作权限Id
   authId: string;
   // 备注
   remark: string;
@@ -364,7 +364,7 @@ export type AttributeModel = {
   speciesId: string;
   // 类别代码
   speciesCode: string;
-  // 工作职权Id
+  // 工作权限Id
   authId: string;
 };
 
@@ -385,7 +385,7 @@ export type OperationModel = {
   speciesId: string;
   // 流程定义Id
   defineId?: string;
-  // 业务发起职权Id
+  // 业务发起权限Id
   beginAuthId?: string;
   // 子项列表
   items: OperationItem[];
@@ -446,7 +446,7 @@ export type IdentityModel = {
   name: string;
   // 编号
   code: string;
-  // 职权Id
+  // 权限Id
   authId: string;
   // 创建组织/个人
   belongId: string;
@@ -722,7 +722,7 @@ export type CreateOrderByStagingModel = {
 };
 
 export type GiveIdentityModel = {
-  // 身份ID
+  // 角色ID
   id: string;
   // 人员ID
   targetIds: string[];
@@ -883,7 +883,7 @@ export type CreateDefineReq = {
   fields?: string;
   //分类id
   speciesId?: string;
-  // 职权ID
+  // 权限ID
   authId?: string;
   //是否公开
   public?: boolean;

@@ -40,7 +40,7 @@ const ApprovalNode: React.FC<IProps> = (props) => {
               props.current.props.assignedType = 'JOB';
               setIsOpen(true);
             }}>
-            选择身份
+            选择角色
           </Button>
           {currentData?.title ? (
             <span>
@@ -57,7 +57,7 @@ const ApprovalNode: React.FC<IProps> = (props) => {
             }}
             style={{ paddingBottom: '10px' }}
             value={radioValue}>
-            <Radio value={1}>全部: 需征得该身份下所有人员同意</Radio>
+            <Radio value={1}>全部: 需征得该角色下所有人员同意</Radio>
             <Radio value={2}>部分会签: 指定审批该节点的人员的数量</Radio>
           </Radio.Group>
           {radioValue === 2 && (
@@ -77,7 +77,7 @@ const ApprovalNode: React.FC<IProps> = (props) => {
       </div>
       <Modal
         width="650px"
-        title="添加身份"
+        title="添加角色"
         open={isOpen}
         destroyOnClose={true}
         onOk={() => {

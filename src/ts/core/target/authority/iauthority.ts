@@ -2,22 +2,22 @@ import { IIdentity } from './iidentity';
 import { model, schema } from '@/ts/base';
 
 export interface IAuthority {
-  /** 职权Id */
+  /** 权限Id */
   id: string;
-  /** 职权名称 */
+  /** 权限名称 */
   name: string;
-  /** 职权编号 */
+  /** 权限编号 */
   code: string;
-  /** 职权归属ID */
+  /** 权限归属ID */
   belongId: string;
   /**备注 */
   remark: string;
-  /** 子职权 */
+  /** 子权限 */
   children: IAuthority[];
-  /** 职权下的身份 */
+  /** 权限下的角色 */
   identitys: IIdentity[];
   /**
-   * 创建子职权
+   * 创建子权限
    * @param name 名称
    * @param code 编号
    * @param ispublic 是否公开
@@ -32,18 +32,18 @@ export interface IAuthority {
     remark: string,
   ): Promise<model.ResultType<schema.XAuthority>>;
   /**
-   * 删除职权
+   * 删除权限
    * @returns
    */
   delete(): Promise<model.ResultType<any>>;
   /**
-   * 删除子职权
-   * @param id 子职权Id
+   * 删除子权限
+   * @param id 子权限Id
    * @returns
    */
   deleteSubAuthority(id: string): Promise<model.ResultType<any>>;
   /**
-   * 更新职权
+   * 更新权限
    * @param name 名称
    * @param code 编号
    * @param ispublic 公开的
@@ -57,7 +57,7 @@ export interface IAuthority {
     remark: string,
   ): Promise<model.ResultType<schema.XAuthority>>;
   /**
-   * 查询指定职权下的身份列表
+   * 查询指定权限下的角色列表
    *  @param reload 是否强制刷新
    * @returns
    */

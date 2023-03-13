@@ -57,10 +57,10 @@ const StoreAppInfo: React.FC = () => {
         case '组织':
           obj.icon = <PartitionOutlined rotate={90} />;
           break;
-        case '职权':
+        case '权限':
           obj.icon = <TeamOutlined />;
           break;
-        case '身份':
+        case '角色':
           obj.icon = <BankOutlined />;
           break;
         case '人员':

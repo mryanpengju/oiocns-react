@@ -76,7 +76,7 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
     return (
       <>
         <Button type="link" onClick={() => setActiveModal('indentity')}>
-          身份设置
+          角色设置
         </Button>
         {isRelationAdmin && (
           <>
@@ -156,7 +156,7 @@ const AgencySetting: React.FC<IProps> = ({ current }: IProps) => {
           </div>
         </PageCard>
       </div>
-      {/* 编辑机构身份 */}
+      {/* 编辑机构角色 */}
       <IndentityManage
         isAdmin={isSuperAdmin}
         open={activeModal === 'indentity'}

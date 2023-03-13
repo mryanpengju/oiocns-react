@@ -13,7 +13,7 @@ interface Iprops {
   current?: IAuthority;
 }
 /*
-  职权编辑模态框
+  权限编辑模态框
 */
 const AuthorityModal = (props: Iprops) => {
   const { open, title, handleOk, current, handleCancel } = props;

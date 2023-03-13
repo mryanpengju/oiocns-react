@@ -32,11 +32,11 @@ export interface ITarget {
   target: schema.XTarget;
   /** 类型 */
   typeName: TargetType;
-  /** 职权树 */
+  /** 权限树 */
   authorityTree: IAuthority | undefined;
-  /** 拥有的身份 */
+  /** 拥有的角色 */
   ownIdentitys: schema.XIdentity[];
-  /** 组织的身份 */
+  /** 组织的角色 */
   identitys: IIdentity[];
   /** 子组织类型 */
   subTeamTypes: TargetType[];
@@ -63,30 +63,30 @@ export interface ITarget {
    */
   delete(): Promise<boolean>;
   /**
-   * 获取职权树
+   * 获取权限树
    * @param reload 是否强制刷新
    */
   loadAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
   /**
-   * 判断是否拥有该身份
-   * @param id 身份id
+   * 判断是否拥有该角色
+   * @param id 角色id
    */
   judgeHasIdentity(codes: string[]): Promise<boolean>;
   /**
-   * 获取身份
-   * @return {IIdentity[]} 身份数组
+   * 获取角色
+   * @return {IIdentity[]} 角色数组
    */
   getIdentitys(): Promise<IIdentity[]>;
   /**
-   * 创建身份
+   * 创建角色
    * @param {model.IdentityModel} params 参数
    */
   createIdentity(
     params: Omit<model.IdentityModel, 'id' | 'belongId'>,
   ): Promise<IIdentity | undefined>;
   /**
-   * 删除身份
-   * @param id 身份ID
+   * 删除角色
+   * @param id 角色ID
    */
   deleteIdentity(id: string): Promise<boolean>;
   /** 加载子组织 */
@@ -324,7 +324,7 @@ export interface ISpace extends IFlow, IMTarget, ITarget {
   cohorts: ICohort[];
   /** 空间类型数据 */
   spaceData: SpaceType;
-  /** 空间职权树 */
+  /** 空间权限树 */
   spaceAuthorityTree: IAuthority | undefined;
   /**
    * @description: 查询群
@@ -340,7 +340,7 @@ export interface ISpace extends IFlow, IMTarget, ITarget {
    */
   deleteCohort(id: string): Promise<boolean>;
   /**
-   * 加载空间职权树
+   * 加载空间权限树
    * @param reload 重新加载
    */
   loadSpaceAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
@@ -589,16 +589,16 @@ export interface IStation extends ITarget {
    * @param code 人员编号
    */
   searchPerson(code: string): Promise<schema.XTargetArray>;
-  /** 加载岗位下的身份 */
+  /** 加载岗位下的角色 */
   loadIdentitys(reload?: boolean): Promise<schema.XIdentity[]>;
   /**
-   * 添加岗位身份
-   * @param {string[]} identitys 身份数组
+   * 添加岗位角色
+   * @param {string[]} identitys 角色数组
    */
   pullIdentitys(identitys: XIdentity[]): Promise<boolean>;
   /**
-   * 移除岗位身份
-   * @param {string[]} ids 身份ID数组
+   * 移除岗位角色
+   * @param {string[]} ids 角色ID数组
    */
   removeIdentitys(ids: string[]): Promise<boolean>;
 }

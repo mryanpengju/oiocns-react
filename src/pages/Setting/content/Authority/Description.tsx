@@ -5,7 +5,7 @@ import cls from '../Agency/index.module.less';
 import userCtrl from '@/ts/controller/setting';
 
 /**
- * @description: 职权信息内容
+ * @description: 权限信息内容
  * @return {*}
  */
 const Description = (props: { title: any; current: ITarget; extra: any }) => {
@@ -25,7 +25,7 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
           width: 120,
         }}
         contentStyle={{ textAlign: 'left', color: '#606266' }}>
-        <Descriptions.Item label="职权名称">{authority.name}</Descriptions.Item>
+        <Descriptions.Item label="权限名称">{authority.name}</Descriptions.Item>
         <Descriptions.Item label="共享组织">
           <Space>
             {authority.belongId ? (
@@ -35,7 +35,7 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
             )}
           </Space>
         </Descriptions.Item>
-        <Descriptions.Item label="职权编码">{authority.code || ''}</Descriptions.Item>
+        <Descriptions.Item label="权限编码">{authority.code || ''}</Descriptions.Item>
         <Descriptions.Item label="创建人">
           {userCtrl.findTeamInfoById(authority.createUser).name}
         </Descriptions.Item>

@@ -188,18 +188,18 @@ const Design: React.FC<IProps> = ({
               fields: attrs.map((attr: any) => {
                 switch (attr.valueType) {
                   case '描述型':
-                    return { label: attr.name, value: attr.code, type: 'STRING' };
+                    return { label: attr.name, value: attr.id, type: 'STRING' };
                   case '数值型':
-                    return { label: attr.name, value: attr.code, type: 'NUMERIC' };
+                    return { label: attr.name, value: attr.id, type: 'NUMERIC' };
                   case '选择型':
                     return {
                       label: attr.name,
-                      value: attr.code,
+                      value: attr.id,
                       type: 'DICT',
                       dict: loadDictItems(attr.dictId),
                     };
                   default:
-                    return { label: attr.name, value: attr.code, type: 'STRING' };
+                    return { label: attr.name, value: attr.id, type: 'STRING' };
                 }
               }),
             });
@@ -569,7 +569,7 @@ const Design: React.FC<IProps> = ({
         type: resource.type,
         name: resource.name,
         num: resource.props == undefined ? 0 : resource.props.num,
-        destType: resource.type == 'ROOT' ? '角色' : '角色',
+        destType: resource.type == 'ROOT' ? '角色' : '身份',
         operations: resource.props.operations,
         destId:
           resource.props != undefined &&
@@ -759,7 +759,6 @@ const Design: React.FC<IProps> = ({
                           resource,
                           'flowNode',
                         ) as FlowNode;
-                        console.log(resource_);
                         let errors = checkValid(resource_);
                         if (errors.length > 0) {
                           setShowErrorsModal(errors);

@@ -102,7 +102,6 @@ const DefineInfo = (props: Iprops) => {
           ...data,
           ...form.getFieldsValue(),
         };
-        value.sourceIds = value.sourceIds.map((i: any) => i.value);
         if (
           value.name &&
           value.belongId &&

@@ -12,7 +12,6 @@ import { getUuid } from '@/utils/tools';
 import CustomTreeComp from '@/components/CustomTreeComp';
 import TransToDict from '@/pages/Setting/content/Standard/Dict/transToDict';
 import TransToSpecies from '@/pages/Setting/content/Standard/Dict/transToSpecies';
-import useObjectUpdate from '@/hooks/useObjectUpdate';
 interface IProps {
   target?: ITarget;
   current: ISpeciesItem;
@@ -35,7 +34,6 @@ const DictInfo: React.FC<IProps> = ({
   setModalType,
 }) => {
   const [dictRecords, setDictRecords] = useState<IDict[]>([]);
-  const [key, forceUpdate] = useObjectUpdate(dictRecords);
   const parentRef = useRef<any>(null); //父级容器Dom
   const [openDictModal, setOpenDictModal] = useState<boolean>(false);
   const [openTransToDictModal, setOpenTransToDictModal] = useState<boolean>(false);
@@ -44,23 +42,36 @@ const DictInfo: React.FC<IProps> = ({
   const [editData, setEditData] = useState<XDict>();
   const [editItemData, setEditItemData] = useState<XDictItem>();
   const [currentDict, setCurrentDict] = useState<IDict>();
+  const [dictKey, setDictKey] = useState<string>();
+  const [selectKey, setSelectKey] = useState<string>();
+  const [itemKey, setItemKey] = useState<string>();
+  const [dicts, setDicts] = useState<any[]>([]);
+  const loadDicts = async () => {
+    let res: IDict[] = await current.loadDictsEntity(
+      userCtrl.space.id,
+      recursionOrg,
+      recursionSpecies,
+      {
+        offset: 0,
+        limit: 10000,
+        filter: '',
+      },
+    );
+    setShowAddDict(res.length > 0 && !!currentDict);
+    setDictRecords(res);
+    let dicts = buildTree(res);
+    setDicts(dicts);
+    if (dicts && dicts[0]) {
+      setSelectKey(dicts[0]?.key);
+      setCurrentDict(dicts[0].item);
+      setItemKey(getUuid());
+    } else {
+      setCurrentDict(undefined);
+      setItemKey(getUuid());
+    }
+  };
 
   useEffect(() => {
-    const loadDicts = async () => {
-      let res: IDict[] = await current.loadDictsEntity(
-        userCtrl.space.id,
-        recursionOrg,
-        recursionSpecies,
-        {
-          offset: 0,
-          limit: 10000,
-          filter: '',
-        },
-      );
-      setShowAddDict(res.length > 0 && !!currentDict);
-      setDictRecords(res);
-      forceUpdate();
-    };
     loadDicts();
   }, [current, recursionOrg, recursionSpecies]);
 
@@ -79,9 +90,6 @@ const DictInfo: React.FC<IProps> = ({
     }
     return result;
   };
-  const dicts = buildTree(dictRecords);
-  const [selectKey, setSelectKey] = useState<string>(dicts[0]?.key);
-  const [itemKey, setItemKey] = useState<string>();
 
   useEffect(() => {
     if (modalType.includes('新增字典项')) {
@@ -122,7 +130,7 @@ const DictInfo: React.FC<IProps> = ({
     <div style={{ display: 'flex', height: '75vh' }}>
       <div style={{ width: '25vw', height: '75vh' }}>
         <CustomTreeComp
-          key={key}
+          key={dictKey}
           title={
             <div style={{ display: 'flex' }}>
               {/* {'分类字典'} */}
@@ -165,14 +173,10 @@ const DictInfo: React.FC<IProps> = ({
                 setOpenDictModal(true);
                 break;
               case '删除':
-                current.deleteDict(node.item.id).then((success) => {
-                  setSelectKey(dicts[0]?.key);
-                  setItemKey(getUuid());
-                  forceUpdate();
+                current.deleteDict(node.item.id).then(async (success) => {
+                  await loadDicts();
+                  // setItemKey(getUuid());
                   success ? message.success('删除成功') : message.error('删除失败');
-                  if (dicts[0]) {
-                    setCurrentDict(dicts[0].item);
-                  }
                 });
                 break;
               case '转为分类':
@@ -219,8 +223,8 @@ const DictInfo: React.FC<IProps> = ({
         }}
         handleOk={function (res: any): void {
           if (res) {
+            loadDicts();
             message.success(`操作成功`);
-            forceUpdate();
           }
           setOpenDictModal(false);
         }}
@@ -248,7 +252,6 @@ const DictInfo: React.FC<IProps> = ({
           handleOk={function (res: any): void {
             if (res) {
               setItemKey(getUuid());
-              setTreeKey(getUuid());
               message.success(`操作成功`);
             }
             setModalType('');

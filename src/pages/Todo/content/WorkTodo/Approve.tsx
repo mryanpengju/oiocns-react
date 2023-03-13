@@ -187,14 +187,16 @@ const Approve: React.FC<IApproveProps> = ({
             })}
           </Timeline>
 
-          <Thing
-            current={speciesItem}
-            height={'400px'}
-            byIds={(flowTask?.instance?.thingIds ?? '')
-              .split(',')
-              .filter((id) => id != '')}
-            selectable={false}
-          />
+          {speciesItem && (
+            <Thing
+              current={speciesItem}
+              height={'400px'}
+              byIds={(flowTask?.instance?.thingIds ?? '')
+                .split(',')
+                .filter((id) => id != '')}
+              selectable={false}
+            />
+          )}
 
           <Card className={cls['bootom_right']}>
             <div style={{ display: 'flex', width: '100%' }}>

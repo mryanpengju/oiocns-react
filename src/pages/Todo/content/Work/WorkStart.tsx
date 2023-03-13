@@ -44,6 +44,7 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
   const [rows, setRows] = useState<any>([]);
   const [successPage, setSuccessPage] = useState<boolean>(false);
   const [thingFreshKey, setThingFreshKey] = useState<string>();
+  const [gridInstance, setGridInstance] = useState<any>();
   const formRef = useRef<ProFormInstance<any>>();
 
   // const getSpecies = (
@@ -209,12 +210,9 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
                 }}
               />
               <Tabs defaultActiveKey="1">
-                <TabPane tab="数据" key="1">
+                <TabPane tab="实体" key="1">
                   <Thing
-                    dataSource={rows.map((item: any) => {
-                      item.key = 'Id';
-                      return item;
-                    })}
+                    dataSource={rows}
                     current={chooseThingModal[0]}
                     checkedList={chooseThingModal.map((e) => {
                       return { item: e };
@@ -250,8 +248,10 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
             setOperations([]);
             setChooseThingModal([]);
           }}
-          onOk={() => {
+          onOk={async () => {
             //获取表格选中的数据
+            let rows = await gridInstance.getSelectedRowsData();
+            setRows(rows);
             if (rows && rows.length > 0) {
               setChooseThingModal([]);
             } else {
@@ -289,14 +289,17 @@ const WorkStart: React.FC<IProps> = ({ selectMenu }) => {
           {chooseThingModal.length > 0 && (
             <Thing
               key={thingFreshKey}
+              setGridInstance={setGridInstance}
+              deferred={true}
               current={chooseThingModal[0]}
               checkedList={chooseThingModal.map((e) => {
                 return { item: e };
               })}
               onSelectionChanged={(rows: any) => {
-                setRows(rows);
+                // ;
+                // setRows(rows);
               }}
-              selectable={true}
+              // selectable={true}
               // height={600}
               height={'calc(80vh - 175px)'}
               toolBarItems={

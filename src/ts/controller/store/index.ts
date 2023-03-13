@@ -49,6 +49,7 @@ class StoreController extends Emitter {
   }
 
   public async addCheckedSpeciesList(speciesItems: ISpeciesItem[], spaceId: string) {
+    speciesItems = speciesItems.filter((item) => item != undefined);
     let existIds = this._checkedSpeciesList.map((item: any) => item.id);
     let items = speciesItems.filter((item: any) => !existIds.includes(item.id));
     for (let speciesItem of items) {

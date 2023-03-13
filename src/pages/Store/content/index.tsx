@@ -22,7 +22,7 @@ const ContentIndex = (props: IProps) => {
         key={props.checkedList?.length}
         current={props.selectMenu.item}
         checkedList={props.checkedList}
-        selectable={true}
+        // selectable={true}
       />
     );
   }

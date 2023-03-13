@@ -1,4 +1,4 @@
-import { Branche, FlowNode } from '@/ts/base/schema';
+import { FlowNode } from '@/ts/base/schema';
 import userCtrl from '@/ts/controller/setting';
 import { ISpeciesItem } from '@/ts/core';
 import thingCtrl from '@/ts/controller/thing';
@@ -6,7 +6,6 @@ import { ProForm, ProFormText, ProFormTreeSelect } from '@ant-design/pro-compone
 import { message, Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React from 'react';
-import { TreeSelect } from 'antd';
 import { kernel } from '@/ts/base';
 import { getUuid } from '@/utils/tools';
 
@@ -40,7 +39,6 @@ export const toTreeData = (species: any[]): any[] => {
   });
 };
 
-const { SHOW_PARENT } = TreeSelect;
 /*
   业务标准编辑模态框
 */
@@ -104,6 +102,7 @@ const DefineInfo = (props: Iprops) => {
           ...data,
           ...form.getFieldsValue(),
         };
+        value.sourceIds = value.sourceIds.map((i: any) => i.value);
         if (
           value.name &&
           value.belongId &&
@@ -238,9 +237,6 @@ const DefineInfo = (props: Iprops) => {
           fieldProps={{
             treeCheckable: true,
             showSearch: true,
-            filterTreeNode: true,
-            allowClear: true,
-            showCheckedStrategy: SHOW_PARENT,
             treeCheckStrictly: true,
           }}
         />

@@ -32,12 +32,22 @@ const ThingCard: React.FC<IThingCardProps> = ({ thingId }) => {
         thing = data[0];
       }
       if (thing) {
+        console.log('thing', thing);
         for (const key in thing) {
           if (Object.prototype.hasOwnProperty.call(thing, key)) {
             const element = thing[key];
             if (key.startsWith('S')) {
-              // const res = await kernel.querySpeciesAttrs({id: })
-              console.log(key);
+              const id = key.substring(1, key.length);
+              if (id.length >= 16 && id.length <= 20) {
+                const attrRes = await kernel.querySpeciesAttrs({
+                  id,
+                  spaceId: userCtrl.space.id,
+                  recursionOrg: true,
+                  recursionSpecies: false,
+                  page: { offset: 0, limit: 1000000, filter: '' },
+                });
+                console.log('attrRes===', attrRes);
+              }
             }
           }
         }
@@ -46,6 +56,6 @@ const ThingCard: React.FC<IThingCardProps> = ({ thingId }) => {
     findThing();
   }, [thingId]);
 
-  return <Card bordered={false}>资产卡片</Card>;
+  return <Card bordered={false} title="资产卡片"></Card>;
 };
 export default ThingCard;

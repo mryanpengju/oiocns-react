@@ -4,29 +4,17 @@ import { kernel } from '@/ts/base';
 import { XFlowDefine, XFlowTaskHistory } from '@/ts/base/schema';
 import { ProFormInstance } from '@ant-design/pro-form';
 import thingCtrl from '@/ts/controller/thing';
-import {
-  Button,
-  Card,
-  Col,
-  Collapse,
-  Input,
-  message,
-  Row,
-  Tabs,
-  TabsProps,
-  Timeline,
-} from 'antd';
+import { Button, Card, Collapse, Input, message, Tabs, TabsProps, Timeline } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { ImUndo2 } from 'react-icons/im';
 import cls from './index.module.less';
 import userCtrl from '@/ts/controller/setting';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import Thing from '@/pages/Store/content/Thing';
-import { SpeciesItem } from '@/ts/core/thing/species';
 import { MenuItemType } from 'typings/globelType';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
 import { ISpeciesItem } from '@/ts/core';
-
+import storeCtrl from '@/ts/controller/store';
 const { Panel } = Collapse;
 
 interface IApproveProps {
@@ -45,9 +33,9 @@ const Approve: React.FC<IApproveProps> = ({
   const formRef = useRef<ProFormInstance<any>>();
   const [taskHistory, setTaskHistorys] = useState<XFlowTaskHistory[]>([]);
   const [comment, setComment] = useState<string>('');
-  const species: SpeciesItem = selectMenu.item;
   const [instance, setInstance] = useState<any>();
   const [speciesItem, setSpeciesItem] = useState<any>();
+  const [rootSpecies, setRootSpecies] = useState<any>();
 
   console.log('flowTask?.instance===', flowTask?.instance);
   const lookForAll = (data: any[], arr: any[]) => {
@@ -69,11 +57,15 @@ const Approve: React.FC<IApproveProps> = ({
         const instances = res.data.result || [];
         if (instances.length > 0) {
           const species_ = await thingCtrl.loadSpeciesTree();
+          setRootSpecies(species_);
           let allNodes: ISpeciesItem[] = lookForAll([species_], []);
           setInstance(instances[0]);
-          let speciesItem = allNodes.filter(
-            (item) => item.id == instances[0].define?.speciesId,
-          )[0];
+          let speciesIds = instances[0].define?.sourceIds?.split(',');
+          let speciesItem = allNodes.filter((item) => speciesIds?.includes(item.id))[0];
+          storeCtrl.addCheckedSpeciesList(
+            [species_ as ISpeciesItem, speciesItem],
+            userCtrl.space.id,
+          );
           console.log('speciesItem===', speciesItem);
           setSpeciesItem(speciesItem);
           setTaskHistorys(instances[0].historyTasks as XFlowTaskHistory[]);
@@ -176,46 +168,46 @@ const Approve: React.FC<IApproveProps> = ({
               );
             })}
           </Timeline>
+
           <Thing
             current={speciesItem}
             height={'400px'}
-            byIds={JSON.parse(flowTask?.instance?.thingIds ?? '')}
+            byIds={(flowTask?.instance?.thingIds ?? '')
+              .split(',')
+              .filter((id) => id != '')}
             selectable={false}
           />
 
           <Card className={cls['bootom_right']}>
-            <Row>
-              <Col span={20}>
+            <div style={{ display: 'flex', width: '100%' }}>
+              <div style={{ width: '84%' }}>
                 <Input.TextArea
-                  size="small"
                   placeholder="请填写审批意见"
                   value={comment}
                   onChange={(e) => {
                     setComment(e.target.value);
                   }}></Input.TextArea>
-              </Col>
-              <Col span={4}>
-                <div style={{ paddingTop: '12px', display: 'flex' }}>
-                  <Button
-                    type="primary"
-                    style={{ marginRight: '8px', marginLeft: '12px' }}
-                    icon={<CloseOutlined />}
-                    onClick={() => {
-                      approvalTask(200);
-                    }}>
-                    驳回
-                  </Button>
-                  <Button
-                    type="primary"
-                    icon={<CheckOutlined />}
-                    onClick={() => {
-                      approvalTask(100);
-                    }}>
-                    同意
-                  </Button>
-                </div>
-              </Col>
-            </Row>
+              </div>
+              <div style={{ width: '16%', display: 'flex', marginTop: '18px' }}>
+                <Button
+                  type="primary"
+                  style={{ marginRight: '8px', marginLeft: '12px' }}
+                  icon={<CloseOutlined />}
+                  onClick={() => {
+                    approvalTask(200);
+                  }}>
+                  驳回
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  onClick={() => {
+                    approvalTask(100);
+                  }}>
+                  同意
+                </Button>
+              </div>
+            </div>
           </Card>
         </>
       ),

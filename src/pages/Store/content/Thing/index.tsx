@@ -45,6 +45,7 @@ interface IProps {
  * 仓库-物
  */
 const Thing: React.FC<IProps> = (props: IProps) => {
+  console.log('byIds', props.byIds);
   const [key] = useCtrlUpdate(storeCtrl);
   const [thingAttrs, setThingAttrs] = useState<any[]>([]);
   const getSortedList = (
@@ -237,6 +238,7 @@ const Thing: React.FC<IProps> = (props: IProps) => {
                   match: {
                     _id: {
                       _in_: props.byIds,
+                      // _in_: ['27502969349997568', '27503071439619072'],
                     },
                   },
                 };

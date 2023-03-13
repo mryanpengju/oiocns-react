@@ -115,6 +115,11 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
             page: { offset: 0, limit: 100000, filter: '' },
           })
         ).data;
+        // alert(resource.operations.length);
+        if (!resource.operations) {
+          message.error('流程未绑定表单');
+          return;
+        }
         //设置起始节点绑定的表单
         if (resource.operations && chooseThingModal.length == 0) {
           setOperations(resource.operations);

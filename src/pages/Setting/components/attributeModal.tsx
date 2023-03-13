@@ -147,8 +147,8 @@ const AttributeModal = (props: Iprops) => {
               label: '时间型',
             },
             {
-              value: '组织/人员',
-              label: '组织型',
+              value: '组织型',
+              label: '组织/人员',
             },
           ],
           onSelect: (select: string) => {

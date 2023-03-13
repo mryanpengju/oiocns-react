@@ -212,9 +212,8 @@ const Work: React.FC<IProps> = ({ selectMenu }) => {
               <Tabs defaultActiveKey="1">
                 <TabPane tab="数据" key="1">
                   <Thing
-                    // key={Id}
                     dataSource={rows.map((item: any) => {
-                      item.key = getUuid();
+                      item.key = 'Id';
                       return item;
                     })}
                     current={chooseThingModal[0]}

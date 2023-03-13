@@ -78,11 +78,6 @@ const Approve: React.FC<IApproveProps> = ({
         }
       }
     };
-    // const loadThings = () => {
-    //   const thingIds = flowTask?.instance?.thingIds;
-    //   console.log('thingIds==', JSON.parse(thingIds));
-    // };
-    // loadThings();
     loadNodes();
   }, [flowTask]);
 
@@ -179,36 +174,11 @@ const Approve: React.FC<IApproveProps> = ({
               );
             })}
           </Timeline>
-          {/* <Thing current={species} height={'400px'} /> */}
-          <Table
-            dataSource={[]}
-            columns={[
-              {
-                title: '唯一标识',
-                dataIndex: '416237430006484992',
-                key: '416237430006484992',
-              },
-              {
-                title: '状态',
-                dataIndex: '422406362727845888',
-                key: '422406362727845888',
-              },
-              {
-                title: '创建人',
-                dataIndex: '422398957721882624',
-                key: '422398957721882624',
-              },
-              {
-                title: '创建时间',
-                dataIndex: '422399137753993216',
-                key: '422399137753993216',
-              },
-              {
-                title: '修改时间',
-                dataIndex: '422436687172472832',
-                key: '422436687172472832',
-              },
-            ]}
+          <Thing
+            current={species}
+            height={'400px'}
+            byIds={JSON.parse(flowTask?.instance?.thingIds ?? '')}
+            selectable={false}
           />
 
           <div className={cls['bootom_right']}>

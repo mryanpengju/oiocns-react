@@ -342,7 +342,6 @@ const Thing: React.FC<IProps> = (props: IProps) => {
             hint="信息卡片"
             icon="paste"
             onClick={(e: any) => {
-              debugger;
               if (props.setThingId) {
                 props.setThingId(e.row.key);
               }

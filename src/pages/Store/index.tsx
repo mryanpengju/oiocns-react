@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import storeCtrl from '@/ts/controller/store';
 import MainLayout from '@/components/MainLayout';
 import useMenuUpdate from './hooks/useMenuUpdate';
@@ -8,17 +8,16 @@ import Content, { TopBarExtra } from './content';
 import { MenuItemType } from 'typings/globelType';
 import FileSysOperate from './components/FileSysOperate';
 import userCtrl from '@/ts/controller/setting';
+import { IconFont } from '@/components/IconFont';
 /** 仓库模块 */
 const Package: React.FC = () => {
   const [operateTarget, setOperateTarget] = useState<MenuItemType>();
   const [operateKey, setOperateKey] = useState<string>();
   const [key, menus, refreshMenu, selectMenu, setSelectMenu] = useMenuUpdate();
   const [checkedList, setCheckedList] = useState<any[]>([]);
-  useEffect(() => {
-    refreshMenu();
-  }, [userCtrl.space.id]);
   return (
     <MainLayout
+      title={{ label: '仓库', icon: <IconFont type={'icon-store'} /> }}
       selectMenu={selectMenu}
       onSelect={async (data) => {
         storeCtrl.currentKey = data.key;

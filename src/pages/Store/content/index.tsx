@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import { GroupMenuType } from '../config/menuType';
 import FileSystem from './FileSystem';
-import Thing from '@/pages/Store/content/Thing';
+import ThingIndex from '@/pages/Store/content/Thing';
 import Application from './App';
 import TaskListComp from '../components/TaskListComp';
 import { Badge, Typography } from 'antd';
@@ -16,15 +16,6 @@ interface IProps {
 
 /** 内容区 */
 const ContentIndex = (props: IProps) => {
-  if (props.checkedList && props.checkedList.length) {
-    return (
-      <Thing
-        key={props.checkedList?.length}
-        current={props.selectMenu.item}
-        checkedList={props.checkedList}
-      />
-    );
-  }
   /** 加载内容区 */
   switch (props.selectMenu.itemType) {
     case GroupMenuType.Application:
@@ -35,7 +26,13 @@ const ContentIndex = (props: IProps) => {
       return <Asset />;
     case GroupMenuType.Thing:
     case GroupMenuType.Wel:
-      return <Thing current={props.selectMenu.item} checkedList={props.checkedList} />;
+      return (
+        <ThingIndex
+          species={props.selectMenu.item}
+          checkedList={props.checkedList}
+          selectable={false}
+        />
+      );
     default:
       return <></>;
   }

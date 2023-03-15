@@ -5,8 +5,9 @@ import SchemaForm from '@/components/SchemaForm';
 import storeCtrl from '@/ts/controller/store';
 import { FileItemShare } from '@/ts/base/model';
 import { BankOutlined } from '@ant-design/icons';
-import { IMarket } from '@/ts/core';
+import { IMarket, ProductType } from '@/ts/core';
 import { parseAvatar } from '@/ts/base';
+import userCtrl from '@/ts/controller/setting';
 
 type AppModel = {
   // 唯一ID
@@ -93,9 +94,94 @@ const AppInfoModal = (props: Iprops) => {
     {
       title: '应用名称',
       dataIndex: 'name',
+      colProps: { span: 12 },
       formItemProps: {
         rules: [{ required: true, message: '应用名称为必填项' }],
       },
+    },
+    {
+      title: '应用编码',
+      dataIndex: 'code',
+      colProps: { span: 12 },
+      formItemProps: {
+        rules: [{ required: true, message: '此项为必填项' }],
+      },
+    },
+    {
+      title: '应用类型',
+      dataIndex: 'typeName',
+      valueType: 'select',
+      valueEnum: ProductType,
+      colProps: { span: 12 },
+      initialValue: ProductType.WebApp,
+    },
+    {
+      title: '制定组织',
+      dataIndex: 'belongId',
+      valueType: 'treeSelect',
+      request: async () => {
+        return await userCtrl.getTeamTree();
+      },
+      fieldProps: {
+        disabled: title === '修改',
+        fieldNames: {
+          label: 'teamName',
+          value: 'id',
+          children: 'subTeam',
+        },
+        showSearch: true,
+        filterTreeNode: true,
+        treeNodeFilterProp: 'teamName',
+      },
+      colProps: { span: 12 },
+      initialValue: userCtrl.space.id,
+    },
+    {
+      title: '向下级组织公开',
+      dataIndex: 'public',
+      valueType: 'select',
+      fieldProps: {
+        options: [
+          {
+            value: '1',
+            label: '公开',
+          },
+          {
+            value: '0',
+            label: '不公开',
+          },
+        ],
+      },
+      colProps: { span: 12 },
+      formItemProps: {
+        rules: [{ required: true, message: '向下级组织公开为必填项' }],
+      },
+      initialValue: '1',
+    },
+    {
+      title: '选择管理权限',
+      dataIndex: 'authId',
+      valueType: 'treeSelect',
+      formItemProps: { rules: [{ required: true, message: '管理权限为必填项' }] },
+      request: async () => {
+        const data = await userCtrl.space.loadAuthorityTree(false);
+        return data ? [data] : [];
+      },
+      fieldProps: {
+        disabled: title === '修改',
+        fieldNames: { label: 'name', value: 'id' },
+        showSearch: true,
+        filterTreeNode: true,
+        treeNodeFilterProp: 'name',
+        treeDefaultExpandAll: true,
+      },
+      initialValue: '361356410774228992',
+    },
+    {
+      title: '应用详情',
+      dataIndex: 'remark',
+      valueType: 'textarea',
+      colProps: { span: 24 },
     },
   ];
   return (

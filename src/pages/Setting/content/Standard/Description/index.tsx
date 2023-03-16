@@ -45,13 +45,17 @@ const Description = (info: { current: ISpeciesItem }) => {
         <Descriptions.Item label="开放域">
           {data.target.public ? '开放' : '私有'}
         </Descriptions.Item>
-        <Descriptions.Item label="创建时间">{data.target.createTime}</Descriptions.Item>
+        <Descriptions.Item label="创建人">
+          {userCtrl.findTeamInfoById(data.target.createUser).name}
+        </Descriptions.Item>
+        <Descriptions.Item label="创建时间" span={3}>
+          {data.target.createTime}
+        </Descriptions.Item>
         <Descriptions.Item
           contentStyle={{ textAlign: 'left' }}
           labelStyle={{ textAlign: 'center' }}
           label="分类定义"
-          span={2}>
->>>>>>> origin/main
+          span={3}>
           {data.target.remark}
         </Descriptions.Item>
       </Descriptions>

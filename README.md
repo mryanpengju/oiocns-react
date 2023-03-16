@@ -68,7 +68,7 @@ TS功能文档: [ts功能划分](https://docs.qq.com/sheet/DQ2JhZGtJZFlsWWln)
 
 ### 项目依赖环境、安装和运行
 
-奥集能是基于 **node 14+** 以上的环境运行，通过 **yarn** 或者 **npm install** 下载安装项目依赖包，并通过**npm run serve** 命令本地运行项目。
+奥集能是基于 **node 14.18.0,16.14.0或18.0.0版本以上** 的环境运行，通过 **yarn** 或者 **npm install** 下载安装项目依赖包，并通过**npm run serve** 命令本地运行项目。
 
 ### 参与贡献
 

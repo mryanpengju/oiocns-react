@@ -17,8 +17,6 @@ const PassportLogin: React.FC<RouteComponentProps> = (props) => {
             setLoading(true);
             return userCtrl.login(account, password).then((res) => {
               setLoading(false);
-              // 首次进入
-              sessionStorage.setItem('firstLogin', '1');
               if (res.success) {
                 props.history.push('/home');
               }

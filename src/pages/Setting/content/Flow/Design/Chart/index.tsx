@@ -1,12 +1,3 @@
-<<<<<<< HEAD:src/pages/Setting/content/Flow/FlowComponents/index.tsx
-import React, { useEffect, useState } from 'react';
-import ProcessTree from './ProcessTree';
-import FlowDrawer from './FlowDrawer';
-import { AddNodeType, conditionDataType } from '@/ts/controller/setting/processType';
-import processCtrl, { ConditionCallBackTypes } from '@/ts/controller/setting/processCtrl';
-
-=======
->>>>>>> origin/main:src/pages/Setting/content/Flow/Design/Chart/index.tsx
 import cls from './index.module.less';
 import FlowDrawer from './FlowDrawer';
 import ProcessTree from './ProcessTree';

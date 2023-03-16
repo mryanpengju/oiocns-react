@@ -1,8 +1,5 @@
+// const res = ;
 import React, { useEffect, useRef, useState } from 'react';
-<<<<<<< HEAD
-import { common } from 'typings/common';
-import marketCtrl from '@/ts/controller/store/marketCtrl';
-=======
 import cls from './index.module.less';
 import CardOrTable from '@/components/CardOrTableComp';
 import AppCard from '@/components/AppShopCard';
@@ -10,7 +7,6 @@ import { common } from 'typings/common';
 import marketCtrl from '@/ts/controller/store/marketCtrl';
 import MerchandiseDetail from '../components/MerchandiseDetail';
 import MarketClassify from '../components/Classify';
->>>>>>> origin/main
 import ReactDOM from 'react-dom';
 import { XMerchandise } from '@/ts/base/schema';
 import { message, Modal } from 'antd';
@@ -19,7 +15,7 @@ import { IMarket } from '@/ts/core';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { marketColumns } from '../../config/columns';
 
-const ShopPage: React.FC = () => {
+const AppShowComp: React.FC = () => {
   const [isProduce, setIsProduce] = useState<boolean>(false); // 查看详情
   const [merchandise, setMerchandise] = useState<XMerchandise>(); // 查看详情
   const parentRef = useRef<any>(null); //父级容器Dom
@@ -66,14 +62,14 @@ const ShopPage: React.FC = () => {
     return [
       {
         key: 'buy',
-        label: '购买',
+        label: '立即购买',
         onClick: () => {
           handleBuyAppFun('buy', item);
         },
       },
       {
         key: 'toBuyCar',
-        label: '暂存',
+        label: '加入购物车',
         onClick: () => {
           marketCtrl.appendStaging(item);
         },
@@ -92,10 +88,10 @@ const ShopPage: React.FC = () => {
         onClick: () => {
           Modal.confirm({
             title: '提示',
-            content: '是否确认下架 [' + item.caption + '] 商品？',
+            content: '是否确认下架《' + item.caption + '》商品',
             onOk: async () => {
               if (await current?.unPublish(item.id)) {
-                message.success('下架 [' + item.caption + '] 商品成功.');
+                message.success('下架' + item.caption + '》商品成功');
               } else {
                 message.error('下架失败');
               }
@@ -160,4 +156,4 @@ const ShopPage: React.FC = () => {
   );
 };
 
-export default ShopPage;
+export default AppShowComp;

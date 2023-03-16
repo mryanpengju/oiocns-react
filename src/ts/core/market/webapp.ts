@@ -140,13 +140,13 @@ export default class WebApp implements IProduct {
       photo,
       thingId: this.prod.thingId,
       belongId: this.prod.belongId,
-      resources: params.resources,
+      resources,
     });
     if (res.success) {
-      this.prod.name = params.name;
-      this.prod.code = params.code;
-      this.prod.typeName = params.typeName;
-      this.prod.remark = params.remark;
+      this.prod.name = name;
+      this.prod.code = code;
+      this.prod.typeName = typeName;
+      this.prod.remark = remark;
       this.resource = [];
       res.data.resource?.forEach((a) => {
         this.resource.push(new Resource(a));

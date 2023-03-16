@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { DownOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Col, Row, Typography } from 'antd';
-import React, { useState } from 'react';
-import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
-import detailStyle from './index.module.less';
-import chatCtrl from '@/ts/controller/chat';
-import useCtrlUpdate from '@/hooks/useCtrlUpdate';
-import InviteMembers from '../components/InviteMembers';
-import RemoveMember from '../components/RemoveMember';
-=======
->>>>>>> origin/main
 import { schema } from '@/ts/base';
 import React, { useState } from 'react';
 import chatCtrl from '@/ts/controller/chat';

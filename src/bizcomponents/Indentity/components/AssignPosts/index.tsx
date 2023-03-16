@@ -63,7 +63,6 @@ const MemberList: React.FC<indexType> = (props) => {
               searchFn(selectedRows);
             },
           }}
-          showChangeBtn={false}
           dataSource={personData ?? []}
           params={{ filter: searchValue }}
           request={

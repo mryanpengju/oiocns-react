@@ -14,40 +14,65 @@ const steps = ['账户验证', '填写信息'];
 const PassportRegister: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [body, setBody] = useState<RegisterType>();
-  const [nextValue, setNextValue] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [privateKey, setPrivateKey] = useState<String>();
   const history = useHistory();
-  const [form] = Form.useForm();
-  const [nextForm] = Form.useForm();
 
   // 上一步
-  const prev = async () => {
-    const nextFormValue = await nextForm.getFieldsValue();
-    form.setFieldsValue(body);
-    setNextValue(nextFormValue);
+  const prev = () => {
     setCurrent(current - 1);
   };
 
   // 下一步
   const next = (val: any) => {
-<<<<<<< HEAD
-    nextForm.setFieldsValue(nextValue);
     if (val.firstPassword !== val.secondPassword) {
       message.warn('输入的两次密码不一致！');
       return;
     }
-=======
->>>>>>> origin/main
     const password = val.firstPassword;
+    if (password.length < 6) {
+      message.warn('密码的长度不能小于6');
+      return;
+    }
+    if (password.length > 15) {
+      message.warn('密码的长度不能大于15');
+      return;
+    }
+    let reg = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,15}/;
+    if (!reg.test(password)) {
+      message.warn('密码必须包含：数字、字母、特殊字符');
+      return;
+    }
     setCurrent(current + 1);
-    nextForm.setFieldsValue(nextValue);
     setBody({ account: val.account, password } as RegisterType);
   };
 
   // 注册
   const registerAction = async (val: any) => {
-    const res = await userCtrl.register({ ...val, ...body });
+    if (body === undefined) return;
+    if (!/^[\u4e00-\u9fa5]{2,8}$/.test(val.name)) {
+      message.warn('请输入正确的姓名');
+      return;
+    }
+    body.name = val.name;
+    if (!/(^1[3|4|5|7|8|9]\d{9}$)|(^09\d{8}$)/.test(val.phone)) {
+      message.warn('请输入正确的手机号');
+      return;
+    }
+    body.phone = val.phone;
+    if (val.nickName && val.nickName.trim() === '') {
+      message.warn('请输入正确的昵称');
+      return;
+    }
+    body.nickName = val.nickName;
+    if (val.motto.trim() === '') {
+      message.warn('请输入正确的座右铭');
+      return;
+    }
+    body.motto = val.motto;
+    body.avatar = '';
+    // 请求
+    const res = await userCtrl.register(body);
     if (res.success) {
       message.success('注册成功！');
       setPrivateKey(res.data.privateKey);
@@ -71,7 +96,7 @@ const PassportRegister: React.FC = () => {
       </Form.Item>
       {current === 0 && (
         <div>
-          <Form onFinish={next} form={form}>
+          <Form onFinish={next}>
             <Form.Item
               name="account"
               rules={[{ required: true, message: '请输入用户名' }]}>
@@ -79,28 +104,7 @@ const PassportRegister: React.FC = () => {
             </Form.Item>
             <Form.Item
               name="firstPassword"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入密码',
-                },
-                () => ({
-                  validator(_, value) {
-                    let reg = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{6,15}/;
-                    if (value.length < 6) {
-                      return Promise.reject(new Error('密码的长度不能小于6!'));
-                    } else if (value.length > 15) {
-                      return Promise.reject(new Error('密码的长度不能大于15!'));
-                    } else if (!reg.test(value)) {
-                      return Promise.reject(
-                        new Error('密码必须包含：数字、字母、特殊字符!'),
-                      );
-                    } else {
-                      return Promise.resolve();
-                    }
-                  },
-                }),
-              ]}>
+              rules={[{ required: true, message: '请输入密码' }]}>
               <Input.Password
                 size="large"
                 placeholder="请输入密码(6-15位：包含大小写字母数字和符号)"
@@ -108,17 +112,7 @@ const PassportRegister: React.FC = () => {
             </Form.Item>
             <Form.Item
               name="secondPassword"
-              rules={[
-                { required: true, message: '请再次输入密码' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('firstPassword') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('两次密码输入不一致!'));
-                  },
-                }),
-              ]}>
+              rules={[{ required: true, message: '请再次输入密码' }]}>
               <Input.Password size="large" placeholder="请再次输入密码" />
             </Form.Item>
             <Form.Item>
@@ -139,74 +133,23 @@ const PassportRegister: React.FC = () => {
 
       {current === 1 && (
         <div>
-          <Form onFinish={registerAction} form={nextForm}>
+          <Form onFinish={registerAction}>
             <Form.Item
               name="phone"
-              rules={[
-                () => ({
-                  validator(_, value) {
-                    if (!value) {
-                      return Promise.reject(new Error('请输入电话号码!'));
-                    }
-                    if (!/(^1[3|4|5|7|8|9]\d{9}$)|(^09\d{8}$)/.test(value)) {
-                      return Promise.reject(new Error('请输入正确的手机号!'));
-                    } else {
-                      return Promise.resolve();
-                    }
-                  },
-                }),
-              ]}>
+              rules={[{ required: true, message: '请输入电话号码' }]}>
               <Input size="large" placeholder="请输入电话号码" />
             </Form.Item>
             <Form.Item
               name="nickName"
-              rules={[
-                () => ({
-                  validator(_, value) {
-                    if (!value) {
-                      return Promise.reject(new Error('请输入昵称!'));
-                    } else if (value && value.trim() === '') {
-                      return Promise.reject(new Error('请输入正确的昵称!'));
-                    } else {
-                      return Promise.resolve();
-                    }
-                  },
-                }),
-              ]}>
+              rules={[{ required: true, message: '请输入昵称' }]}>
               <Input size="large" placeholder="请输入昵称" />
             </Form.Item>
             <Form.Item
               name="name"
-              rules={[
-                () => ({
-                  validator(_, value) {
-                    if (!value) {
-                      return Promise.reject(new Error('请输入真实姓名!'));
-                    } else if (!/^[\u4e00-\u9fa5]{2,8}$/.test(value)) {
-                      return Promise.reject(new Error('请输入正确的姓名!'));
-                    } else {
-                      return Promise.resolve();
-                    }
-                  },
-                }),
-              ]}>
+              rules={[{ required: true, message: '请输入真实姓名' }]}>
               <Input size="large" placeholder="请输入真实姓名" />
             </Form.Item>
-            <Form.Item
-              name="motto"
-              rules={[
-                () => ({
-                  validator(_, value) {
-                    if (!value) {
-                      return Promise.reject(new Error('请输入座右铭!'));
-                    } else if (value.trim() === '') {
-                      return Promise.reject(new Error('请输入正确的座右铭!'));
-                    } else {
-                      return Promise.resolve();
-                    }
-                  },
-                }),
-              ]}>
+            <Form.Item name="motto" rules={[{ required: true, message: '请输入座右铭' }]}>
               <Input size="large" placeholder="请输入座右铭" />
             </Form.Item>
             <Form.Item>

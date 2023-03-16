@@ -1,23 +1,16 @@
 import { Card, Button, Descriptions, Modal, message, Layout, ModalProps } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
-<<<<<<< HEAD
-=======
 import CardOrTable from '@/components/CardOrTableComp';
 import { schema } from '@/ts/base';
 import { IIdentity } from '@/ts/core/target/authority/iidentity';
 import { XTarget } from '@/ts/base/schema';
->>>>>>> origin/main
 import { columns } from './config';
-import { common } from 'typings/common';
-import { XTarget } from '@/ts/base/schema';
-import { ITarget } from '@/ts/core';
-import { IIdentity } from '@/ts/core/target/authority/iidentity';
-import CardOrTable from '@/components/CardOrTableComp';
-import TreeLeftDeptPage from './components/TreeLeftPosPage';
 import EditIndentityModal from './components/AddPositionMoadl';
+import TreeLeftDeptPage from './components/TreeLeftPosPage';
 import AssignPosts from './components/AssignPosts';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
 import cls from './index.module.less';
+import { ITarget } from '@/ts/core';
 
 const { Sider, Content } = Layout;
 type IndentityManageType = {
@@ -36,7 +29,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
   const [indentity, setIndentity] = useState<IIdentity>();
   const [indentitys, setIndentitys] = useState<IIdentity[]>([]);
   const [isOpenAssign, setIsOpenAssign] = useState<boolean>(false);
-  const [currentPerson, setPerson] = useState<XTarget[]>();
+  const [currentPerson, setPerson] = useState<schema.XTarget[]>();
   const [key, forceUpdate] = useObjectUpdate(indentity);
   useEffect(() => {
     if (open) {
@@ -233,8 +226,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
                   ids.push(a.id);
                 }
                 await indentity?.pullMembers(ids);
-
-                message.success('指派成功');
+                forceUpdate();
               }}>
               <AssignPosts searchFn={setPerson} />
             </Modal>

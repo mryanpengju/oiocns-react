@@ -1,5 +1,5 @@
-import { Button, Card, Dropdown, Tag, Form } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import { Button, Card, Dropdown, Form, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
 import cls from './index.module.less';
 import { DataItem, sourceColumns } from './config';
 // import { BtnGroupDiv } from '@/components/CommonComp';
@@ -103,8 +103,8 @@ const StoreAppInfo: React.FC = () => {
           }
         />
         <div className="btns">
-          <Button className="btn" type="primary" shape="round" onClick={handleEditApp}>
-            编辑
+          <Button className="btn" type="primary" shape="round">
+            续费
           </Button>
           <Dropdown menu={{ items: menu }} placement="bottom">
             <EllipsisOutlined
@@ -134,7 +134,7 @@ const StoreAppInfo: React.FC = () => {
         {/* 应用信息 */}
         <SchemaForm<DataItem>
           style={{ padding: '20px' }}
-          formRef={formRef}
+          form={createAppForm}
           layoutType="Form"
           open={true}
           title="应用资源信息"

@@ -46,39 +46,39 @@ const TeamIcon = (info: teamTypeInfo) => {
   switch (info.share?.typeName) {
     case '平台':
     case TargetType.Group:
-      icon = <im.ImTree fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImTree fontSize={fontSize} />;
       break;
     case TargetType.Company:
-      icon = <im.ImOffice fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImOffice fontSize={fontSize} />;
       break;
     case TargetType.Section:
     case TargetType.Department:
-      return <im.ImLibrary fontSize={size ? size - 4 : fontSize} />;
+      return <im.ImLibrary fontSize={fontSize} />;
     case TargetType.College:
-      return <im.ImTrophy fontSize={size ? size - 4 : fontSize} />;
+      return <im.ImTrophy fontSize={fontSize} />;
     case TargetType.Laboratory:
-      icon = <im.ImJoomla fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImJoomla fontSize={fontSize} />;
       break;
     case TargetType.Office:
-      icon = <im.ImBriefcase fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImBriefcase fontSize={fontSize} />;
       break;
     case TargetType.Research:
-      icon = <im.ImFlickr4 fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImFlickr4 fontSize={fontSize} />;
       break;
     case TargetType.Working:
-      icon = <im.ImUsers fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImUsers fontSize={fontSize} />;
       break;
     case TargetType.Station:
-      icon = <im.ImAddressBook fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImAddressBook fontSize={fontSize} />;
       break;
     case TargetType.Cohort:
-      icon = <im.ImBubbles fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImBubbles fontSize={fontSize} />;
       break;
     case TargetType.Person:
-      icon = <im.ImUserTie fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImUserTie fontSize={fontSize} />;
       break;
     default:
-      icon = <im.ImSvg fontSize={size ? size - 4 : fontSize} />;
+      icon = <im.ImSvg fontSize={fontSize} />;
       break;
   }
   if (info.notAvatar) {
@@ -88,7 +88,7 @@ const TeamIcon = (info: teamTypeInfo) => {
     <Avatar
       size={size}
       icon={icon}
-      style={{ background: 'transparent', color: '#a6aec7' }}
+      style={{ background: 'transparent', color: '#606060' }}
     />
   );
 };

@@ -6,7 +6,6 @@ import { IMarket, Market } from '../market';
 import IProduct from '../market/iproduct';
 import { IAuthority } from './authority/iauthority';
 import { IIdentity } from './authority/iidentity';
-import { ISpeciesItem } from './species/ispecies';
 export type TargetParam = Omit<TargetModel, 'id' | 'belongId'>;
 
 /** 空间类型数据 */
@@ -33,13 +32,11 @@ export interface ITarget {
   target: schema.XTarget;
   /** 类型 */
   typeName: TargetType;
-  /** 职权树 */
+  /** 权限树 */
   authorityTree: IAuthority | undefined;
-  /** 分类标准树 */
-  speciesTree: ISpeciesItem | undefined;
-  /** 拥有的身份 */
+  /** 拥有的角色 */
   ownIdentitys: schema.XIdentity[];
-  /** 组织的身份 */
+  /** 组织的角色 */
   identitys: IIdentity[];
   /** 子组织类型 */
   subTeamTypes: TargetType[];
@@ -66,35 +63,30 @@ export interface ITarget {
    */
   delete(): Promise<boolean>;
   /**
-   * 获取职权树
+   * 获取权限树
    * @param reload 是否强制刷新
    */
   loadAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
   /**
-   * 获取分类标准树
-   * @param reload 是否强制刷新
-   */
-  loadSpeciesTree(reload?: boolean): Promise<ISpeciesItem | undefined>;
-  /**
-   * 判断是否拥有该身份
-   * @param id 身份id
+   * 判断是否拥有该角色
+   * @param id 角色id
    */
   judgeHasIdentity(codes: string[]): Promise<boolean>;
   /**
-   * 获取身份
-   * @return {IIdentity[]} 身份数组
+   * 获取角色
+   * @return {IIdentity[]} 角色数组
    */
   getIdentitys(): Promise<IIdentity[]>;
   /**
-   * 创建身份
+   * 创建角色
    * @param {model.IdentityModel} params 参数
    */
   createIdentity(
     params: Omit<model.IdentityModel, 'id' | 'belongId'>,
   ): Promise<IIdentity | undefined>;
   /**
-   * 删除身份
-   * @param id 身份ID
+   * 删除角色
+   * @param id 角色ID
    */
   deleteIdentity(id: string): Promise<boolean>;
   /** 加载子组织 */
@@ -310,11 +302,6 @@ export interface IFlow {
    */
   getDefines(reload: boolean): Promise<schema.XFlowDefine[]>;
   /**
-   * 查询流程定义绑定项
-   * @param reload 是否强制刷新
-   */
-  queryFlowRelation(reload: boolean): Promise<schema.XFlowRelation[]>;
-  /**
    * 发布流程定义（包含创建、更新）
    * @param data
    */
@@ -331,23 +318,14 @@ export interface IFlow {
    * @param data 流程实例参数
    */
   createInstance(data: model.FlowInstanceModel): Promise<schema.XFlowInstance>;
-  /**
-   * 绑定应用业务与流程定义
-   * @param params
-   */
-  bindingFlowRelation(params: model.FlowRelationModel): Promise<schema.XFlowRelation>;
-  /**
-   * 解绑应用业务与流程定义
-   * @param params
-   */
-  unbindingFlowRelation(params: model.FlowRelationModel): Promise<boolean>;
 }
 export interface ISpace extends IFlow, IMTarget, ITarget {
   /** 我的群组 */
   cohorts: ICohort[];
   /** 空间类型数据 */
   spaceData: SpaceType;
-
+  /** 空间权限树 */
+  spaceAuthorityTree: IAuthority | undefined;
   /**
    * @description: 查询群
    * @param reload 是否强制刷新
@@ -361,6 +339,11 @@ export interface ISpace extends IFlow, IMTarget, ITarget {
    * @returns
    */
   deleteCohort(id: string): Promise<boolean>;
+  /**
+   * 加载空间权限树
+   * @param reload 重新加载
+   */
+  loadSpaceAuthorityTree(reload?: boolean): Promise<IAuthority | undefined>;
 }
 /** 群组操作 */
 export interface ICohort extends ITarget {
@@ -547,8 +530,8 @@ export interface IGroup extends ITarget {
    * @param id 目标Id
    * @returns
    */
+  applyJoinGroup(id: string): Promise<boolean>;
   /**
-   applyJoinGroup(id: string): Promise<ResultType<any>>;
    * 创建子集团
    * @param data 子集团基本信息
    */
@@ -606,16 +589,16 @@ export interface IStation extends ITarget {
    * @param code 人员编号
    */
   searchPerson(code: string): Promise<schema.XTargetArray>;
-  /** 加载岗位下的身份 */
+  /** 加载岗位下的角色 */
   loadIdentitys(reload?: boolean): Promise<schema.XIdentity[]>;
   /**
-   * 添加岗位身份
-   * @param {string[]} identitys 身份数组
+   * 添加岗位角色
+   * @param {string[]} identitys 角色数组
    */
   pullIdentitys(identitys: XIdentity[]): Promise<boolean>;
   /**
-   * 移除岗位身份
-   * @param {string[]} ids 身份ID数组
+   * 移除岗位角色
+   * @param {string[]} ids 角色ID数组
    */
   removeIdentitys(ids: string[]): Promise<boolean>;
 }

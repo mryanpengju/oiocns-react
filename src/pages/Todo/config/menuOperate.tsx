@@ -1,52 +1,73 @@
 import React from 'react';
 import { Avatar } from 'antd';
 import * as im from 'react-icons/im';
-import { ISpeciesItem, ITodoGroup } from '@/ts/core';
-import userCtrl from '@/ts/controller/setting/';
-import { GroupMenuType } from './menuType';
+import { ISpeciesItem, ITodoGroup, WorkType } from '@/ts/core';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
-import { FileSyncOutlined, ToTopOutlined } from '@ant-design/icons';
+import thingCtrl from '@/ts/controller/thing';
+import { ToTopOutlined } from '@ant-design/icons';
 import { MenuItemType } from 'typings/globelType';
+import { getUuid } from '@/utils/tools';
 
-export const loadPlatformMenu = async () => {
+export const loadPlatformTodoMenu = async () => {
+  let friendTodo = await loadChildren(todoCtrl.FriendTodo);
+  let companyTodo = await loadChildren(todoCtrl.CompanyTodo);
+  let groupTodo = await loadChildren(todoCtrl.GroupTodo);
+
+  let PublishTodo = await loadChildren(todoCtrl.PublishTodo);
+  let MarketTodo = await loadChildren(todoCtrl.MarketTodo);
   return [
     {
-      key: '组织审批',
+      key: WorkType.OrgTodo,
       label: '组织',
-      itemType: '组织审批',
+      itemType: WorkType.OrgTodo,
       icon: <im.ImTree />,
-      ...(await loadOrgChildren(todoCtrl.OrgTodo)),
-    },
-    {
-      key: '商店审批',
-      label: '商店',
-      itemType: '商店审批',
-      icon: <im.ImCart />,
-      ...(await loadMarket()),
-    },
-    {
       children: [
+        ...friendTodo.children,
         {
-          children: [],
-          key: '销售订单',
-          label: '销售',
-          itemType: GroupMenuType.Order,
-          item: todoCtrl.OrderTodo,
-          count: await todoCtrl.OrderTodo?.getCount(),
-          icon: <im.Im500Px />,
+          key: WorkType.CompanyTodo,
+          label: '单位',
+          itemType: WorkType.CompanyTodo,
+          icon: <im.ImTree />,
+          ...companyTodo,
         },
         {
-          children: [],
-          key: '采购订单',
-          label: '采购',
-          itemType: GroupMenuType.Order,
-          item: todoCtrl.OrderTodo,
-          icon: <im.ImBarcode />,
+          key: WorkType.GroupTodo,
+          label: '集团',
+          itemType: WorkType.GroupTodo,
+          icon: <im.ImTree />,
+          ...groupTodo,
         },
       ],
-      key: '订单管理',
+      count: friendTodo.count + companyTodo.count + groupTodo.count,
+    },
+    {
+      key: WorkType.StoreTodo,
+      label: '商店',
+      itemType: WorkType.StoreTodo,
+      icon: <im.ImCart />,
+      children: [
+        {
+          key: WorkType.PublishTodo,
+          label: '上架',
+          itemType: WorkType.PublishTodo,
+          icon: <ToTopOutlined />,
+          ...PublishTodo,
+        },
+        {
+          key: WorkType.JoinStoreTodo,
+          label: '加入',
+          itemType: WorkType.JoinStoreTodo,
+          icon: <im.ImBarcode />,
+          ...MarketTodo,
+        },
+      ],
+      count: PublishTodo.count + MarketTodo.count,
+    },
+    {
+      children: [],
+      key: WorkType.OrderTodo,
       label: '订单',
-      itemType: GroupMenuType.Order,
+      itemType: WorkType.OrderTodo,
       item: todoCtrl.OrderTodo,
       count: await todoCtrl.OrderTodo?.getCount(),
       icon: <im.ImBarcode />,
@@ -54,64 +75,82 @@ export const loadPlatformMenu = async () => {
   ];
 };
 
+export const loadPlatformApplyMenu = async () => {
+  return [
+    {
+      key: WorkType.OrgApply,
+      label: '组织',
+      itemType: WorkType.OrgApply,
+      icon: <im.ImCart />,
+      children: [
+        {
+          key: WorkType.FriendApply,
+          label: '加好友',
+          itemType: WorkType.FriendApply,
+          icon: <im.ImCart />,
+          children: [],
+        },
+        {
+          key: WorkType.CompanyApply,
+          label: '加单位',
+          itemType: WorkType.CompanyApply,
+          icon: <im.ImCart />,
+          children: [],
+        },
+        {
+          key: WorkType.GroupApply,
+          label: '加集团',
+          itemType: WorkType.GroupApply,
+          icon: <im.ImCart />,
+          children: [],
+        },
+      ],
+    },
+    {
+      key: WorkType.StoreApply,
+      label: '商店',
+      itemType: WorkType.StoreApply,
+      icon: <im.ImCart />,
+      children: [
+        {
+          key: WorkType.PublishApply,
+          label: '上架',
+          itemType: WorkType.PublishApply,
+          icon: <ToTopOutlined />,
+          item: todoCtrl.PublishApply,
+          children: [],
+        },
+        {
+          key: WorkType.JoinStoreApply,
+          label: '加入',
+          itemType: WorkType.JoinStoreApply,
+          icon: <im.ImBarcode />,
+          item: todoCtrl.MarketApply,
+          children: [],
+        },
+      ],
+    },
+    {
+      key: WorkType.OrderApply,
+      label: '订单',
+      item: todoCtrl.OrderTodo,
+      itemType: WorkType.OrderApply,
+      icon: <im.ImCart />,
+      children: [],
+    },
+  ];
+};
+
 /** 获取事菜单 */
 export const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
-  const root = await userCtrl.space.loadSpeciesTree();
+  const root = await thingCtrl.loadSpeciesTree();
   if (root) {
     return await buildSpeciesTree(root?.children, prefix + '事', isWork);
   }
   return [];
 };
 
-const loadMarket = async () => {
-  let sum = 0;
-  let children = [
-    {
-      key: '上架审批',
-      label: '上架审批',
-      itemType: GroupMenuType.Publish,
-      icon: <ToTopOutlined />,
-      ...(await loadChildren(todoCtrl.PublishTodo, GroupMenuType.Publish)),
-    },
-    {
-      key: '加入审批',
-      label: '加入审批',
-      itemType: GroupMenuType.JoinStore,
-      icon: <im.ImBarcode />,
-      ...(await loadChildren(todoCtrl.MarketTodo, GroupMenuType.JoinStore)),
-    },
-  ];
-  children.forEach((a) => (sum += a.count));
-  return {
-    children: children,
-    count: sum,
-  };
-};
-
-const loadChildren = async (todoGroups: ITodoGroup[], typeName: string) => {
-  let sum = 0;
-  let children = [];
-  for (const todoGroup of todoGroups) {
-    let count = todoGroup.id ? await todoGroup.getCount() : 0;
-    let key = todoGroup.id ? todoGroup.id : '-申请';
-    children.push({
-      key: typeName + key,
-      label: todoGroup.name,
-      itemType: typeName,
-      icon: <FileSyncOutlined />,
-      item: todoGroup,
-      count: count,
-      children: [],
-    });
-    sum += count;
-  }
-  return {
-    children: children,
-    count: sum,
-  };
-};
-
-const loadOrgChildren = async (todoGroups: ITodoGroup[]) => {
+const loadChildren = async (todoGroups: ITodoGroup[]) => {
   let sum = 0;
   let children = [];
   for (const todoGroup of todoGroups) {
@@ -120,16 +159,12 @@ const loadOrgChildren = async (todoGroups: ITodoGroup[]) => {
     ) : (
       <im.ImOffice />
     );
-    const menuType =
-      todoGroup.id == userCtrl.user.id
-        ? GroupMenuType.Friend
-        : GroupMenuType.Organization;
-    let count = await todoGroup.getCount();
+    let count = todoGroup.id ? await todoGroup.getCount() : 0;
     children.push({
-      key: todoGroup.id!,
-      label: todoGroup.name,
-      itemType: menuType,
       icon: icon,
+      key: getUuid(),
+      label: todoGroup.name,
+      itemType: todoGroup.type,
       item: todoGroup,
       count: count,
       children: [],
@@ -159,6 +194,10 @@ const buildSpeciesTree = async (
       menuType: isWork ? 'checkbox' : undefined,
       menus: [],
       children: await buildSpeciesTree(item.children, itemType, isWork),
+      count:
+        itemType.indexOf('todo') > -1
+          ? todoCtrl.getWorkTodoBySpeciesId(item.id).length
+          : undefined,
     });
   }
   return result;

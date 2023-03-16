@@ -50,14 +50,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
 
   // 跳转到流程设计
   const toFlowDesign = (operation: XOperation) => {
-    if (operation.flow) {
-      setTabKey('流程定义');
-      setModalType('编辑流程设计');
-      setFlowTabKey(1);
-      setFlowDesign(operation.flow);
-    } else {
-      setTabKey('流程定义');
-    }
+    setTabKey('办事定义');
   };
 
   /** 操作按钮 */
@@ -103,7 +96,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
             {'新增表单'}
           </Button>
         );
-      case '流程定义':
+      case '办事定义':
         return (
           <>
             {modalType == '' && (
@@ -111,7 +104,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
                 key="edit"
                 type="link"
                 onClick={() => {
-                  setModalType('新增流程设计');
+                  setModalType('新增办事');
                   setFlowDesign({
                     id: '',
                     name: '',
@@ -128,10 +121,10 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
                     target: undefined,
                   });
                 }}>
-                {'新增流程'}
+                {'新增办事'}
               </Button>
             )}
-            {(modalType == '新增流程设计' || modalType == '编辑流程设计') && (
+            {modalType == '设计流程' && (
               <Button
                 key="back"
                 type="link"
@@ -199,8 +192,8 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
       ),
     },
     {
-      label: `流程定义`,
-      key: '流程定义',
+      label: `办事定义`,
+      key: '办事定义',
       children: (
         <SettingFlow
           key={tabKey}
@@ -219,7 +212,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
   const renderTabBarExtraContent = () => {
     return (
       <div>
-        {tabKey != '流程定义' && (
+        {tabKey != '办事定义' && (
           <Segmented
             options={['全部', '本组织']}
             onChange={(value) => {
@@ -231,7 +224,7 @@ const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
             }}
           />
         )}
-        {tabKey != '流程定义' && (
+        {tabKey != '办事定义' && (
           <Segmented
             options={['全部', '本分类']}
             onChange={(value) => {

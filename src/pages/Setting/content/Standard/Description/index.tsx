@@ -12,11 +12,13 @@ import userCtrl from '@/ts/controller/setting';
 const Description = (info: { current: ISpeciesItem }) => {
   const [data, setData] = useState(info.current);
   useEffect(() => {
-    info.current
-      .loadInfo(userCtrl.findTeamInfoById(data.target.belongId))
-      .then((item) => {
-        setData(item);
-      });
+    if (info.current) {
+      info.current
+        .loadInfo(userCtrl.findTeamInfoById(data.target.belongId))
+        .then((item) => {
+          setData(item);
+        });
+    }
   }, [info.current]);
   return (
     <Card bordered={false} className={cls['company-dept-content']}>
@@ -24,8 +26,8 @@ const Description = (info: { current: ISpeciesItem }) => {
         size="middle"
         title={<Typography.Title level={5}>分类[{data.name}]基本信息</Typography.Title>}
         bordered
-        column={2}
-        labelStyle={{ textAlign: 'center', color: '#606266' }}
+        column={3}
+        labelStyle={{ textAlign: 'center', color: '#606266', width: '160px' }}
         contentStyle={{ textAlign: 'center', color: '#606266' }}>
         <Descriptions.Item label="共享组织">
           <Space>
@@ -43,12 +45,17 @@ const Description = (info: { current: ISpeciesItem }) => {
         <Descriptions.Item label="开放域">
           {data.target.public ? '开放' : '私有'}
         </Descriptions.Item>
-        <Descriptions.Item label="创建时间">{data.target.createTime}</Descriptions.Item>
+        <Descriptions.Item label="创建人">
+          {userCtrl.findTeamInfoById(data.target.createUser).name}
+        </Descriptions.Item>
+        <Descriptions.Item label="创建时间" span={3}>
+          {data.target.createTime}
+        </Descriptions.Item>
         <Descriptions.Item
           contentStyle={{ textAlign: 'left' }}
           labelStyle={{ textAlign: 'center' }}
           label="分类定义"
-          span={2}>
+          span={3}>
           {data.target.remark}
         </Descriptions.Item>
       </Descriptions>

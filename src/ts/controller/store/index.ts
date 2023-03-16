@@ -1,4 +1,3 @@
-import { kernel } from '@/ts/base';
 import { Emitter } from '@/ts/base/common';
 import { XAttribute } from '@/ts/base/schema';
 import {
@@ -7,8 +6,8 @@ import {
   getFileSysItemRoot,
   IFileSystemItem,
   IObjectItem,
+  ISpeciesItem,
 } from '@/ts/core';
-import { ISpeciesItem } from '@/ts/core/target/species/ispecies';
 /**
  * 仓库控制器
  */
@@ -20,7 +19,7 @@ class StoreController extends Emitter {
   private _root: IFileSystemItem = getFileSysItemRoot();
   constructor() {
     super();
-    emitter.subscribePart(DomainTypes.User, () => {
+    emitter.subscribePart([DomainTypes.User, DomainTypes.Company], () => {
       this._root = getFileSysItemRoot();
       setTimeout(async () => {
         this._home = await this._root.create('主目录');
@@ -50,6 +49,7 @@ class StoreController extends Emitter {
   }
 
   public async addCheckedSpeciesList(speciesItems: ISpeciesItem[], spaceId: string) {
+    speciesItems = speciesItems.filter((item) => item != undefined);
     let existIds = this._checkedSpeciesList.map((item: any) => item.id);
     let items = speciesItems.filter((item: any) => !existIds.includes(item.id));
     for (let speciesItem of items) {
@@ -68,21 +68,6 @@ class StoreController extends Emitter {
           targetAttr.species = this._checkedSpeciesList.filter(
             (item) => item.id == targetAttr.speciesId,
           )[0].target;
-        }
-
-        if (targetAttr.dictId) {
-          targetAttr.dictItems =
-            (
-              await kernel.queryDictItems({
-                id: targetAttr.dictId,
-                spaceId: spaceId,
-                page: {
-                  offset: 0,
-                  limit: 1000,
-                  filter: '',
-                },
-              })
-            ).data?.result || [];
         }
       }
       speciesItem.attrs = targetAttrs;

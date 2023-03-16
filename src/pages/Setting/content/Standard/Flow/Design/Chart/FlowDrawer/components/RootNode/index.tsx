@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal } from 'antd';
-import SelectAuth from '@/pages/Setting/content/Standard/Flow/Comp/selectAuth';
+import { Button, message, Modal } from 'antd';
 import cls from './index.module.less';
 import { NodeType } from '../../processType';
-import userCtrl from '@/ts/controller/setting';
+import { XOperation } from '@/ts/base/schema';
+import { ISpeciesItem } from '@/ts/core';
+import ViewFormModal from '@/pages/Setting/components/viewFormModal';
+import ShareShowComp from '@/bizcomponents/IndentityManage/ShareShowComp';
+import SelectOperation from '@/pages/Setting/content/Standard/Flow/Comp/SelectOperation';
 interface IProps {
   current: NodeType;
   orgId?: string;
+  species?: ISpeciesItem;
 }
 /**
  * @description: 角色
@@ -14,17 +18,15 @@ interface IProps {
  */
 
 const RootNode: React.FC<IProps> = (props) => {
-  const [isApprovalOpen, setIsApprovalOpen] = useState<boolean>(false); // 打开弹窗
-  const [currentData, setCurrentData] = useState<{
-    data: { id: string; name: string };
-    title: string;
-    key: string;
-  }>({ title: '', key: '', data: { id: '', name: '' } });
-
-  const onChange = (newValue: string) => {
-    // props.config.conditions[0].val = newValue;
-    // setKey(key + 1);
-  };
+  const [operations, setOperations] = useState<XOperation[]>([]);
+  const [operationModal, setOperationModal] = useState<any>();
+  const [viewFormOpen, setViewFormOpen] = useState<boolean>(false);
+  const [editData, setEditData] = useState<XOperation>();
+  const [showData, setShowData] = useState<any[]>([]);
+  // 操作内容渲染函数
+  useEffect(() => {
+    setOperations(props.current.props.operations || []);
+  }, []);
   return (
     <div className={cls[`app-roval-node`]}>
       <div className={cls[`roval-node`]}>
@@ -34,44 +36,64 @@ const RootNode: React.FC<IProps> = (props) => {
             shape="round"
             size="small"
             onClick={() => {
-              setIsApprovalOpen(true);
+              setOperationModal('');
             }}>
-            选择角色
+            绑定表单
           </Button>
         </div>
         <div>
-          {currentData?.title ? (
+          {operations && operations.length > 0 && (
             <span>
-              当前选择：<a>{currentData?.title}</a>
+              <ShareShowComp
+                departData={operations}
+                onClick={(item: any) => {
+                  setEditData(item);
+                  setViewFormOpen(true);
+                }}
+                deleteFuc={(id: string) => {
+                  props.current.props.operations = props.current.props.operations.filter(
+                    (op) => op.id != id,
+                  );
+                  setOperations(props.current.props.operations);
+                }}></ShareShowComp>
             </span>
-          ) : null}
+          )}
+          {/* <ChooseOperation
+            open={operationModal != undefined}
+            onOk={(item: any) => {
+              props.current.props.operations = [item.operation];
+              setOperations([item.operation]);
+              setOperationModal(undefined);
+            }}
+            onCancel={() => setOperationModal(undefined)}></ChooseOperation> */}
+          <Modal
+            title={`选择表单`}
+            width={800}
+            destroyOnClose={true}
+            open={operationModal != undefined}
+            okText="确定"
+            onOk={() => {
+              props.current.props.operations = showData;
+              setOperations(showData);
+              setOperationModal(undefined);
+            }}
+            onCancel={() => setOperationModal(undefined)}>
+            <SelectOperation
+              showData={showData}
+              setShowData={setShowData}></SelectOperation>
+          </Modal>
+          <ViewFormModal
+            data={editData}
+            open={viewFormOpen}
+            handleCancel={() => {
+              setViewFormOpen(false);
+            }}
+            handleOk={() => {
+              setViewFormOpen(false);
+            }}
+          />
         </div>
       </div>
-      <Modal
-        title="添加身份"
-        key="addApproval"
-        open={isApprovalOpen}
-        destroyOnClose={true}
-        onOk={() => {
-          props.current.props.assignedUser = [
-            { name: currentData.title, id: currentData.data.id },
-          ];
-          setIsApprovalOpen(false);
-        }}
-        onCancel={() => setIsApprovalOpen(false)}
-        width="650px">
-        {/* <IndentityManage
-          multiple={false}
-          orgId={nodeOperateOrgId}
-          onChecked={(params: any) => {
-            props.current.props.assignedUser = [
-              { name: params.title, id: params.data.id },
-            ];
-            setCurrentData(params);
-          }}
-        /> */}
-        <SelectAuth onChange={onChange}></SelectAuth>
-      </Modal>
     </div>
   );
 };

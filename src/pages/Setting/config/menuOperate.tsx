@@ -1,6 +1,7 @@
 import React from 'react';
 import * as im from 'react-icons/im';
 import userCtrl from '@/ts/controller/setting';
+import thingCtrl from '@/ts/controller/thing';
 import { ISpeciesItem, ITarget, TargetType } from '@/ts/core';
 import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 import { MenuItemType, OperateMenuType } from 'typings/globelType';
@@ -59,7 +60,7 @@ export const buildSpeciesTree = (species: ISpeciesItem) => {
   return result;
 };
 
-/** 编译职权树 */
+/** 编译权限树 */
 export const buildAuthorityTree = (authoritys: IAuthority) => {
   const result: MenuItemType = {
     key: authoritys.id,
@@ -80,7 +81,6 @@ export const getSpaceMenu = async () => {
     label = userCtrl.company.teamName;
     itemType = GroupMenuType.Company;
   }
-  await userCtrl.space.loadSpeciesTree();
   return {
     key: userCtrl.space.key,
     item: userCtrl.space,
@@ -131,25 +131,25 @@ export const loadGroupMenus = async (param: groupMenuParams) => {
 
 export const loadStandardSetting = async () => {
   const result: MenuItemType[] = [];
-  const authors = await userCtrl.space.loadAuthorityTree();
+  const authors = await userCtrl.space.loadSpaceAuthorityTree();
   if (authors) {
     result.push({
       children: [buildAuthorityTree(authors)],
-      key: '职权标准',
-      label: '职权标准',
-      itemType: '职权标准',
+      key: '权限标准',
+      label: '权限标准',
+      itemType: '权限标准',
       item: userCtrl.space,
       icon: <im.ImNewspaper />,
     });
   }
-  const species = await userCtrl.space.loadSpeciesTree();
+  const species = await thingCtrl.loadSpeciesTree();
   if (species) {
     result.push({
       children: [buildSpeciesTree(species)],
       key: '分类标准',
       label: '分类标准',
-      itemType: '分类标准',
-      item: userCtrl.space,
+      itemType: GroupMenuType.Species,
+      item: undefined,
       icon: <im.ImNewspaper />,
     });
   }
@@ -249,11 +249,6 @@ export const loadSpeciesMenus = (item: ISpeciesItem) => {
       icon: <im.ImBoxAdd />,
       label: '转为字典',
     },
-    {
-      key: '分类匹配',
-      icon: <im.ImMagicWand />,
-      label: '分类匹配',
-    },
   ];
   if (item.target.belongId) {
     items.push(
@@ -278,7 +273,7 @@ export const loadAuthorityMenus = (item: IAuthority) => {
     {
       key: '新增',
       icon: <im.ImPlus />,
-      label: '新增职权',
+      label: '新增权限',
     },
   ];
   if (item.belongId) {
@@ -286,12 +281,12 @@ export const loadAuthorityMenus = (item: IAuthority) => {
       {
         key: '修改',
         icon: <im.ImCog />,
-        label: '编辑职权',
+        label: '编辑权限',
       },
       {
         key: '移除',
         icon: <im.ImBin />,
-        label: '删除职权',
+        label: '删除权限',
       },
     );
   }
@@ -316,14 +311,6 @@ export const loadTypeMenus = async (item: ITarget) => {
       icon: <im.ImPencil />,
       label: '编辑信息',
     });
-    if (item.speciesTree) {
-      menus.push({
-        key: '制定标准',
-        label: '制定标准',
-        icon: <im.ImNewspaper />,
-        subMenu: buildSpeciesTree(item.speciesTree),
-      });
-    }
     if (item != userCtrl.user && item != userCtrl.company) {
       menus.push({
         key: '删除',

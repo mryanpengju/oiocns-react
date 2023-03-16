@@ -15,7 +15,6 @@ import AssignModal from '@/bizcomponents/AssignModal';
 import Description from '../Description';
 import chatCtrl from '@/ts/controller/chat';
 import ExclamationCircleOutlined from '@ant-design/icons/lib/icons/ExclamationCircleOutlined';
-import AddPostModal from '@/bizcomponents/AddPositionModal';
 import { IsRelationAdmin, IsSuperAdmin } from '@/utils/authority';
 interface IProps {
   current: ICohort;
@@ -53,7 +52,7 @@ const CohortSetting: React.FC<IProps> = ({ current }: IProps) => {
     return (
       <>
         <Button type="link" onClick={() => setActiveModal('indentity')}>
-          身份设置
+          角色设置
         </Button>
         {isRelationAdmin && (
           <Button type="link" onClick={() => setActiveModal('addOne')}>
@@ -140,11 +139,7 @@ const CohortSetting: React.FC<IProps> = ({ current }: IProps) => {
           <Typography.Title level={5}>{current.target.typeName}信息</Typography.Title>
         }
         current={current}
-        extra={[
-          <Button type="link" key="qx" onClick={() => setActiveModal('post')}>
-            权限管理
-          </Button>,
-        ]}
+        extra={[]}
       />
       <div className={cls['pages-wrap']}>
         <PageCard bordered={false} tabList={TitleItems} tabBarExtraContent={renderBtns()}>
@@ -200,14 +195,6 @@ const CohortSetting: React.FC<IProps> = ({ current }: IProps) => {
             columns={PersonColumns}
           />
         </Modal>
-        {/* 权限设置 */}
-        <AddPostModal
-          title={'权限设置'}
-          IsAdmin={isSuperAdmin}
-          open={activeModal === 'post'}
-          handleOk={() => setActiveModal('')}
-          current={current}
-        />
       </div>
     </div>
   );

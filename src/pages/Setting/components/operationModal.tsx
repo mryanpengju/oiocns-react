@@ -11,7 +11,8 @@ import {
 import { Modal } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React from 'react';
-import ProFormAuth from './render/widgets/ProFormAuth';
+import { targetsToTreeData } from '..';
+// import ProFormAuth from './render/widgets/ProFormAuth';
 
 interface Iprops {
   title: string;
@@ -55,12 +56,19 @@ const OperationModal = (props: Iprops) => {
           ...form.getFieldsValue(),
         };
         if (title.includes('新增')) {
-          handleOk(await current.createOperation(value));
+          const result = await current.createOperation(value);
+          form.resetFields();
+          handleOk(result);
         } else {
-          handleOk(await current.updateOperation(value));
+          const result = await current.updateOperation(value);
+          form.resetFields();
+          handleOk(result);
         }
       }}
-      onCancel={handleCancel}
+      onCancel={() => {
+        form.resetFields();
+        handleCancel();
+      }}
       destroyOnClose={true}
       cancelText={'关闭'}
       width={640}>
@@ -106,18 +114,12 @@ const OperationModal = (props: Iprops) => {
           required={true}
           colProps={{ span: 12 }}
           request={async () => {
-            return await userCtrl.getTeamTree();
+            const res = await userCtrl.getTeamTree();
+            return targetsToTreeData(res);
           }}
           fieldProps={{
-            disabled: title === '修改',
-            fieldNames: {
-              label: 'teamName',
-              value: 'id',
-              children: 'subTeam',
-            },
+            disabled: title === '修改' || title === '编辑',
             showSearch: true,
-            filterTreeNode: true,
-            treeNodeFilterProp: 'teamName',
           }}
         />
         <ProFormSelect
@@ -143,12 +145,12 @@ const OperationModal = (props: Iprops) => {
             rules: [{ required: true, message: '是否公开为必填项' }],
           }}
         />
-        <ProFormAuth
+        {/* <ProFormAuth
           width="md"
           name="beginAuthId"
           placeholder="请选择角色"
           colProps={{ span: 12 }}
-        />
+        /> */}
       </ProForm>
     </Modal>
   );

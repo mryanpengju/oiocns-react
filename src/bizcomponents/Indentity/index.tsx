@@ -19,7 +19,7 @@ type IndentityManageType = {
   isAdmin: boolean;
 };
 /**
- * 身份设置
+ * 角色设置
  * @returns
  */
 const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
@@ -38,7 +38,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
       setIndentity(undefined);
     }
   }, [open]);
-  // 左侧身份数据
+  // 左侧角色数据
   const getDataList = async () => {
     const data = await current.getIdentitys();
     setIndentitys(data);
@@ -76,7 +76,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
   const setTreeCurrent = async (current: IIdentity) => {
     setIndentity(current);
   };
-  // 身份信息操作
+  // 角色信息操作
   const buttons = isAdmin
     ? [
         <Button
@@ -114,11 +114,11 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
       ]
     : [];
 
-  // 身份信息内容
+  // 角色信息内容
   const content = (
     <div className={cls['company-dept-content']}>
       <Descriptions
-        title="身份信息"
+        title="角色信息"
         bordered
         column={2}
         size="small"
@@ -142,14 +142,14 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
   // 按钮
   const renderBtns = isAdmin ? (
     <Button type="link" onClick={async () => setIsOpenAssign(true)}>
-      指派身份
+      指派角色
     </Button>
   ) : (
     <></>
   );
-  // 身份信息标题
+  // 角色信息标题
 
-  //身份主体
+  //角色主体
   const deptCount = (
     <div className={`${cls['dept-wrap-pages']}`}>
       <div className={`pages-wrap flex flex-direction-col ${cls['pages-wrap']}`}>
@@ -182,8 +182,9 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
     <Modal
       open={open}
       width={1424}
-      title="身份设置"
+      title="角色设置"
       destroyOnClose
+      footer={[]}
       bodyStyle={{ padding: 0 }}
       {...other}>
       <Layout style={{ height: 682, overflow: 'hidden' }}>
@@ -213,7 +214,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
               current={current}
             />
             <Modal
-              title="指派身份"
+              title="指派角色"
               open={isOpenAssign}
               width={900}
               destroyOnClose

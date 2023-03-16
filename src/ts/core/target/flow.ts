@@ -4,7 +4,7 @@ import { model, schema } from '../../base';
 
 export default class FlowTarget extends BaseTarget {
   defines: schema.XFlowDefine[] = [];
-  defineRelations: schema.XFlowRelation[] = [];
+  defineRelations: schema.XOperation[] = [];
   async getDefines(reload: boolean = false): Promise<schema.XFlowDefine[]> {
     if (!reload && this.defines.length > 0) {
       return this.defines;
@@ -12,7 +12,6 @@ export default class FlowTarget extends BaseTarget {
     const res = await kernel.queryDefine({
       speciesId: this.target.id,
       spaceId: '',
-      isStrict: false,
       page: { offset: 0, limit: 1, filter: '' },
     });
 
@@ -20,18 +19,6 @@ export default class FlowTarget extends BaseTarget {
       this.defines = res.data.result;
     }
     return this.defines;
-  }
-  async queryFlowRelation(reload: boolean = false): Promise<schema.XFlowRelation[]> {
-    if (!reload && this.defineRelations.length > 0) {
-      return this.defineRelations;
-    }
-    const res = await kernel.queryDefineRelation({
-      id: this.target.id,
-    });
-    if (res.success && res.data.result) {
-      this.defineRelations = res.data.result;
-    }
-    return this.defineRelations;
   }
   async publishDefine(
     data: Omit<model.CreateDefineReq, 'belongId'>,
@@ -58,26 +45,5 @@ export default class FlowTarget extends BaseTarget {
   }
   async createInstance(data: model.FlowInstanceModel): Promise<schema.XFlowInstance> {
     return (await kernel.createInstance(data)).data;
-  }
-  async bindingFlowRelation(
-    data: model.FlowRelationModel,
-  ): Promise<schema.XFlowRelation> {
-    const res = await kernel.createFlowRelation(data);
-    if (res.success) {
-      this.defineRelations = this.defineRelations.filter(
-        (a) => a.productId != data.productId || a.functionCode != data.functionCode,
-      );
-      this.defineRelations.push(res.data);
-    }
-    return res.data;
-  }
-  async unbindingFlowRelation(data: model.FlowRelationModel): Promise<boolean> {
-    const res = await kernel.deleteFlowRelation(data);
-    if (res.success) {
-      this.defineRelations = this.defineRelations.filter(
-        (a) => a.productId != data.productId || a.functionCode != data.functionCode,
-      );
-    }
-    return res.success;
   }
 }

@@ -42,6 +42,9 @@ const SelectAuth: React.FC<IProps> = (props: IProps) => {
       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
       placeholder="请选择角色"
       treeDefaultExpandAll
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
       onChange={props.onChange}
       treeData={treeData}
       disabled={props.readonly}

@@ -19,11 +19,12 @@ export type Header = {
 
 interface IProps {
   speciesArray: XSpecies[];
+  dataSource?: any[];
 }
 /**
  * 类别-数据表格子表
  */
-const SpeciesDataGrid: React.FC<IProps> = ({ speciesArray }) => {
+const SpeciesDataGrid: React.FC<IProps> = ({ speciesArray, dataSource }) => {
   const [headers, setHeaders] = useState<Header[]>([]);
   const [tkey, tforceUpdate] = useObjectUpdate(speciesArray);
 
@@ -62,7 +63,7 @@ const SpeciesDataGrid: React.FC<IProps> = ({ speciesArray }) => {
   return (
     <DataGrid
       key={tkey}
-      dataSource={[]}
+      dataSource={dataSource || []}
       keyExpr="key"
       columnMinWidth={80}
       focusedRowEnabled={true}

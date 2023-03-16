@@ -10,15 +10,12 @@ import Identity from './authority/identity';
 import { generateUuid, logger, sleep } from '@/ts/base/common';
 import { XTarget, XTargetArray } from '@/ts/base/schema';
 import { TargetModel, TargetShare } from '@/ts/base/model';
-import { ISpeciesItem } from './species/ispecies';
-import { SpeciesItem } from './species/species';
 export default class BaseTarget implements ITarget {
   public key: string;
   public typeName: TargetType;
   public subTeamTypes: TargetType[] = [];
   protected memberTypes: TargetType[] = [TargetType.Person];
   public readonly target: schema.XTarget;
-  public speciesTree: ISpeciesItem | undefined;
   public authorityTree: Authority | undefined;
   public ownIdentitys: schema.XIdentity[];
   public identitys: IIdentity[];
@@ -423,8 +420,8 @@ export default class BaseTarget implements ITarget {
   }
 
   /**
-   * 判断是否拥有该职权对应身份
-   * @param codes 职权编号集合
+   * 判断是否拥有该权限对应角色
+   * @param codes 权限编号集合
    */
   async judgeHasIdentity(codes: string[]): Promise<boolean> {
     if (this.ownIdentitys.length == 0) {
@@ -447,7 +444,7 @@ export default class BaseTarget implements ITarget {
   }
 
   /**
-   * 查询组织职权树
+   * 查询组织权限树
    * @param id
    * @returns
    */
@@ -460,6 +457,7 @@ export default class BaseTarget implements ITarget {
     await this.getOwnIdentitys(reload);
     const res = await kernel.queryAuthorityTree({
       id: this.target.id,
+      spaceId: '0',
       page: {
         offset: 0,
         filter: '',
@@ -470,17 +468,5 @@ export default class BaseTarget implements ITarget {
       this.authorityTree = new Authority(res.data, this.id);
     }
     return this.authorityTree;
-  }
-
-  public async loadSpeciesTree(
-    reload: boolean = false,
-  ): Promise<ISpeciesItem | undefined> {
-    if (reload || !this.speciesTree) {
-      const res = await kernel.querySpeciesTree('0', this.id, '');
-      if (res.success) {
-        this.speciesTree = new SpeciesItem(res.data, undefined);
-      }
-    }
-    return this.speciesTree;
   }
 }

@@ -5,49 +5,84 @@ import { ProForm } from '@ant-design/pro-components';
 import { Col, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OioFormItem from './FormItems';
-import SpeciesTabs from './SpeciesTabs';
+// import SpeciesTabs from './SpeciesTabs';
 
 type OioFormProps = {
   operation: XOperation;
-  onValuesChange?: (values: any) => void;
+  operationItems?: any[];
+  submitter?: any;
+  onValuesChange?: (changedValues: any, values: Record<string, any>) => void;
+  onFinished?: Function;
+  fieldsValue?: any;
+  formRef: any;
+  disabled?: boolean;
 };
 
 /**
  * 奥集能表单
  */
-const OioForm: React.FC<OioFormProps> = ({ operation, onValuesChange }) => {
+const OioForm: React.FC<OioFormProps> = ({
+  operation,
+  operationItems,
+  submitter,
+  onValuesChange,
+  onFinished,
+  fieldsValue,
+  formRef,
+  disabled,
+}) => {
   const [items, setItems] = useState<XOperationItem[]>([]);
+  // const formRef = useRef<ProFormInstance<any>>();
   let config: any = { col: 12, layout: 'horizontal' };
-  if (operation.remark) {
+  if (operation?.remark) {
     config = JSON.parse(operation.remark);
   }
   useEffect(() => {
-    const queryItems = async () => {
-      // 表单项
-      const operateItemRes = await kernel.queryOperationItems({
-        id: operation.id,
-        spaceId: userCtrl.space.id,
-        page: { offset: 0, limit: 100000, filter: '' },
-      });
-      const operateItems = (operateItemRes.data.result || []) as XOperationItem[];
-      setItems(operateItems);
-    };
-    queryItems();
-  }, [operation.id]);
+    if (fieldsValue) {
+      formRef?.current?.setFieldsValue(fieldsValue);
+    }
+  }, [fieldsValue]);
+
+  useEffect(() => {
+    if (operationItems) {
+      setItems(operationItems);
+    } else {
+      const queryItems = async () => {
+        // 表单项
+        const operateItemRes = await kernel.queryOperationItems({
+          id: operation.id,
+          spaceId: userCtrl.space.id,
+          page: { offset: 0, limit: 100000, filter: '' },
+        });
+        const operateItems = (operateItemRes.data.result || []) as XOperationItem[];
+        setItems(operateItems);
+      };
+      queryItems();
+    }
+  }, [operation?.id]);
 
   return (
     <ProForm
-      submitter={{
-        searchConfig: {
-          resetText: '重置',
-          submitText: '提交',
-        },
-        resetButtonProps: {
-          style: { display: 'none' },
-        },
-        submitButtonProps: {
-          style: { display: 'none' },
-        },
+      disabled={disabled === true}
+      initialValues={fieldsValue}
+      submitter={
+        submitter || {
+          searchConfig: {
+            resetText: '重置',
+            submitText: '提交',
+          },
+          resetButtonProps: {
+            style: { display: 'none' },
+          },
+          submitButtonProps: {
+            style: { display: 'none' },
+          },
+        }
+      }
+      formRef={formRef}
+      onFinish={async (values) => {
+        await formRef.current?.validateFields();
+        onFinished?.call(this, values);
       }}
       onValuesChange={onValuesChange}
       layout={config.layout}
@@ -65,13 +100,13 @@ const OioForm: React.FC<OioFormProps> = ({ operation, onValuesChange }) => {
               <OioFormItem item={item} />
             </Col>
           ))}
-        {items.filter((i: XOperationItem) => !i.attrId).length > 0 && (
+        {/* {items.filter((i: XOperationItem) => !i.attrId).length > 0 && (
           <Col span={24}>
             <SpeciesTabs
               operationItems={items.filter((i: XOperationItem) => !i.attrId)}
             />
           </Col>
-        )}
+        )} */}
       </Row>
     </ProForm>
   );

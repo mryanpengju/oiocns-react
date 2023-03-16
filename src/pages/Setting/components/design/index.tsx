@@ -12,6 +12,7 @@ import {
   Radio,
   Row,
   Select,
+  SelectProps,
   Space,
 } from 'antd';
 import React, { useEffect } from 'react';
@@ -19,10 +20,10 @@ import { useState } from 'react';
 import userCtrl from '@/ts/controller/setting';
 import { ProForm } from '@ant-design/pro-components';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
-import { EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import AttrItem from './AttrItem';
 import OperateItem from './OperateItem';
-import SpeciesTabs from './SpeciesTabs';
+// import SpeciesTabs from './SpeciesTabs';
 import SpeciesTreeModal from './SpeciesTreeModal';
 import { ISpeciesItem } from '@/ts/core';
 import { XOperation, XOperationItem } from '@/ts/base/schema';
@@ -120,6 +121,86 @@ export const widgetsOpts = [
 ];
 
 /**
+ * 正则表达式
+ */
+export const regexpOpts: SelectProps['options'] = [
+  {
+    label: '固定电话号码',
+    value: '(\\d{4}-|\\d{3}-)?(\\d{8}|\\d{7})',
+  },
+  {
+    label: '手机号码',
+    value: '1\\d{10}',
+  },
+  {
+    label: '邮政编码',
+    value: '[1-9]\\d{5}',
+  },
+  {
+    label: '角色证号(15位或18位)',
+    value: '\\d{15}(\\d\\d[0-9xX])?',
+  },
+  { label: '网址', value: '[a-zA-z]+://[^s]*' },
+  {
+    label: 'IP地址',
+    value: '((2[0-4]d|25[0-5]|[01]?dd?).){3}(2[0-4]d|25[0-5]|[01]?dd?)',
+  },
+  {
+    label: '邮箱地址',
+    value: '\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*',
+  },
+  {
+    label: 'QQ号码',
+    value: '[1-9]\\d{4,}',
+  },
+  {
+    label: 'HTML标记',
+    value: '<(.*)(.*)>.*<\\/\\1>|<(.*) \\/>',
+  },
+  {
+    label: '日期(年-月-日',
+    value: '(\\d{4}|\\d{2})-((1[0-2])|(0?[1-9]))-(([12][0-9])|(3[01])|(0?[1-9]))',
+  },
+  {
+    label: '日期(月/日/年)',
+    value: '((1[0-2])|(0?[1-9]))/(([12][0-9])|(3[01])|(0?[1-9]))/(\\d{4}|\\d{2})',
+  },
+  {
+    label: '时间(小时:分钟, 24小时制)',
+    value: '((1|0?)[0-9]|2[0-3]):([0-5][0-9])',
+  },
+  {
+    label: '汉字(字符)',
+    value: '[\\u4e00-\\u9fa5]',
+  },
+  {
+    label: '中文及全角标点符号(字符)',
+    value:
+      '[\\u3000-\\u301e\\ufe10-\\ufe19\\ufe30-\\ufe44\\ufe50-\\ufe6b\\uff01-\\uffee]',
+  },
+  {
+    label: '非负整数(正整数或零)',
+    value: '\\d+',
+  },
+  {
+    label: '正整数',
+    value: '[0-9]*[1-9][0-9]*',
+  },
+  {
+    label: '负整数',
+    value: '-[0-9]*[1-9][0-9]*',
+  },
+  {
+    label: '整数',
+    value: '-?\\d+',
+  },
+  {
+    label: '小数',
+    value: '(-?\\d+)(\\.\\d+)?',
+  },
+];
+
+/**
  * 转化特性为表单项
  */
 const transformAttrToOperationItem = (
@@ -135,7 +216,25 @@ const transformAttrToOperationItem = (
   } else if (attr.valueType === '选择型') {
     widget = 'dict';
     dictId = attr.dictId;
-  }
+  } else if (attr.valueType === '分类') {
+    widget = 'species';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '日期型') {
+    widget = 'date';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '时间型') {
+    widget = 'datetime';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '附件') {
+    widget = 'file';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '人员') {
+    widget = 'person';
+    dictId = attr.dictId;
+  } else if (attr.valueType === '部门') {
+    widget = 'department';
+    dictId = attr.dictId;
+  } // Todo 增加类型
   return (
     attr.operationItem || {
       id: attr.id,
@@ -245,7 +344,9 @@ const Design: React.FC<DesignProps> = ({
       const attrIds = operateItems.map((item) => item.attrId);
       items['operationItems'] = operateItems;
       // 过滤出特性
-      items['attrs'] = attrs.filter((attr) => !attrIds.includes(attr.id));
+      items['attrs'] = attrs
+        .filter((attr) => !attrIds.includes(attr.id))
+        .filter((attr) => attr.belongId);
       setItems(items);
       tforceUpdate();
     };
@@ -450,16 +551,16 @@ const Design: React.FC<DesignProps> = ({
     tforceUpdate();
   };
 
-  // 删除表单子表项
-  const deleteOperationItem = (code: string) => {
-    items['operationItems'] = items['operationItems'].filter((i: any) => i.code !== code);
-    setItems(items);
-    setOperationModel({
-      ...operation,
-      ...{ items: items['operationItems'] },
-    });
-    tforceUpdate();
-  };
+  // // 删除表单子表项
+  // const deleteOperationItem = (code: string) => {
+  //   items['operationItems'] = items['operationItems'].filter((i: any) => i.code !== code);
+  //   setItems(items);
+  //   setOperationModel({
+  //     ...operation,
+  //     ...{ items: items['operationItems'] },
+  //   });
+  //   tforceUpdate();
+  // };
 
   return (
     <div key={tkey}>
@@ -516,24 +617,6 @@ const Design: React.FC<DesignProps> = ({
                         layoutChange({ layout: value });
                       }}
                     />
-                    {!operation.flow && (
-                      <Button
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                          toFlowDesign(operation);
-                        }}>
-                        新建流程
-                      </Button>
-                    )}
-                    {operation.flow && (
-                      <Button
-                        icon={<EditOutlined />}
-                        onClick={() => {
-                          toFlowDesign(operation);
-                        }}>
-                        设计流程
-                      </Button>
-                    )}
                     <Space wrap>
                       <Button
                         icon={<PlusOutlined />}
@@ -576,7 +659,7 @@ const Design: React.FC<DesignProps> = ({
                           <OperateItem item={item} />
                         </Col>
                       ))}
-                    {items['operationItems'].filter((i: XOperationItem) => !i.attrId)
+                    {/* {items['operationItems'].filter((i: XOperationItem) => !i.attrId)
                       .length > 0 && (
                       <Col span={24}>
                         <SpeciesTabs
@@ -588,7 +671,7 @@ const Design: React.FC<DesignProps> = ({
                           setOpenSpeciesModal={setOpenSpeciesModal}
                         />
                       </Col>
-                    )}
+                    )} */}
                   </Row>
                 </ProForm>
               </Card>
@@ -635,16 +718,13 @@ const Design: React.FC<DesignProps> = ({
                   <Form.Item label="特性说明" name="description">
                     <Input.TextArea />
                   </Form.Item>
-                  <Form.Item
-                    label="校验规则"
-                    name="rules"
-                    tooltip="示例：[
-      {
-        pattern: '^[A-Za-z0-9]+$',
-        message: '只允许填写英文字母和数字',
-      },
-    ]">
-                    <Input.TextArea />
+                  <Form.Item label="正则校验" name="rules" tooltip="示例：^[A-Za-z0-9]+$">
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="请输入或者选择正则表达式"
+                      options={regexpOpts}
+                    />
                   </Form.Item>
                 </Form>
               </Card>
@@ -672,6 +752,7 @@ const Design: React.FC<DesignProps> = ({
         width={900}>
         <OioForm
           operation={operation}
+          operationItems={items['operationItems']}
           onValuesChange={(values) => console.log('values', values)}
         />
       </Modal>

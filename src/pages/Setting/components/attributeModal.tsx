@@ -5,6 +5,7 @@ import { AttributeModel } from '@/ts/base/model';
 import { IDict, ISpeciesItem, ITarget } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting';
 import { XAttribute } from '@/ts/base/schema';
+import { targetsToTreeData } from '..';
 
 interface Iprops {
   title: string;
@@ -62,23 +63,22 @@ const AttributeModal = (props: Iprops) => {
         title: '选择制定组织',
         dataIndex: 'belongId',
         valueType: 'treeSelect',
+        initialValue: userCtrl.space.id,
         formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
         request: async () => {
-          return await userCtrl.getTeamTree();
+          const res = await userCtrl.getTeamTree();
+          return targetsToTreeData(res);
         },
         fieldProps: {
           disabled: title === '修改',
-          fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
           showSearch: true,
-          filterTreeNode: true,
-          treeNodeFilterProp: 'teamName',
         },
       },
       {
-        title: '选择管理职权',
+        title: '选择管理权限',
         dataIndex: 'authId',
         valueType: 'treeSelect',
-        formItemProps: { rules: [{ required: true, message: '管理职权为必填项' }] },
+        formItemProps: { rules: [{ required: true, message: '管理权限为必填项' }] },
         request: async () => {
           const data = await userCtrl.company.loadAuthorityTree(false);
           return data ? [data] : [];
@@ -130,6 +130,26 @@ const AttributeModal = (props: Iprops) => {
               value: '选择型',
               label: '选择型',
             },
+            {
+              value: '分类',
+              label: '分类型',
+            },
+            {
+              value: '附件',
+              label: '附件型',
+            },
+            {
+              value: '日期型',
+              label: '日期型',
+            },
+            {
+              value: '时间型',
+              label: '时间型',
+            },
+            {
+              value: '组织型',
+              label: '组织/人员',
+            },
           ],
           onSelect: (select: string) => {
             setSelectType(select);
@@ -172,7 +192,8 @@ const AttributeModal = (props: Iprops) => {
       width={640}
       onOpenChange={(open: boolean) => {
         if (open) {
-          formRef.current?.setFieldValue('belongId', props.target?.id);
+          // console.log('props.target?.id', props.target?.id);
+          // formRef.current?.setFieldsValue({ belongId: props.target?.id });
           if (title.includes('修改')) {
             setSelectType(data?.valueType);
             formRef.current?.setFieldsValue(data);

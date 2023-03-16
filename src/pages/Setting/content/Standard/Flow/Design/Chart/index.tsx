@@ -3,6 +3,7 @@ import FlowDrawer from './FlowDrawer';
 import ProcessTree from './ProcessTree';
 import React, { useEffect, useState } from 'react';
 import { AddNodeType, FieldCondition, NodeType } from './FlowDrawer/processType';
+import { ISpeciesItem } from '@/ts/core';
 
 interface IProps {
   operateOrgId?: string;
@@ -10,6 +11,8 @@ interface IProps {
   scale?: number;
   resource: any;
   conditions?: FieldCondition[]; //内置条件选择器
+  species?: ISpeciesItem;
+  defaultEditable: boolean;
 }
 
 const ChartDesign: React.FC<IProps> = (props) => {
@@ -28,14 +31,14 @@ const ChartDesign: React.FC<IProps> = (props) => {
           <div className={cls['design']} style={{ transform: `scale(${scale / 100})` }}>
             {/* 树结构展示 */}
             <ProcessTree
+              defaultEditable={props.defaultEditable}
               operateOrgId={props.operateOrgId}
               conditions={props.conditions}
               resource={props.resource}
               onSelectedNode={(params) => {
                 if (
                   params.type !== AddNodeType.CONCURRENTS &&
-                  params.type !== AddNodeType.ORGANIZATIONA &&
-                  params.type !== AddNodeType.ROOT
+                  params.type !== AddNodeType.ORGANIZATIONA
                 ) {
                   //设置当前操作的节点，后续都是对当前节点的操作
                   setCurrentNode(params);
@@ -50,9 +53,13 @@ const ChartDesign: React.FC<IProps> = (props) => {
       </div>
       {/* 侧边数据填充 */}
       <FlowDrawer
+        defaultEditable={props.defaultEditable}
+        species={props.species}
         operateOrgId={props.operateOrgId}
         designOrgId={props.designOrgId}
-        isOpen={isOpen}
+        isOpen={
+          isOpen && (props.defaultEditable || currentNode?.task?.records?.length > 0)
+        }
         current={currentNode}
         conditions={props.conditions}
         onClose={() => {

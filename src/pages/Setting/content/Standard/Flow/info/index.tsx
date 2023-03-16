@@ -1,4 +1,4 @@
-import { Card, Modal, message, TreeSelect } from 'antd';
+import { Card, Modal, message } from 'antd';
 import React, { useRef, useEffect, useState } from 'react';
 import cls from './index.module.less';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -10,12 +10,11 @@ import FlowCard from './FlowCard';
 import { FlowColumn } from '@/pages/Setting/config/columns';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
 import { ISpeciesItem } from '@/ts/core/thing/ispecies';
-// import { IsThingAdmin } from '@/utils/authority';
-import { ITarget } from '@/ts/core';
-import { DefaultOptionType } from 'rc-select/lib/Select';
 import { kernel } from '@/ts/base';
 import { PageRequest } from '@/ts/base/model';
 import { getUuid } from '@/utils/tools';
+// import FieldInfo from '../Design/Field';
+import DefineInfo from '@/pages/Setting/content/Standard/Flow/info/DefineInfo';
 
 interface IProps {
   modalType: string;
@@ -27,6 +26,7 @@ interface IProps {
   onDesign: () => void;
   onCurrentChaned: (item?: XFlowDefine) => void;
   setInstance: Function;
+  setTestModel?: Function;
 }
 
 /**
@@ -42,6 +42,7 @@ const FlowList: React.FC<IProps> = ({
   onDesign,
   onCurrentChaned,
   setInstance,
+  setTestModel,
 }: IProps) => {
   const parentRef = useRef<any>(null);
   const parentRef2 = useRef<any>(null);
@@ -49,11 +50,12 @@ const FlowList: React.FC<IProps> = ({
   const [key, setKey] = useState<string>();
   const [binds, setBinds] = useState<any[]>([]);
   const [operationModal, setOperationModal] = useState<string>();
-  const [treeData, setTreeData] = useState<any[]>([]);
+  const [defineInfo, setDefineInfo] = useState<XFlowDefine>();
   useEffect(() => {
-    if (modalType.includes('新增流程设计')) {
+    if (modalType.includes('新增办事')) {
       onCurrentChaned(undefined);
-      onDesign();
+      setDefineInfo(undefined);
+      // onDesign();
     }
   }, [modalType]);
 
@@ -61,88 +63,60 @@ const FlowList: React.FC<IProps> = ({
     setBinds([]);
   }, [species]);
 
-  const getTreeData = (targets: ITarget[]): DefaultOptionType[] => {
-    return targets.map((item: ITarget) => {
-      return {
-        label: item.teamName,
-        value: item.id,
-        children:
-          item.subTeam && item.subTeam.length > 0 ? getTreeData(item.subTeam) : [],
-      };
-    });
-  };
-
-  const loadTreeData = async () => {
-    let tree = await userCtrl.getTeamTree();
-    setTreeData(getTreeData(tree));
-  };
-
-  useEffect(() => {
-    loadTreeData();
-  }, [userCtrl.space]);
-
   const renderOperation = (record: XFlowDefine): any[] => {
     let operations: any[] = [
       {
         key: 'editor',
         label: '编辑',
         onClick: () => {
-          Modal.confirm({
-            title: '与该流程相关的未完成待办将会重置，是否确定编辑?',
-            icon: <ExclamationCircleOutlined />,
-            okText: '确认',
-            cancelText: '取消',
-            okType: 'danger',
-            onOk: () => {
-              onCurrentChaned(record);
-              // setIsModalOpen(true);
-              // setIsModalOpen(false);
-              setOperateOrgId(userCtrl.space.id);
-              setModalType('编辑流程设计');
-              onDesign();
-            },
-          });
+          onCurrentChaned(undefined);
+          setModalType('编辑办事');
+          setDefineInfo(record);
         },
       },
       {
-        key: 'bindOperation',
-        label: '绑定业务',
+        key: 'design',
+        label: '设计',
         onClick: () => {
-          setOperationModal(record.id);
+          onCurrentChaned(record);
+          setOperateOrgId(userCtrl.space.id);
+          setModalType('设计流程');
+          onDesign();
         },
       },
-      {
-        key: 'createInstance',
-        label: '发起测试流程',
-        onClick: async () => {
-          let res = await kernel.createInstance({
-            defineId: record.id,
-            SpaceId: userCtrl.space.id,
-            content: 'Text文本显示正常',
-            contentType: 'Text',
-            data: JSON.stringify({
-              id: '789171',
-              name: '测试流程的数据',
-              code: 'test',
-              // price: '0',
-              remark: '测试流程的数据',
-            }),
-            title: record.name,
-            hook: '',
-          });
-          if (res.success) {
-            message.success('发起测试流程成功');
-            console.log('instance', res.data);
-            setInstance(res.data);
-            onCurrentChaned(record);
-            setOperateOrgId(userCtrl.space.id);
-            setModalType('编辑流程设计');
-            onDesign();
-          } else {
-            message.error('发起测试流程失败');
-          }
-        },
-      },
+      // {
+      //   key: 'createInstance',
+      //   label: '发起测试流程',
+      //   onClick: async () => {
+      //     let res = await kernel.createInstance({
+      //       defineId: record.id,
+      //       SpaceId: userCtrl.space.id,
+      //       content: 'Text文本显示正常',
+      //       contentType: 'Text',
+      //       data: JSON.stringify({
+      //         id: '789171',
+      //         name: '测试流程的数据',
+      //         code: 'test',
+      //         // price: '0',
+      //         remark: '测试流程的数据',
+      //       }),
+      //       title: record.name,
+      //       hook: '',
+      //       thingIds: [],
+      //     });
+      //     if (res.success) {
+      //       message.success('发起测试流程成功');
+      //       setTestModel?.call(this, true);
+      //       setInstance(res.data);
+      //       onCurrentChaned(record);
+      //       setOperateOrgId(userCtrl.space.id);
+      //       setModalType('设计流程');
+      //       onDesign();
+      //     } else {
+      //       message.error('发起测试流程失败');
+      //     }
+      //   },
+      // },
     ];
     if (isAdmin) {
       operations.push({
@@ -208,13 +182,12 @@ const FlowList: React.FC<IProps> = ({
           bordered={false}
           // style={{ paddingBottom: '10px' }}
           bodyStyle={{ paddingTop: 0 }}>
-          <div className={cls['app-wrap']} ref={parentRef} style={{ height: 400 }}>
+          <div className={cls['app-wrap']} ref={parentRef}>
             <CardOrTable<XFlowDefine>
               columns={FlowColumn}
               parentRef={parentRef}
               dataSource={[]}
               operation={renderOperation}
-              // height={height}
               rowKey={(record: XFlowDefine) => record.id}
               request={async (page) => {
                 let res: XFlowDefineArray | undefined = await species?.loadFlowDefines(
@@ -225,15 +198,7 @@ const FlowList: React.FC<IProps> = ({
               }}
               onRow={(record: any) => {
                 return {
-                  onClick: async () => {
-                    let res = await kernel.queryDefineRelation({
-                      id: record.id,
-                      page: { offset: 0, limit: 1000, filter: '' },
-                    });
-                    setBinds(res.data.result || []);
-                    setKey(getUuid());
-                    // setHeight(0.3 * useWindowSize().height);
-                  },
+                  onClick: async () => {},
                 };
               }}
               renderCardContent={(items) => {
@@ -262,7 +227,6 @@ const FlowList: React.FC<IProps> = ({
               parentRef={parentRef2}
               key={key}
               rowKey={'id'}
-              // params={tkey}
               columns={OperationColumns}
               showChangeBtn={false}
               dataSource={binds}
@@ -287,6 +251,29 @@ const FlowList: React.FC<IProps> = ({
           dataSource={[]}
         />
       </Modal>
+
+      {species && (
+        <DefineInfo
+          data={defineInfo}
+          title={modalType}
+          open={modalType.includes('新增办事') || modalType.includes('编辑办事')}
+          handleCancel={function (): void {
+            setDefineInfo(undefined);
+            setModalType('');
+          }}
+          handleOk={async (res: any) => {
+            if (res) {
+              setDefineInfo(undefined);
+              message.success('保存成功');
+              setModalType('');
+              tforceUpdate();
+            } else {
+              message.error('保存失败');
+            }
+          }}
+          current={species}
+        />
+      )}
     </div>
   );
 };

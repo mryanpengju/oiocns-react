@@ -8,7 +8,14 @@ import { SpeciesItem } from './species';
  */
 export const loadSpeciesTree = async (id: string) => {
   let item: INullSpeciesItem;
-  const res = await kernel.querySpeciesTree('0', id, '');
+  const res = await kernel.querySpeciesTree({
+    id: id,
+    page: {
+      offset: 0,
+      limit: 0,
+      filter: '',
+    },
+  });
   if (res.success) {
     item = new SpeciesItem(res.data, undefined);
   }

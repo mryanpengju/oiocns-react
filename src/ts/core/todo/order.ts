@@ -1,6 +1,6 @@
 import { logger } from '@/ts/base/common';
 import consts from '../consts';
-import { CommonStatus, TodoType } from '../enum';
+import { CommonStatus, WorkType } from '../enum';
 import {
   ITodoGroup,
   IApprovalItem,
@@ -14,7 +14,7 @@ export class OrderTodo implements ITodoGroup {
   name: string = '订单审批';
   private _todoList: ApprovalItem[] = [];
   private _doList: ApprovalItem[] = [];
-  type: TodoType = TodoType.OrderTodo;
+  type: WorkType = WorkType.OrderTodo;
   async getCount(): Promise<number> {
     if (this._todoList.length <= 0) {
       await this.getTodoList();

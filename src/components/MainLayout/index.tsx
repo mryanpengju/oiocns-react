@@ -19,14 +19,20 @@ type MainLayoutType = {
   children?: React.ReactNode; // 子组件
   siderMenuData: MenuItemType;
   rightBar?: React.ReactNode;
+  headerMenu?: MenuItemType;
   selectMenu: MenuItemType;
   tabs?: TabItemType[];
   checkedList: any[];
   tabKey?: string;
+  title: {
+    label: string;
+    icon: React.ReactNode;
+  };
   onTabChanged: (tabKey: string) => void;
   onCheckedChange: Function;
   onSelect?: (item: MenuItemType) => void;
   onMenuClick?: (item: MenuItemType, menuKey: string) => void;
+  searchRightRegion?: any;
 };
 
 /**
@@ -59,8 +65,8 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
     <Layout className={`${className}`} style={{ height: '100%', position: 'relative' }}>
       <Sider className={cls.sider} width={250} collapsed={collapsed}>
         <div className={cls.title}>
-          <span style={{ fontSize: 16, margin: 6 }}>{props.selectMenu.icon}</span>
-          {!collapsed && <strong>{props.selectMenu.label}</strong>}
+          <span style={{ fontSize: 16, margin: 6 }}>{props.title.icon}</span>
+          {!collapsed && <strong>{props.title.label}</strong>}
         </div>
 
         <div className={cls.container} id="templateMenu">
@@ -76,6 +82,7 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
               }}
               onCheckedChange={onCheckedChange}
               checkedList={checkedList}
+              searchRightRegion={props.searchRightRegion}
             />
           )}
           {tabs && (
@@ -106,6 +113,7 @@ const MainLayout: React.FC<MainLayoutType> = (props) => {
                       }}
                       onCheckedChange={onCheckedChange}
                       checkedList={checkedList}
+                      searchRightRegion={props.searchRightRegion}
                     />
                   ),
                 };

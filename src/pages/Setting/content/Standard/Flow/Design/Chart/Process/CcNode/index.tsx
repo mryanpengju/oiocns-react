@@ -7,6 +7,7 @@ type CcNodeProps = {
   onDelNode: Function;
   onSelected: Function;
   config: any;
+  defaultEditable: boolean;
   [key: string]: any;
 };
 
@@ -36,6 +37,7 @@ const CcNode: React.FC<CcNodeProps> = (props: CcNodeProps) => {
       showError={false}
       content={content}
       config={props?.config}
+      defaultEditable={props.defaultEditable}
       errorInfo="错误信息"
       placeholder="请设置抄送对象"
       headerBgc="#3296fa"

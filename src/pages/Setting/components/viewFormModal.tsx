@@ -24,8 +24,8 @@ const ViewFormModal = (props: FormDesignProps) => {
       onCancel={handleCancel}
       destroyOnClose={true}
       cancelText={'关闭'}
-      width={900}>
-      <OioForm operationId={data?.id as string} />
+      width={1000}>
+      <OioForm operation={data as XOperation} />
     </Modal>
   );
 };

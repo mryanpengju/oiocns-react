@@ -85,6 +85,7 @@ export default class Authority implements IAuthority {
   public async createSubAuthority(
     name: string,
     code: string,
+    belongId: string,
     ispublic: boolean,
     remark: string,
   ): Promise<model.ResultType<schema.XAuthority>> {
@@ -98,11 +99,19 @@ export default class Authority implements IAuthority {
       remark,
       public: ispublic,
       parentId: this.id,
-      belongId: this._belongId,
+      belongId: belongId || this._belongId,
     });
     if (res.success && res.data != undefined) {
       this.children.push(new Authority(res.data, this._belongId));
     }
+    return res;
+  }
+  public async delete(): Promise<model.ResultType<any>> {
+    const res = await kernel.deleteAuthority({
+      id: this.id,
+      belongId: this._belongId,
+      typeName: '',
+    });
     return res;
   }
   public async deleteSubAuthority(id: string): Promise<model.ResultType<any>> {
@@ -154,6 +163,7 @@ export default class Authority implements IAuthority {
     }
     const res = await kernel.queryAuthorityIdentitys({
       id: this._authority.id,
+      spaceId: this.id,
       page: {
         offset: 0,
         filter: '',
@@ -166,24 +176,5 @@ export default class Authority implements IAuthority {
       });
     }
     return this.identitys;
-  }
-  public async getSubAuthoritys(reload: boolean = false): Promise<IAuthority[]> {
-    if (!reload && this.children.length > 0) {
-      return this.children;
-    }
-    const res = await kernel.querySubAuthoritys({
-      id: this._authority.id,
-      page: {
-        offset: 0,
-        filter: '',
-        limit: common.Constants.MAX_UINT_16,
-      },
-    });
-    if (res.success && res.data.result) {
-      this.children = res.data.result.map((auth) => {
-        return new Authority(auth, this._belongId);
-      });
-    }
-    return this.children;
   }
 }

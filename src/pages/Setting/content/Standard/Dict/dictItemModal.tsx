@@ -6,6 +6,7 @@ import { IDict } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting';
 import { XDictItem } from '@/ts/base/schema';
 import { message } from 'antd';
+import { targetsToTreeData } from '@/pages/Setting';
 
 interface Iprops {
   open: boolean;
@@ -45,23 +46,22 @@ const DictItemModal = (props: Iprops) => {
       title: '选择制定组织',
       dataIndex: 'belongId',
       valueType: 'treeSelect',
+      initialValue: userCtrl.space.id,
       formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
       request: async () => {
-        return await userCtrl.getTeamTree();
+        const res = await userCtrl.getTeamTree();
+        return targetsToTreeData(res);
       },
       fieldProps: {
-        disabled: title === '编辑',
-        fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
+        disabled: title === '编辑' || title === '修改',
         showSearch: true,
-        filterTreeNode: true,
-        treeNodeFilterProp: 'teamName',
       },
     },
     // {
-    //   title: '选择管理职权',
+    //   title: '选择管理权限',
     //   dataIndex: 'authId',
     //   valueType: 'treeSelect',
-    //   formItemProps: { rules: [{ required: true, message: '管理职权为必填项' }] },
+    //   formItemProps: { rules: [{ required: true, message: '管理权限为必填项' }] },
     //   request: async () => {
     //     const data = await userCtrl.space.loadAuthorityTree(false);
     //     return data ? [data] : [];

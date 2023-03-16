@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 const { Search } = Input;
 
 /**
- * 身份组件(Todo 待完善)
+ * 角色组件(Todo 待完善)
  */
 const ProFormIdentity = (props: any) => {
   const nodeOperateOrgId = props.orgId || userCtrl.space.id;
@@ -22,7 +22,7 @@ const ProFormIdentity = (props: any) => {
 
   return (
     <>
-      <ProForm.Item {...props} label={props.label || '身份'}>
+      <ProForm.Item {...props} label={props.label || '角色'}>
         <Search
           placeholder={props.placeholder || '请选择角色'}
           allowClear

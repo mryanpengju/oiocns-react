@@ -35,7 +35,7 @@ export const WorkColumns: ProColumns<{ Data: any }>[] = [
   },
 ];
 
-export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
+export const OrgColumns = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -45,7 +45,7 @@ export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '说明',
     dataIndex: ['Data', 'remark'],
-    render: (_, row) => {
+    render: (_: any, row: any) => {
       if (row as IApplyItem) {
         return '请求添加' + row.Data?.team?.name + '为好友';
       } else {
@@ -65,7 +65,7 @@ export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '状态',
     dataIndex: 'status',
-    render: (_, record: IApplyItem | IApprovalItem) => {
+    render: (_: any, record: IApplyItem | IApprovalItem) => {
       const status = statusMap[record.Data.status];
       return <Tag color={status.color}>{status.text}</Tag>;
     },
@@ -77,7 +77,7 @@ export const OrgColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   },
 ];
 
-export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
+export const MarketColumns = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -88,7 +88,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '市场',
     dataIndex: ['Data', 'market', 'name'],
     width: 300,
-    render: (name, record) => {
+    render: (name: any, record: any) => {
       return (
         <Space>
           {name}
@@ -102,7 +102,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     dataIndex: '',
     key: 'rule',
     width: 180,
-    render: (_, record) => {
+    render: (_: any, record: any) => {
       if (record.Data.target) {
         return record.Data.target.name;
       }
@@ -116,7 +116,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '状态 ',
     dataIndex: 'status',
     valueType: 'select',
-    render: (_, record) => {
+    render: (_: any, record: any) => {
       const status = statusMap[record.Data.status];
       return <Tag color={status.color}>{status.text}</Tag>;
     },
@@ -128,7 +128,7 @@ export const MarketColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   },
 ];
 
-export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
+export const MerchandiseColumns = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -139,7 +139,7 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '市场',
     dataIndex: ['Data', 'market', 'name'],
     width: 300,
-    render: (name, record) => {
+    render: (name: any, record: any) => {
       return (
         <Space>
           {name}
@@ -156,28 +156,29 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
     title: '说明',
     dataIndex: ['Data', 'information'],
   },
-  {
-    title: '应用',
-    dataIndex: ['Data', 'product', 'name'],
-    render: (name, record) => {
-      return (
-        <Space>
-          {name}
-          <Tag>{record.Data.product?.code}</Tag>
-        </Space>
-      );
-    },
-  },
+  // {
+  //   title: '应用',
+  //   dataIndex: ['Data', 'product', 'name'],
+  //   render: (name: any, record: any) => {
+  //     return (
+  //       <Space>
+  //         {name}
+  //         <Tag>{record.Data.product?.code}</Tag>
+  //       </Space>
+  //     );
+  //   },
+  // },
   {
     title: '价格',
     dataIndex: ['Data', 'price'],
     valueType: 'money',
-    render: (_, record) => record.Data.price || '免费',
+    render: (_: any, record: any) => record.Data.price || '免费',
   },
   {
     title: '使用期限',
     dataIndex: ['Data', 'days'],
-    render: (_, record) => (record.Data.days ? record.Data.days + ' 天' : '永久'),
+    render: (_: any, record: any) =>
+      record.Data.days ? record.Data.days + ' 天' : '永久',
   },
   {
     title: '应用类型',
@@ -190,7 +191,7 @@ export const MerchandiseColumns: ProColumns<IApplyItem | IApprovalItem>[] = [
   {
     title: '状态 ',
     dataIndex: 'status',
-    render: (_, record) => {
+    render: (_: any, record: any) => {
       const status = statusMap[record.Data.status];
       return <Tag color={status.color}>{status.text}</Tag>;
     },
@@ -406,6 +407,109 @@ export const ApplicationApplyColumns: ProColumns<IApplyItem>[] = [
   },
   { title: '创建时间', dataIndex: ['Data', 'createTime'], valueType: 'dateTime' },
 ];
+
+export const WorkReocrdColumns: ProColumns[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'index',
+    width: 60,
+  },
+  {
+    title: '事项',
+    dataIndex: ['historyTask', 'instance', 'title'],
+  },
+  {
+    title: '审批人',
+    dataIndex: 'createUser',
+    render: (_, record) => {
+      const team = userCtrl.findTeamInfoById(record.createUser);
+      if (team) {
+        return team.name;
+      }
+    },
+  },
+  {
+    title: '审批时间',
+    dataIndex: ['createTime'],
+    valueType: 'dateTime',
+  },
+  {
+    title: '审批意见',
+    dataIndex: 'comment',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    render: (_, record) => {
+      const status = statusMap[record.status];
+      return <Tag color={status.color}>{status.text}</Tag>;
+    },
+  },
+];
+
+export const WorkStartReocrdColumns: ProColumns[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'index',
+    width: 60,
+  },
+  {
+    title: '事项',
+    dataIndex: 'title',
+  },
+  {
+    title: '发起时间',
+    dataIndex: ['createTime'],
+    valueType: 'dateTime',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    render: (_, record) => {
+      const status = statusMap[record.status];
+      return <Tag color={status.color}>{status.text}</Tag>;
+    },
+  },
+];
+
+export const WorkTodoColumns: ProColumns[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'index',
+    width: 60,
+  },
+  {
+    title: '事项',
+    dataIndex: ['instance', 'define', 'name'],
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    render: (_, record) => {
+      const status = statusMap[record.status];
+      return <Tag color={status.color}>{status.text}</Tag>;
+    },
+  },
+  {
+    title: '申请人',
+    dataIndex: ['instance', 'createUser'],
+    render: (_, record) => {
+      const team = userCtrl.findTeamInfoById(record.instance.createUser);
+      if (team) {
+        return team.name;
+      }
+    },
+  },
+  {
+    title: '申请时间',
+    dataIndex: ['instance', 'createTime'],
+    valueType: 'dateTime',
+  },
+];
+
 const statusMap = {
   1: {
     color: 'blue',
@@ -436,3 +540,5 @@ const statusMap = {
     text: '已退货',
   },
 };
+
+export const FlowInstanceColumns: ProColumns<IApprovalItem>[] = [];

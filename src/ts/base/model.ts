@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import { FlowNode as SchemaFlowNode } from './schema';
+import { FlowNode as SchemaFlowNode, XOperation } from './schema';
 
 // 请求类型定义
 export type ReqestType = {
@@ -106,7 +106,7 @@ export type IdOperationReq = {
   id: string;
   // 工作空间ID
   spaceId: string;
-  // 是否职权过滤
+  // 是否权限过滤
   filterAuth: boolean;
   // 是否递归组织
   recursionOrg: boolean;
@@ -132,7 +132,7 @@ export type QueryDefineReq = {
 };
 
 export type SpaceAuthReq = {
-  // 职权ID
+  // 权限ID
   authId: string;
   // 工作空间ID
   spaceId: string;
@@ -335,7 +335,7 @@ export type SpeciesModel = {
   parentId: string;
   // 创建组织/个人
   belongId: string;
-  // 工作职权Id
+  // 工作权限Id
   authId: string;
   // 备注
   remark: string;
@@ -364,7 +364,7 @@ export type AttributeModel = {
   speciesId: string;
   // 类别代码
   speciesCode: string;
-  // 工作职权Id
+  // 工作权限Id
   authId: string;
 };
 
@@ -385,7 +385,7 @@ export type OperationModel = {
   speciesId: string;
   // 流程定义Id
   defineId?: string;
-  // 业务发起职权Id
+  // 业务发起权限Id
   beginAuthId?: string;
   // 子项列表
   items: OperationItem[];
@@ -446,7 +446,7 @@ export type IdentityModel = {
   name: string;
   // 编号
   code: string;
-  // 职权Id
+  // 权限Id
   authId: string;
   // 创建组织/个人
   belongId: string;
@@ -722,7 +722,7 @@ export type CreateOrderByStagingModel = {
 };
 
 export type GiveIdentityModel = {
-  // 身份ID
+  // 角色ID
   id: string;
   // 人员ID
   targetIds: string[];
@@ -862,6 +862,8 @@ export type FlowInstanceModel = {
   title: string;
   // 回调地址
   hook: string;
+  // 操作主体对象集合
+  thingIds: string[];
 };
 
 export type CreateDefineReq = {
@@ -881,10 +883,12 @@ export type CreateDefineReq = {
   fields?: string;
   //分类id
   speciesId?: string;
-  // 职权ID
+  // 权限ID
   authId?: string;
   //是否公开
   public?: boolean;
+  //数据源id
+  sourceIds?: string;
 };
 
 export type FlowNode = {
@@ -898,6 +902,8 @@ export type FlowNode = {
   children: FlowNode;
   branches: Branche[];
   belongId: string;
+  // 绑定的表单信息
+  operations: XOperation[];
 };
 
 export type Branche = {
@@ -942,6 +948,12 @@ export type Refuse = {
   type: string;
   target: string;
 };
+export type QueryTaskReq = {
+  // 流程定义Id
+  defineId: string;
+  // 任务类型 审批、抄送
+  typeName: string;
+};
 
 export type FlowRelationModel = {
   //流程定义Id
@@ -953,6 +965,8 @@ export type FlowRelationModel = {
 export type FlowReq = {
   // 流程实例Id
   id?: string;
+  // 类别Id
+  speciesId?: string;
   // 空间Id
   spaceId?: string;
   // 状态
@@ -968,6 +982,8 @@ export type ApprovalTaskReq = {
   status: number;
   // 评论
   comment: string;
+  // 数据
+  data: string;
 };
 /**
  * 文件系统项分享数据

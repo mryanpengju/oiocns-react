@@ -160,11 +160,11 @@ export const IdentityColumn: ProColumns<schema.XIdentity>[] = [
     dataIndex: 'id',
   },
   {
-    title: '身份名称',
+    title: '角色名称',
     dataIndex: 'name',
   },
   {
-    title: '职权',
+    title: '权限',
     dataIndex: 'name',
   },
   {
@@ -192,19 +192,25 @@ export const AttributeColumns: ProColumns<schema.XAttribute>[] = [
     width: 200,
   },
   {
+    title: '特性分类',
+    dataIndex: 'speciesId',
+    key: 'speciesId',
+    width: 150,
+    render: (_, record) => {
+      return findSpecesName([thingCtrl.species], record.speciesId);
+    },
+  },
+  {
     title: '特性类型',
     dataIndex: 'valueType',
     key: 'valueType',
     width: 150,
   },
   {
-    title: '特性分类',
-    dataIndex: 'speciesId',
-    key: 'speciesId',
+    title: '选择字典',
+    dataIndex: ['dict', 'name'],
+    key: 'dictId',
     width: 150,
-    render: (_, record) => {
-      return findSpecesName([thingCtrl.teamSpecies], record.speciesId);
-    },
   },
   {
     title: '共享组织',
@@ -245,6 +251,9 @@ export const findSpecesName = (
 };
 
 export const findAuthName = (auths: IAuthority[], id: string): string | undefined => {
+  if (!id) {
+    return undefined;
+  }
   let authName = undefined;
   for (const item of auths) {
     if (item?.id == id) {
@@ -283,7 +292,7 @@ export const OperationColumns: ProColumns<schema.XOperation>[] = [
     key: 'speciesId',
     width: 150,
     render: (_, record) => {
-      return findSpecesName([thingCtrl.teamSpecies], record.speciesId);
+      return findSpecesName([thingCtrl.species], record.speciesId);
     },
   },
   {
@@ -296,17 +305,6 @@ export const OperationColumns: ProColumns<schema.XOperation>[] = [
       if (team) {
         return team.name;
       }
-    },
-  },
-  {
-    title: '角色',
-    dataIndex: 'beginAuthId',
-    key: 'beginAuthId',
-    render: (_, record) => {
-      return findAuthName(
-        [userCtrl.space.authorityTree as IAuthority],
-        record.beginAuthId,
-      );
     },
   },
 ];
@@ -337,16 +335,11 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
     width: 50,
   },
   {
-    title: '流程名称',
+    title: '办事名称',
     dataIndex: 'name',
   },
   {
-    title: '备注',
-    ellipsis: true,
-    dataIndex: 'remark',
-  },
-  {
-    title: '共享组织',
+    title: '需求主体',
     dataIndex: 'belongId',
     key: 'belongId',
     width: 200,
@@ -360,6 +353,11 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
   {
     title: '创建时间',
     dataIndex: 'createTime',
+  },
+  {
+    title: '备注',
+    ellipsis: true,
+    dataIndex: 'remark',
   },
 ];
 

@@ -20,7 +20,7 @@ export type XAttribute = {
   speciesId: string;
   // 创建组织/个人
   belongId: string;
-  // 工作职权Id
+  // 工作权限Id
   authId: string;
   // 状态
   status: number;
@@ -36,11 +36,9 @@ export type XAttribute = {
   updateTime: string;
   // 字典类型
   dict: XDict | undefined;
-  // 字典子项类型
-  dictItems: XDictItem[] | undefined;
   // 度量特性对应的类别
   species: XSpecies | undefined;
-  // 工作职权
+  // 工作权限
   authority: XAuthority | undefined;
   // 创建度量标准的组织/个人
   belong: XTarget | undefined;
@@ -109,8 +107,6 @@ export type XOperation = {
   speciesId: string;
   // 创建组织/个人
   belongId: string;
-  // 绑定的流程ID
-  defineId: string;
   // 状态
   status: number;
   // 创建人员ID
@@ -123,10 +119,6 @@ export type XOperation = {
   createTime: string;
   // 更新时间
   updateTime: string;
-  // 角色ID
-  beginAuthId: string;
-  // 绑定的流程
-  flow: XFlowDefine | undefined;
   // 度量特性对应的类别
   species: XSpecies | undefined;
   // 创建度量标准的组织/个人
@@ -201,7 +193,7 @@ export type XOperationItemArray = {
   result: XOperationItem[] | undefined;
 };
 
-//职权定义
+//权限定义
 export type XAuthority = {
   // 雪花ID
   id: string;
@@ -213,7 +205,7 @@ export type XAuthority = {
   remark: string;
   // 公开的
   public: boolean;
-  // 上级职权ID
+  // 上级权限ID
   parentId: string;
   // 创建组织/个人
   belongId: string;
@@ -229,15 +221,15 @@ export type XAuthority = {
   createTime: string;
   // 更新时间
   updateTime: string;
-  // 上下级职权
+  // 上下级权限
   parent: XAuthority | undefined;
-  // 上下级职权
+  // 上下级权限
   nodes: XAuthority[] | undefined;
-  // 创建职权标准的组织/个人
+  // 创建权限标准的组织/个人
   belong: XTarget | undefined;
 };
 
-//职权定义查询返回集合
+//权限定义查询返回集合
 export type XAuthorityArray = {
   // 偏移量
   offset: number;
@@ -409,10 +401,35 @@ export type XFlowDefine = {
   target: XTarget | undefined;
   // 分类id
   speciesId?: string;
-  // 职权Id
+  // 权限Id
   authId?: string;
   // 公开的
   public?: boolean;
+  //数据源id
+  sourceIds?: string;
+};
+
+export type XFlowNode = {
+  // 雪花ID
+  id: string;
+  // 前端定义的编码 代替原先的NodeId
+  code: string;
+  // 节点类型
+  nodeType: string;
+  // 节点名称
+  name: string;
+  // 审批数量
+  count: number;
+  // 节点审批操作人类型 暂只支持 '角色'
+  destType: string;
+  // 节点审批操作Id 如 '角色Id'
+  destId: number | undefined;
+  // 节点审批操作名称 如 '角色名称'
+  destName: string;
+  // 节点归属
+  belongId: string;
+  // 节点绑定的表单
+  bindOperations: XOperation[];
 };
 
 export type FlowNode = {
@@ -426,11 +443,11 @@ export type FlowNode = {
   name: string;
   // 审批数量
   num: number;
-  // 节点审批操作人类型 暂只支持 '身份'
+  // 节点审批操作人类型 暂只支持 '角色'
   destType: string;
-  // 节点审批操作Id 如 '身份Id'
-  destId: number | undefined;
-  // 节点审批操作名称 如 '身份名称'
+  // 节点审批操作Id 如 '角色Id'
+  destId: string | undefined;
+  // 节点审批操作名称 如 '角色名称'
   destName: string;
   // 子节点
   children: FlowNode | undefined;
@@ -438,6 +455,8 @@ export type FlowNode = {
   branches: Branche[];
   // 节点归属
   belongId: string;
+  // 节点绑定的表单
+  operations: XOperation[];
 };
 
 export type Branche = {
@@ -505,9 +524,15 @@ export type XFlowInstance = {
   // 更新时间
   updateTime: string;
   // 流程的定义
-  flowDefine: XFlowDefine | undefined;
+  define: XFlowDefine | undefined;
+  // 审批任务
+  historyTasks: XFlowTaskHistory[] | undefined;
   // 归属
   belongId: string;
+  // 填写的表单Id集合
+  operationIds: string;
+  // 物的Id集合
+  thingIds: string;
 };
 
 //流程实例查询返回集合
@@ -526,12 +551,12 @@ export type XFlowInstanceArray = {
 export type XFlowRecord = {
   // 雪花ID
   id: string;
-  // 审批人员
-  targetId: string;
   // 节点任务
   taskId: string;
   // 评论
   comment: string;
+  // 内容
+  data: string;
   // 状态
   status: number;
   // 创建人员ID
@@ -544,8 +569,6 @@ export type XFlowRecord = {
   createTime: string;
   // 更新时间
   updateTime: string;
-  // 审批人员
-  target: XTarget | undefined;
 };
 
 //流程节点数据查询返回集合
@@ -635,8 +658,6 @@ export type XFlowTask = {
   instanceId: string;
   // 节点分配目标Id
   identityId: string;
-  // 审批人员
-  personIds: string;
   // 状态
   status: number;
   // 创建人员ID
@@ -649,10 +670,12 @@ export type XFlowTask = {
   createTime: string;
   // 更新时间
   updateTime: string;
-  // 任务审批的身份
+  // 任务审批的角色
   identity: XIdentity | undefined;
   // 流程的定义
   flowInstance: XFlowInstance | undefined;
+  // 流程节点
+  node: XFlowNode | undefined;
 };
 
 //流程任务查询返回集合
@@ -690,11 +713,13 @@ export type XFlowTaskHistory = {
   // 更新时间
   updateTime: string;
   // 流程节点记录
-  flowRecords: XFlowRecord[] | undefined;
-  // 任务审批的身份
+  records: XFlowRecord[] | undefined;
+  // 任务审批的角色
   identity: XIdentity | undefined;
   // 流程的定义
-  flowInstance: XFlowInstance | undefined;
+  instance: XFlowInstance | undefined;
+  // 流程节点
+  node: XFlowNode | undefined;
 };
 
 //流程任务查询返回集合
@@ -709,7 +734,7 @@ export type XFlowTaskHistoryArray = {
   result: XFlowTaskHistory[] | undefined;
 };
 
-//身份
+//角色
 export type XIdentity = {
   // 雪花ID
   id: string;
@@ -719,7 +744,7 @@ export type XIdentity = {
   code: string;
   // 备注
   remark: string;
-  // 职权Id
+  // 权限Id
   authId: string;
   // 创建组织/个人
   belongId: string;
@@ -735,15 +760,15 @@ export type XIdentity = {
   createTime: string;
   // 更新时间
   updateTime: string;
-  // 赋予身份的组织/个人
+  // 赋予角色的组织/个人
   givenTargets: XTarget[] | undefined;
-  // 身份的类别
+  // 角色的类别
   authority: XAuthority | undefined;
-  // 创建身份的组织/个人
+  // 创建角色的组织/个人
   belong: XTarget | undefined;
 };
 
-//身份查询返回集合
+//角色查询返回集合
 export type XIdentityArray = {
   // 偏移量
   offset: number;
@@ -1337,7 +1362,7 @@ export type XSpecies = {
   parentId: string;
   // 创建组织/个人
   belongId: string;
-  // 工作职权Id
+  // 工作权限Id
   authId: string;
   // 状态
   status: number;
@@ -1355,7 +1380,7 @@ export type XSpecies = {
   parent: XSpecies | undefined;
   // 分类的结构
   nodes: XSpecies[] | undefined;
-  // 工作职权
+  // 工作权限
   authority: XAuthority | undefined;
   // 创建类别标准的组织/个人
   belong: XTarget | undefined;
@@ -1447,7 +1472,7 @@ export type XTarget = {
   avatar: string | undefined;
   // 作为团队的影子
   team: XTeam | undefined;
-  // 赋予该组织/个人创建的身份
+  // 赋予该组织/个人创建的角色
   givenIdentitys: XIdentity[] | undefined;
   // 该组织或个人所属的组织/个人
   belong: XTarget | undefined;

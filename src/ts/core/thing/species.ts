@@ -1,6 +1,5 @@
+import { XDict, XFlowDefine } from '@/ts/base/schema';
 import { kernel, model, parseAvatar, schema } from '../../base';
-import { Dict } from '../target/species/dict';
-import { IDict, INullDict } from '../target/species/idict';
 import {
   AttributeModel,
   CreateDefineReq,
@@ -10,9 +9,9 @@ import {
   SpeciesModel,
   TargetShare,
 } from '../../base/model';
+import { Dict } from './dict';
+import { IDict, INullDict } from './idict';
 import { INullSpeciesItem, ISpeciesItem } from './ispecies';
-import { XDict, XFlowDefine } from '@/ts/base/schema';
-
 /**
  * 分类系统项实现
  */
@@ -39,14 +38,14 @@ export class SpeciesItem implements ISpeciesItem {
     this.belongInfo = { name: '奥集能平台', typeName: '平台' };
   }
   async loadAttrs(
-    spaceId: string,
+    id: string,
     recursionOrg: boolean,
     recursionSpecies: boolean,
     page: PageRequest,
   ): Promise<schema.XAttributeArray> {
     const res = await kernel.querySpeciesAttrs({
       id: this.id,
-      spaceId: spaceId,
+      spaceId: id,
       recursionOrg: recursionOrg,
       recursionSpecies: recursionSpecies,
       page: {
@@ -172,6 +171,7 @@ export class SpeciesItem implements ISpeciesItem {
     const res = await kernel.createDict({
       ...data,
       id: undefined,
+      speciesId: this.id,
     });
     if (res.success) {
       const newItem = new Dict(res.data);
@@ -180,10 +180,9 @@ export class SpeciesItem implements ISpeciesItem {
     return;
   }
 
-  async updateDict(data: Omit<DictModel, 'speciesId' | 'speciesCode'>): Promise<boolean> {
+  async updateDict(data: DictModel): Promise<boolean> {
     const res = await kernel.updateDict({
       ...data,
-      speciesId: this.target.id,
     });
     return res.success;
   }
@@ -257,12 +256,10 @@ export class SpeciesItem implements ISpeciesItem {
     });
   }
 
-  async updateOperation(
-    data: Omit<OperationModel, 'speciesId' | 'speciesCode'>,
-  ): Promise<boolean> {
+  async updateOperation(data: OperationModel): Promise<boolean> {
     const res = await kernel.updateOperation({
       ...data,
-      speciesId: this.target.id,
+      speciesId: data.speciesId || this.target.id,
     });
     return res.success;
   }
@@ -293,7 +290,6 @@ export class SpeciesItem implements ISpeciesItem {
   async updateFlowDefine(data: CreateDefineReq): Promise<boolean> {
     const res = await kernel.publishDefine({
       ...data,
-      speciesId: this.target.id,
     });
     return res.success;
   }

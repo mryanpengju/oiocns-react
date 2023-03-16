@@ -26,7 +26,7 @@ const Description = (props: { title: any; current: ITarget; extra: any }) => {
         contentStyle={{ textAlign: 'left', color: '#606266' }}>
         <Descriptions.Item label={current.typeName + '名称'}>
           <Space>
-            {current.shareInfo.avatar && (
+            {current.shareInfo?.avatar && (
               <Avatar src={current.shareInfo.avatar.thumbnail} />
             )}
             <strong>{current.teamName}</strong>

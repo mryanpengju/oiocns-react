@@ -1,3 +1,5 @@
+import { XOperation } from "@/ts/base/schema";
+
 // 类型 枚举
 export enum dataType {
   'STRING' = 'STRING',
@@ -61,7 +63,7 @@ export type NodeType = {
   belongId?: string;
   task?: any;
   conditions: conditiondType[];
-  props: { assignedUser: {}; assignedType: {}; num: number | null };
+  props: { operations: XOperation[], assignedUser: any; assignedType: {}; num: number | null };
 };
 
 export const getConditionKeys: (type: string) => any[] = (type: string) => {
@@ -137,7 +139,7 @@ type Approvalprops = {
 export const APPROVAL_PROPS: Approvalprops = {
   assignedType: 'USER',
   mode: 'AND',
-  num: 1,
+  num: 0,
   assignedUser: [],
   refuse: {
     type: 'TO_END', //驳回规则 TO_END  TO_NODE  TO_BEFORE

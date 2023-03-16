@@ -29,10 +29,6 @@ const FlowList: React.FC<IProps> = (props) => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [binds, setBinds] = useState<XFlowRelation[]>([]);
 
-  useEffect(() => {
-    loadBangdingCard;
-  });
-
   const renderOperation = (record: XFlowDefine): any[] => {
     return [
       {
@@ -66,12 +62,6 @@ const FlowList: React.FC<IProps> = (props) => {
       },
     ];
   };
-
-  const loadBangdingCard = useMemo(async () => {
-    let data = await userCtrl.space.queryFlowRelation(false);
-    setBinds(data.filter((a) => a.defineId == current?.id));
-    setFreshBinds(false);
-  }, [current, freshBinds == true]);
 
   return (
     <div className={cls['company-top-content']}>
@@ -124,7 +114,7 @@ const FlowList: React.FC<IProps> = (props) => {
                     props.onCurrentChaned(undefined);
                     props.onDesign();
                   }}>
-                  新建流程
+                  新建办事流程
                 </Button>,
               ]}
             />

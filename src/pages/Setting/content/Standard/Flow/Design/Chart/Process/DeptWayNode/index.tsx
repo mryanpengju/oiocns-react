@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import InsertButton from '../InsertButton';
 import { CopyOutlined, CloseOutlined } from '@ant-design/icons';
 import cls from './index.module.less';
@@ -6,7 +6,6 @@ import { Tooltip } from 'antd';
 import userCtrl from '@/ts/controller/setting';
 import SelectOrg from '@/pages/Setting/content/Standard/Flow/Comp/selectOrg';
 import { dataType } from '../../FlowDrawer/processType';
-import { ICompany } from '@/ts/core';
 type DeptWayNodeProps = {
   //默认操作组织id
   operateOrgId?: string;
@@ -16,6 +15,7 @@ type DeptWayNodeProps = {
   onSelected: Function;
   config: any;
   level: any;
+  defaultEditable: boolean;
   [key: string]: any;
   // config?: any,
   //  _disabled?: boolean,
@@ -32,7 +32,6 @@ const DeptWayNode: React.FC<DeptWayNodeProps> = (props: DeptWayNodeProps) => {
   const [editable, setEditable] = useState<boolean>(true);
   const [key, setKey] = useState<number>(0);
   const [orgId, setOrgId] = useState<string>();
-  const [company, setCompany] = useState<ICompany>();
   const delNode = () => {
     props.onDelNode();
   };
@@ -43,7 +42,7 @@ const DeptWayNode: React.FC<DeptWayNodeProps> = (props: DeptWayNodeProps) => {
     props.onSelected();
   };
   const isEditable = (): boolean => {
-    let editable = true;
+    let editable = props.defaultEditable;
     if (
       props.config.belongId &&
       props.config.belongId != '' &&
@@ -53,7 +52,6 @@ const DeptWayNode: React.FC<DeptWayNodeProps> = (props: DeptWayNodeProps) => {
     }
     return editable;
   };
-  const findCompany = async () => {};
   useEffect(() => {
     setEditable(isEditable());
     if (props.config.conditions.length == 0) {

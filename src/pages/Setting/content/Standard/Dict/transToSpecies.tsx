@@ -4,10 +4,10 @@ import { Input, message, Modal, TreeProps } from 'antd';
 import React, { useState, useEffect, Key } from 'react';
 import cls from './index.module.less';
 import userCtrl from '@/ts/controller/setting';
-import { INullSpeciesItem, ISpeciesItem } from '@/ts/core';
+import { INullSpeciesItem, ISpeciesItem, loadSpeciesTree } from '@/ts/core';
 import CustomTree from '@/components/CustomTreeComp';
 import { ImTree } from 'react-icons/im';
-import { IDict, INullDict } from '@/ts/core/target/species/idict';
+import { IDict } from '@/ts/core/thing/idict';
 interface Iprops {
   open: boolean;
   setOpen: Function;
@@ -32,7 +32,7 @@ const updateTreeData = (list: any[], key: React.Key, children: any[]): any[] =>
     return node;
   });
 const TransToSpecies = (props: Iprops) => {
-  const { currentSpeciesItem, open, setOpen, dict } = props;
+  const { open, setOpen, dict } = props;
   const [leftTreeSelectedKeys, setLeftTreeSelectedKeys] = useState<Key[]>([]); //集团列表
   const [leftTreeData, setLeftTreeData] = useState<any>([]);
   const [selectItem, setSelectItem] = useState<any>(undefined);
@@ -112,7 +112,7 @@ const TransToSpecies = (props: Iprops) => {
   };
 
   const onLoadSpeciesData = async () => {
-    const species = await userCtrl.space.loadSpeciesTree();
+    const species = await loadSpeciesTree(userCtrl.space.id);
     if (species) {
       setLeftTreeData([buildSpeciesTree(species)]);
     }

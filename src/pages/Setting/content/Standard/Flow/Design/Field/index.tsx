@@ -3,9 +3,10 @@ import cls from './index.module.less';
 import React, { useEffect, useRef } from 'react';
 import { ProFormColumnsType, ProFormInstance } from '@ant-design/pro-components';
 import SchemaForm from '@/components/SchemaForm';
-import { AttributeModel } from '@/ts/base/model';
+import thingCtrl from '@/ts/controller/thing';
+import { TreeSelect } from 'antd';
 import userCtrl from '@/ts/controller/setting';
-
+const { SHOW_PARENT } = TreeSelect;
 interface IProps {
   currentFormValue: any;
   operateOrgId?: string;
@@ -14,7 +15,15 @@ interface IProps {
   nextStep: (params: any) => void;
   onChange: (params: any) => void;
 }
-
+export const toTreeData = (species: any[]): any[] => {
+  return species.map((t) => {
+    return {
+      label: t.name,
+      value: t.id,
+      children: toTreeData(t.children),
+    };
+  });
+};
 /** 傻瓜组件，只负责读取状态 */
 const FieldInfo: React.FC<IProps> = ({
   nextStep,
@@ -25,39 +34,55 @@ const FieldInfo: React.FC<IProps> = ({
   const [form] = Form.useForm();
   const formRef = useRef<ProFormInstance>();
   const getFromColumns = () => {
-    const columns: ProFormColumnsType<AttributeModel>[] = [
+    const columns: ProFormColumnsType<any>[] = [
       {
-        title: '流程名称',
+        title: '办事名称',
         dataIndex: 'name',
-        readonly: modalType == '编辑流程设计',
         formItemProps: {
-          rules: [{ required: true, message: '流程名称为必填项' }],
+          rules: [{ required: true, message: '办事名称为必填项' }],
+        },
+        colProps: { span: 12 },
+      },
+
+      {
+        title: '制定组织',
+        dataIndex: 'belongId',
+        valueType: 'treeSelect',
+        formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
+        request: async () => {
+          return await userCtrl.getTeamTree();
+        },
+        fieldProps: {
+          fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
+          showSearch: true,
+          filterTreeNode: true,
+          treeNodeFilterProp: 'teamName',
+        },
+      },
+      {
+        title: '限定操作实体分类',
+        dataIndex: 'sourceIds',
+        valueType: 'treeSelect',
+        request: async () => {
+          const species = await thingCtrl.loadSpeciesTree();
+          let tree = toTreeData([species]);
+          return tree;
+        },
+        fieldProps: {
+          treeCheckable: true,
+          showSearch: true,
+          filterTreeNode: true,
+          allowClear: true,
+          showCheckedStrategy: SHOW_PARENT,
         },
         colProps: { span: 24 },
       },
-      // {
-      //   title: '归属',
-      //   dataIndex: 'belongId',
-      //   // dataIndex: 'operateOrgId',
-      //   valueType: 'treeSelect',
-      //   readonly: true,
-      //   formItemProps: { rules: [{ required: true, message: '组织为必填项' }] },
-      //   request: async () => {
-      //     return await userCtrl.getTeamTree();
-      //   },
-      //   fieldProps: {
-      //     fieldNames: { label: 'teamName', value: 'id', children: 'subTeam' },
-      //     showSearch: true,
-      //     filterTreeNode: true,
-      //     treeNodeFilterProp: 'teamName',
-      //   },
-      // },
 
       // {
-      //   title: '选择管理职权',
+      //   title: '选择管理权限',
       //   dataIndex: 'authId',
       //   valueType: 'treeSelect',
-      //   // formItemProps: { rules: [{ required: true, message: '管理职权为必填项' }] },
+      //   // formItemProps: { rules: [{ required: true, message: '管理权限为必填项' }] },
       //   request: async () => {
       //     const data = await userCtrl.company.loadAuthorityTree(false);
       //     return data ? [data] : [];
@@ -109,7 +134,7 @@ const FieldInfo: React.FC<IProps> = ({
     //   });
     // }
     columns.push({
-      title: '备注信息',
+      title: '备注',
       dataIndex: 'remark',
       valueType: 'textarea',
       colProps: { span: 24 },
@@ -135,9 +160,9 @@ const FieldInfo: React.FC<IProps> = ({
         }}>
         <ProFormText
           name="name"
-          label="流程名称"
-          placeholder="输入流程名称"
-          rules={[{ required: true, message: '请输入流程名称!' }]}
+          label="办事名称"
+          placeholder="输入办事名称"
+          rules={[{ required: true, message: '请输入办事名称!' }]}
         />
         <ProFormSelect
           name="belongId"
@@ -153,9 +178,9 @@ const FieldInfo: React.FC<IProps> = ({
         form={form}
         open={true}
         width={640}
-        // onOpenChange={(open: boolean) => {}}
         onValuesChange={async () => {
           const currentValue = await form.getFieldsValue();
+          currentValue.sourceIds = currentValue.sourceIds.join(',');
           onChange(currentValue);
         }}
         rowProps={{
@@ -163,6 +188,7 @@ const FieldInfo: React.FC<IProps> = ({
         }}
         layoutType="Form"
         onFinish={async (values) => {
+          values.sourceIds = values.sourceIds.join(',');
           nextStep(values);
         }}
         columns={getFromColumns()}></SchemaForm>

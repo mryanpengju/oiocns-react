@@ -52,7 +52,7 @@ const CcNode: React.FC<IProps> = (props) => {
         </div>
       </div>
       <Modal
-        title="添加身份"
+        title="添加角色"
         key="addApproval"
         open={isApprovalOpen}
         destroyOnClose={true}

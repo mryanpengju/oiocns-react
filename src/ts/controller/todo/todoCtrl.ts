@@ -6,52 +6,84 @@ import {
   ITodoGroup,
   DomainTypes,
   emitter,
+  WorkType,
+  loadPublishApply,
+  loadMarketApply,
 } from '@/ts/core';
 import { Emitter } from '@/ts/base/common';
 import userCtrl from '../setting';
+import { XFlowTaskHistory, XTarget } from '@/ts/base/schema';
+import { kernel } from '@/ts/base';
 
 /** 待办控制器 */
 class TodoController extends Emitter {
   private _tabIndex: string = '1';
   public currentKey: string = '';
-  private _orgTodo: ITodoGroup[] = [];
+  private _friendTodo: ITodoGroup[] = [];
+  private _groupTodo: ITodoGroup[] = [];
+  private _companyTodo: ITodoGroup[] = [];
+  private _pubApply: ITodoGroup | undefined;
   private _pubTodo: ITodoGroup[] = [];
   private _orderTodo: ITodoGroup | undefined;
+  private _marketApply: ITodoGroup | undefined;
   private _marketTodo: ITodoGroup[] = [];
   private _curAppTodo: ITodoGroup | undefined;
+  private _workTodo: XFlowTaskHistory[] = [];
   constructor() {
     super();
-    emitter.subscribePart(DomainTypes.User, () => {
+    emitter.subscribePart([DomainTypes.Company, DomainTypes.User], () => {
       setTimeout(async () => {
-        let orgTodoTypes = [
-          {
-            id: userCtrl.user.id,
-            name: '好友管理',
-            avatar: userCtrl.user.target.avatar,
-          },
-        ];
-        let groupIds: string[] = [];
+        let group: XTarget[] = [];
         let companys = await userCtrl.user.getJoinedCompanys(false);
         companys.forEach(async (company) => {
           (await company.getJoinedGroups(false))
-            .filter((a) => groupIds.indexOf(a.id) < 0)
+            .filter((a) => group.findIndex((s) => a.id == s.id) < 0)
             .forEach((a) => {
-              orgTodoTypes.push(a.target);
-              groupIds.push(a.id);
+              group.push(a.target);
             });
         });
-        orgTodoTypes.push(...companys.map((a) => a.target));
-        this._orgTodo = await loadOrgTodo(orgTodoTypes);
+        this._friendTodo = await loadOrgTodo(
+          [
+            {
+              id: userCtrl.user.id,
+              name: '好友',
+              avatar: userCtrl.user.target.avatar,
+            },
+          ],
+          WorkType.FriendTodo,
+        );
+        this._groupTodo = await loadOrgTodo(group, WorkType.GroupTodo);
+        this._companyTodo = await loadOrgTodo(
+          companys.map((a) => a.target),
+          WorkType.CompanyTodo,
+        );
         this._pubTodo = await loadPublishTodo();
+        this._pubApply = await loadPublishApply();
         this._orderTodo = await loadOrderTodo();
         this._marketTodo = await loadMarketTodo();
+        this._marketApply = await loadMarketApply();
+        this._workTodo =
+          (await kernel.queryApproveTask({ id: userCtrl.space.id })).data?.result || [];
+
         this.changCallback();
       }, 800);
     });
   }
-  /** 组织单位审批 */
-  public get OrgTodo(): ITodoGroup[] {
-    return this._orgTodo!;
+  /** 好友审批 */
+  public get FriendTodo(): ITodoGroup[] {
+    return this._friendTodo!;
+  }
+  /** 单位审批 */
+  public get CompanyTodo(): ITodoGroup[] {
+    return this._companyTodo!;
+  }
+  /** 集团审批 */
+  public get GroupTodo(): ITodoGroup[] {
+    return this._groupTodo!;
+  }
+  /** 组织申请 */
+  public get MarketApply(): ITodoGroup {
+    return this._marketApply!;
   }
   /** 市场审批 */
   public get MarketTodo(): ITodoGroup[] {
@@ -61,6 +93,10 @@ class TodoController extends Emitter {
   public get OrderTodo(): ITodoGroup {
     return this._orderTodo!;
   }
+  /** 组织申请 */
+  public get PublishApply(): ITodoGroup {
+    return this._pubApply!;
+  }
   /** 应用上架审批 */
   public get PublishTodo(): ITodoGroup[] {
     return this._pubTodo!;
@@ -69,14 +105,35 @@ class TodoController extends Emitter {
   public get CurAppTodo(): ITodoGroup | undefined {
     return this._curAppTodo;
   }
+  /** 事待办 */
+  public get WorkTodo(): XFlowTaskHistory[] {
+    return this._workTodo;
+  }
+  /** 强制刷新待办事项 */
+  public async refreshWorkTodo(): Promise<XFlowTaskHistory[]> {
+    this._workTodo =
+      (await kernel.queryApproveTask({ id: userCtrl.space.id })).data?.result || [];
+    return this._workTodo;
+  }
+  /** 获取事类别的待办 */
+  public getWorkTodoBySpeciesId(speciesId: string): XFlowTaskHistory[] {
+    return this._workTodo.filter((todo) => {
+      return speciesId === todo.instance?.define?.speciesId;
+    });
+  }
   /** 获取总的待办数量 */
   public async getTaskCount(): Promise<number> {
-    let sum = 0;
     let marketTodos = this.MarketTodo.filter((a) => a.id != '' && a.id);
     let publishTodos = this.PublishTodo.filter((a) => a.id != '' && a.id);
-    sum += (await this._orderTodo?.getCount()) ?? 0;
-    for (let i = 0; i < this.OrgTodo.length; i++) {
-      sum += await this.OrgTodo[i]?.getCount();
+    let sum = await this.OrderTodo?.getCount();
+    for (let i = 0; i < this.FriendTodo.length; i++) {
+      sum += await this.FriendTodo[i]?.getCount();
+    }
+    for (let i = 0; i < this.GroupTodo.length; i++) {
+      sum += await this.GroupTodo[i]?.getCount();
+    }
+    for (let i = 0; i < this.CompanyTodo.length; i++) {
+      sum += await this.CompanyTodo[i]?.getCount();
     }
     for (let i = 0; i < marketTodos.length; i++) {
       sum += await marketTodos[i]?.getCount();

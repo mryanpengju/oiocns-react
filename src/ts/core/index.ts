@@ -30,17 +30,13 @@ export type {
   ITarget,
   IWorking,
 } from './target/itarget';
+export type { IDict } from '@/ts/core/target/species/idict';
+export type { Dict } from '@/ts/core/target/species/dict';
 export { findTargetShare } from './target/targetMap';
 export type { INullSpeciesItem, ISpeciesItem } from './thing';
 export { loadSpeciesTree } from './thing';
 export type { IApplyItem, IApprovalItem, IOrderApplyItem, ITodoGroup } from './todo';
-export {
-  loadAppTodo,
-  loadMarketTodo,
-  loadOrderTodo,
-  loadOrgTodo,
-  loadPublishTodo,
-} from './todo';
+export { loadMarketTodo, loadOrderTodo, loadOrgTodo, loadPublishTodo } from './todo';
 
 export const createPerson = (data: XTarget) => {
   return new Person(data);

@@ -1,5 +1,12 @@
 import { Card, Button, Descriptions, Modal, message, Layout, ModalProps } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
+<<<<<<< HEAD
+=======
+import CardOrTable from '@/components/CardOrTableComp';
+import { schema } from '@/ts/base';
+import { IIdentity } from '@/ts/core/target/authority/iidentity';
+import { XTarget } from '@/ts/base/schema';
+>>>>>>> origin/main
 import { columns } from './config';
 import { common } from 'typings/common';
 import { XTarget } from '@/ts/base/schema';
@@ -16,13 +23,14 @@ const { Sider, Content } = Layout;
 type IndentityManageType = {
   open: boolean;
   current: ITarget;
+  isAdmin: boolean;
 };
 /**
  * 身份设置
  * @returns
  */
 const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
-  const { open, current, ...other } = props;
+  const { open, current, isAdmin, ...other } = props;
   const parentRef = useRef<any>(null); //父级容器Dom
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [indentity, setIndentity] = useState<IIdentity>();
@@ -46,24 +54,28 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
     }
   };
   // 操作内容渲染函数
-  const renderOperation = (item: XTarget): common.OperationType[] => {
+  const renderOperation = (item: XTarget) => {
     return [
-      {
-        key: 'remove',
-        label: <span style={{ color: 'red' }}>移除</span>,
-        onClick: async () => {
-          Modal.confirm({
-            title: '提示',
-            content: '是否确认移除该人员',
-            okText: '确认',
-            cancelText: '取消',
-            onOk: async () => {
-              await indentity?.removeMembers([item.id]);
-              forceUpdate();
-            },
-          });
-        },
-      },
+      isAdmin ? (
+        {
+          key: 'remove',
+          label: <span style={{ color: 'red' }}>移除</span>,
+          onClick: async () => {
+            Modal.confirm({
+              title: '提示',
+              content: '确认移除该人员',
+              okText: '确认',
+              cancelText: '取消',
+              onOk: async () => {
+                await indentity?.removeMembers([item.id]);
+                forceUpdate();
+              },
+            });
+          },
+        }
+      ) : (
+        <></>
+      ),
     ];
   };
 
@@ -72,40 +84,42 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
     setIndentity(current);
   };
   // 身份信息操作
-  const buttons = [
-    <Button
-      key="edit"
-      type="link"
-      onClick={() => {
-        setIsOpenModal(true);
-        setIndentity(indentity);
-      }}>
-      编辑
-    </Button>,
-    <Button
-      key="delete"
-      type="link"
-      onClick={async () => {
-        Modal.confirm({
-          title: '提示',
-          content: '是否确认删除',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: async () => {
-            const success = await current?.deleteIdentity(indentity?.target.id!);
-            if (success) {
-              message.success('删除成功');
-              getDataList();
-              setIndentity(undefined);
-            } else {
-              message.error('删除失败');
-            }
-          },
-        });
-      }}>
-      删除
-    </Button>,
-  ];
+  const buttons = isAdmin
+    ? [
+        <Button
+          key="edit"
+          type="link"
+          onClick={() => {
+            setIsOpenModal(true);
+            setIndentity(indentity);
+          }}>
+          编辑
+        </Button>,
+        <Button
+          key="delete"
+          type="link"
+          onClick={async () => {
+            Modal.confirm({
+              title: '提示',
+              content: '是否确认删除',
+              okText: '确认',
+              cancelText: '取消',
+              onOk: async () => {
+                const success = await current?.deleteIdentity(indentity?.target.id!);
+                if (success) {
+                  message.success('删除成功');
+                  getDataList();
+                  setIndentity(undefined);
+                } else {
+                  message.error('删除失败');
+                }
+              },
+            });
+          }}>
+          删除
+        </Button>,
+      ]
+    : [];
 
   // 身份信息内容
   const content = (
@@ -133,12 +147,13 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
     </div>
   );
   // 按钮
-  const renderBtns = (
+  const renderBtns = isAdmin ? (
     <Button type="link" onClick={async () => setIsOpenAssign(true)}>
       指派身份
     </Button>
+  ) : (
+    <></>
   );
-
   // 身份信息标题
 
   //身份主体
@@ -155,7 +170,6 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
               <CardOrTable<XTarget>
                 dataSource={[]}
                 rowKey={'id'}
-                total={0}
                 params={key}
                 request={async (page) => {
                   return await indentity?.loadMembers(page);
@@ -186,6 +200,7 @@ const SettingIdentity: React.FC<IndentityManageType & ModalProps> = (props) => {
             currentKey={indentity ? indentity?.id : ''}
             indentitys={indentitys}
             current={current}
+            isAdmin={isAdmin}
           />
         </Sider>
         <Content style={{ paddingLeft: 4 }}>

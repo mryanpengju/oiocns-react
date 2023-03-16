@@ -5,6 +5,8 @@ import { ISpeciesItem, ITarget, TargetType } from '@/ts/core';
 import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
 import { MenuItemType, OperateMenuType } from 'typings/globelType';
 import { GroupMenuType } from './menuType';
+import { IsSuperAdmin } from '@/utils/authority';
+import { IAuthority } from '@/ts/core/target/authority/iauthority';
 
 /** 加载分组菜单参数 */
 interface groupMenuParams {
@@ -57,6 +59,19 @@ export const buildSpeciesTree = (species: ISpeciesItem) => {
   return result;
 };
 
+/** 编译职权树 */
+export const buildAuthorityTree = (authoritys: IAuthority) => {
+  const result: MenuItemType = {
+    key: authoritys.id,
+    item: authoritys,
+    label: authoritys.name,
+    icon: <im.ImTree />,
+    itemType: GroupMenuType.Authority,
+    menus: loadAuthorityMenus(authoritys),
+    children: authoritys.children?.map((i) => buildAuthorityTree(i)) ?? [],
+  };
+  return result;
+};
 /** 获取空间菜单 */
 export const getSpaceMenu = async () => {
   let label = '个人信息';
@@ -81,6 +96,20 @@ export const getSpaceMenu = async () => {
 
 /** 加载分组菜单 */
 export const loadGroupMenus = async (param: groupMenuParams) => {
+  let menus = [
+    {
+      key: '刷新',
+      icon: <im.ImSpinner9 />,
+      label: '刷新子组织',
+    },
+  ];
+  if (await IsSuperAdmin(param.item)) {
+    menus.unshift({
+      key: '新建|' + param.typeName,
+      icon: <im.ImPlus />,
+      label: '新建' + param.typeName,
+    });
+  }
   return {
     key: param.key,
     label: param.key,
@@ -97,21 +126,37 @@ export const loadGroupMenus = async (param: groupMenuParams) => {
         notAvatar={true}
       />
     ),
-    menus: [
-      {
-        key: '新建|' + param.typeName,
-        icon: <im.ImPlus />,
-        label: '新建' + param.typeName,
-      },
-      {
-        key: '刷新',
-        icon: <im.ImSpinner9 />,
-        label: '刷新子组织',
-      },
-    ],
+    menus: menus,
     item: param.item,
     children: await buildTargetTree(param.subTeam),
   };
+};
+
+export const loadStandardSetting = async () => {
+  const result: MenuItemType[] = [];
+  const authors = await userCtrl.space.loadAuthorityTree();
+  if (authors) {
+    result.push({
+      children: [buildAuthorityTree(authors)],
+      key: '职权标准',
+      label: '职权标准',
+      itemType: '职权标准',
+      item: userCtrl.space,
+      icon: <im.ImNewspaper />,
+    });
+  }
+  const species = await userCtrl.space.loadSpeciesTree();
+  if (species) {
+    result.push({
+      children: [buildSpeciesTree(species)],
+      key: '分类标准',
+      label: '分类标准',
+      itemType: '分类标准',
+      item: userCtrl.space,
+      icon: <im.ImNewspaper />,
+    });
+  }
+  return result;
 };
 
 export const loadSpaceSetting = () => {
@@ -202,6 +247,16 @@ export const loadSpeciesMenus = (item: ISpeciesItem) => {
       icon: <im.ImPlus />,
       label: '新增分类',
     },
+    {
+      key: '转为字典',
+      icon: <im.ImBoxAdd />,
+      label: '转为字典',
+    },
+    {
+      key: '分类匹配',
+      icon: <im.ImMagicWand />,
+      label: '分类匹配',
+    },
   ];
   if (item.target.belongId) {
     items.push(
@@ -220,42 +275,73 @@ export const loadSpeciesMenus = (item: ISpeciesItem) => {
   return items;
 };
 
-/** 加载类型更多操作 */
-export const loadTypeMenus = async (item: ITarget) => {
-  const menus: OperateMenuType[] = [];
-  if (item.subTeamTypes.length > 0) {
-    menus.push(
+/** 加载右侧菜单 */
+export const loadAuthorityMenus = (item: IAuthority) => {
+  const items = [
+    {
+      key: '新增',
+      icon: <im.ImPlus />,
+      label: '新增职权',
+    },
+  ];
+  if (item.belongId) {
+    items.push(
       {
-        key: '新建|' + item.subTeamTypes.join('|'),
-        icon: <im.ImPlus />,
-        label: '新建子组织',
+        key: '修改',
+        icon: <im.ImCog />,
+        label: '编辑职权',
       },
       {
-        key: '刷新',
-        icon: <im.ImSpinner9 />,
-        label: '刷新子组织',
+        key: '移除',
+        icon: <im.ImBin />,
+        label: '删除职权',
       },
     );
   }
-  menus.push({
-    key: '编辑',
-    icon: <im.ImPencil />,
-    label: '编辑信息',
-  });
-  if (item.speciesTree) {
-    menus.push({
-      key: '制定标准',
-      label: '制定标准',
-      icon: <im.ImNewspaper />,
-      subMenu: buildSpeciesTree(item.speciesTree),
-    });
+  return items;
+};
+/** 加载类型更多操作 */
+export const loadTypeMenus = async (item: ITarget) => {
+  const menus: OperateMenuType[] = [];
+  let isAdmin = await IsSuperAdmin(item);
+  if (item.subTeamTypes.length > 0) {
+    if (isAdmin) {
+      menus.push({
+        key: '新建|' + item.subTeamTypes.join('|'),
+        icon: <im.ImPlus />,
+        label: '新建子组织',
+      });
+    }
   }
-  if (item != userCtrl.user && item != userCtrl.company) {
+  if (isAdmin) {
     menus.push({
-      key: '删除',
-      icon: <im.ImBin />,
-      label: '删除' + item.typeName,
+      key: '编辑',
+      icon: <im.ImPencil />,
+      label: '编辑信息',
     });
+    if (item.speciesTree) {
+      menus.push({
+        key: '制定标准',
+        label: '制定标准',
+        icon: <im.ImNewspaper />,
+        subMenu: buildSpeciesTree(item.speciesTree),
+      });
+    }
+    if (item != userCtrl.user && item != userCtrl.company) {
+      menus.push({
+        key: '删除',
+        icon: <im.ImBin />,
+        label: '删除' + item.typeName,
+      });
+    }
+  } else if (await IsSuperAdmin(userCtrl.space)) {
+    if (item != userCtrl.user && item != userCtrl.company) {
+      menus.push({
+        key: '退出',
+        icon: <im.ImBin />,
+        label: '退出' + item.typeName,
+      });
+    }
   }
   return menus;
 };

@@ -2,23 +2,37 @@ import React, { useState } from 'react';
 import { MenuItemType } from 'typings/globelType';
 import { GroupMenuType } from '../config/menuType';
 import FileSystem from './FileSystem';
+import ThingIndex from '@/pages/Store/content/Thing';
 import Application from './App';
 import TaskListComp from '../components/TaskListComp';
 import { Badge, Typography } from 'antd';
 import { FaTasks } from 'react-icons/fa';
+import Asset from '@/pages/Welfare/WelfareOrg/Asset';
 
 interface IProps {
   selectMenu: MenuItemType;
+  checkedList?: any[];
 }
 
 /** 内容区 */
-const ContentIndex = ({ selectMenu }: IProps) => {
+const ContentIndex = (props: IProps) => {
   /** 加载内容区 */
-  switch (selectMenu.itemType) {
+  switch (props.selectMenu.itemType) {
     case GroupMenuType.Application:
       return <Application />;
     case GroupMenuType.FileSystemItem:
-      return <FileSystem current={selectMenu.item} />;
+      return <FileSystem current={props.selectMenu.item} />;
+    case GroupMenuType.Asset:
+      return <Asset />;
+    case GroupMenuType.Thing:
+    case GroupMenuType.Wel:
+      return (
+        <ThingIndex
+          species={props.selectMenu.item}
+          checkedList={props.checkedList}
+          selectable={false}
+        />
+      );
     default:
       return <></>;
   }

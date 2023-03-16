@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import MainLayout from '@/components/MainLayout';
 import userCtrl from '@/ts/controller/setting';
-import { ISpeciesItem, ITarget } from '@/ts/core';
+import { ISpeciesItem, ITarget, TargetType } from '@/ts/core';
 import Content from './content';
 import useMenuUpdate from './hooks/useMenuUpdate';
 import TeamModal from '@/bizcomponents/GlobalComps/createTeam';
+import TransToDict from '@/pages/Setting/content/Standard/Dict/transToDict';
 import SpeciesModal from './components/speciesModal';
 import { GroupMenuType } from './config/menuType';
 import { Modal } from 'antd';
+import { TopBarExtra } from '../Store/content';
+
 const TeamSetting: React.FC = () => {
   const [species, setSpecies] = useState<ISpeciesItem>();
   const [key, menus, refreshMenu, selectMenu, setSelectMenu] = useMenuUpdate();
@@ -16,26 +19,28 @@ const TeamSetting: React.FC = () => {
   return (
     <MainLayout
       selectMenu={selectMenu}
+      tabKey={'1'}
+      rightBar={<TopBarExtra key={key} selectMenu={selectMenu} />}
       onSelect={async (data) => {
         if (data.itemType === GroupMenuType.Species) {
           setSpecies(data.item);
-          return;
-        }
-        userCtrl.currentKey = data.key;
-        const item = data.item as ITarget;
-        if (item && !item.speciesTree) {
-          await item.loadSpeciesTree();
-          refreshMenu();
-        }
-        if (data.itemType === GroupMenuType.Agency) {
-          if (item.subTeam.length === 0) {
-            const subs = await item.loadSubTeam();
-            if (subs.length > 0) {
-              refreshMenu();
+        } else {
+          setSpecies(undefined);
+          userCtrl.currentKey = data.key;
+          const item = data.item as ITarget;
+          if (item && !item.speciesTree) {
+            await item.loadSpeciesTree();
+            refreshMenu();
+          }
+          if (data.itemType === GroupMenuType.Agency) {
+            if (item.subTeam.length === 0) {
+              const subs = await item.loadSubTeam();
+              if (subs.length > 0) {
+                refreshMenu();
+              }
             }
           }
         }
-        setSpecies(undefined);
         setSelectMenu(data);
       }}
       onMenuClick={async (data, key) => {
@@ -47,6 +52,23 @@ const TeamSetting: React.FC = () => {
                 if (await (data.item as ITarget).delete()) {
                   refreshMenu();
                 }
+              },
+            });
+            break;
+          case '退出':
+            Modal.confirm({
+              content: '确定要退出吗?',
+              onOk: async () => {
+                let item = data.item as ITarget;
+                switch (item.typeName) {
+                  case TargetType.Group:
+                    userCtrl.company.quitGroup((data.item as ITarget).id);
+                    break;
+                  case TargetType.Cohort:
+                    userCtrl.user.quitCohorts((data.item as ITarget).id);
+                    break;
+                }
+                refreshMenu();
               },
             });
             break;
@@ -66,7 +88,15 @@ const TeamSetting: React.FC = () => {
             break;
         }
       }}
-      siderMenuData={menus}>
+      tabs={menus}
+      siderMenuData={menus[0]?.menu}
+      onCheckedChange={(_: string[]) => {
+        refreshMenu();
+      }}
+      checkedList={[]}
+      onTabChanged={() => {
+        refreshMenu();
+      }}>
       {/** 组织模态框 */}
       <TeamModal
         title={operateKeys[0]}
@@ -99,6 +129,13 @@ const TeamSetting: React.FC = () => {
         targetId={(selectMenu.item as ITarget)?.id}
         current={species}
       />
+      {/* 分类转字典 */}
+      {species && (
+        <TransToDict
+          open={['转为字典'].includes(operateKeys[0])}
+          setOpen={() => setOperateKeys([''])}
+          currentSpeciesItem={species}></TransToDict>
+      )}
       <Content key={key} selectMenu={selectMenu} species={species} />
     </MainLayout>
   );

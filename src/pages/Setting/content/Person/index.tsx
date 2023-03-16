@@ -1,4 +1,4 @@
-import { Button, Card, Descriptions, message, Modal } from 'antd';
+import { Button, Card, Descriptions, message, Modal, Typography } from 'antd';
 import Layout from 'antd/lib/layout/layout';
 import React, { useRef, useState } from 'react';
 
@@ -12,6 +12,8 @@ import { CompanyColumn, PersonColumns } from '../../config/columns';
 import SearchCompany from '@/bizcomponents/SearchCompany';
 import { TargetType } from '@/ts/core';
 import PageCard from '@/components/PageCard';
+import { common } from 'typings/common';
+import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 
 /**
  * 个人信息
@@ -20,6 +22,7 @@ import PageCard from '@/components/PageCard';
 const PersonSetting: React.FC = () => {
   const history = useHistory();
   const parentRef = useRef<any>(null);
+  const [key, forceUpdate] = useCtrlUpdate(userCtrl);
   const [tabKey, setTabKey] = useState<string>('friends');
   const [modalType, setModalType] = useState('');
   const [searchCallback, setSearchCallback] = useState<schema.XTarget[]>();
@@ -58,36 +61,58 @@ const PersonSetting: React.FC = () => {
       key: 'companys',
     },
   ];
-  // 信息标题
-  const title = (
-    <div className={cls['person-info-title']}>
-      <div style={{ fontSize: 100 }}>
-        <TeamIcon share={userCtrl.user.shareInfo} size={100} preview={true} />
-      </div>
-      <div>
-        <Button type="link">修改密码</Button>
-      </div>
-    </div>
-  );
   // 信息内容
   const content = (
     <div className={cls['person-info-info']}>
       <Card bordered={false}>
-        <Descriptions title={title} column={2}>
-          <Descriptions.Item label="昵称">{userCtrl.user.name}</Descriptions.Item>
+        <Descriptions
+          bordered
+          size="middle"
+          title={'个人信息'}
+          column={2}
+          extra={[
+            <Button type="link" key="updatePassword">
+              修改密码
+            </Button>,
+          ]}>
+          <Descriptions.Item label="昵称">
+            <TeamIcon share={userCtrl.user.shareInfo} size={40} preview={true} />
+            {userCtrl.user.name}
+          </Descriptions.Item>
           <Descriptions.Item label="姓名">{userCtrl.user.teamName}</Descriptions.Item>
+          <Descriptions.Item label="账号">
+            <Typography.Paragraph copyable>
+              {userCtrl.user.target.code}
+            </Typography.Paragraph>
+          </Descriptions.Item>
           <Descriptions.Item label="联系方式">
             {userCtrl.user.target.team?.code}
           </Descriptions.Item>
-          <Descriptions.Item label="座右铭" span={2}>
+          <Descriptions.Item label="座右铭">
             {userCtrl.user.target.team?.remark}
           </Descriptions.Item>
         </Descriptions>
       </Card>
     </div>
   );
-  //
-  // TODO 1、个人空间显示加入的公司；2、单位空间显示所在的部门、工作组、岗位
+  // 操作内容渲染函数
+  const renderOperation = (item: schema.XTarget): common.OperationType[] => {
+    return [
+      {
+        key: 'remove',
+        label: tabKey === 'companys' ? '退出' : '移除',
+        onClick: async () => {
+          if (tabKey === 'companys') {
+            await userCtrl.user.quitCompany(item.id);
+          } else {
+            await userCtrl.user.removeMember(item);
+          }
+          forceUpdate();
+        },
+      },
+    ];
+  };
+
   return (
     <div className={cls['person-info-container']}>
       <Layout className={cls.container}>{content}</Layout>
@@ -111,12 +136,12 @@ const PersonSetting: React.FC = () => {
           }>
           <div className={cls['page-content-table']} ref={parentRef}>
             <CardOrTable<schema.XTarget>
+              key={key}
               dataSource={[]}
-              pageSize={10}
               showChangeBtn={false}
-              hideOperation={true}
               parentRef={parentRef}
               params={tabKey}
+              operation={renderOperation}
               request={async (page) => {
                 if (tabKey === 'companys') {
                   const targets = userCtrl.user.joinedCompany?.map((i) => i.target);

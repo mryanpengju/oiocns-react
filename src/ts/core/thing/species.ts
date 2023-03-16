@@ -1,6 +1,18 @@
-import { kernel, parseAvatar, schema } from '../../base';
-import { AttributeModel, PageRequest, SpeciesModel, TargetShare } from '../../base/model';
+import { kernel, model, parseAvatar, schema } from '../../base';
+import { Dict } from '../target/species/dict';
+import { IDict, INullDict } from '../target/species/idict';
+import {
+  AttributeModel,
+  CreateDefineReq,
+  DictModel,
+  OperationModel,
+  PageRequest,
+  SpeciesModel,
+  TargetShare,
+} from '../../base/model';
 import { INullSpeciesItem, ISpeciesItem } from './ispecies';
+import { XDict, XFlowDefine } from '@/ts/base/schema';
+
 /**
  * 分类系统项实现
  */
@@ -26,9 +38,95 @@ export class SpeciesItem implements ISpeciesItem {
     }
     this.belongInfo = { name: '奥集能平台', typeName: '平台' };
   }
-  async loadAttrs(id: string, page: PageRequest): Promise<schema.XAttributeArray> {
+  async loadAttrs(
+    spaceId: string,
+    recursionOrg: boolean,
+    recursionSpecies: boolean,
+    page: PageRequest,
+  ): Promise<schema.XAttributeArray> {
     const res = await kernel.querySpeciesAttrs({
       id: this.id,
+      spaceId: spaceId,
+      recursionOrg: recursionOrg,
+      recursionSpecies: recursionSpecies,
+      page: {
+        offset: page.offset,
+        limit: page.limit,
+        filter: '',
+      },
+    });
+    return res.data;
+  }
+
+  async loadDicts(
+    id: string,
+    recursionOrg: boolean,
+    recursionSpecies: boolean,
+    page: PageRequest,
+  ): Promise<schema.XDictArray> {
+    const res = await kernel.querySpeciesDict({
+      id: this.id,
+      spaceId: id,
+      recursionOrg: recursionOrg,
+      recursionSpecies: recursionSpecies,
+      page: {
+        offset: page.offset,
+        limit: page.limit,
+        filter: '',
+      },
+    });
+    return res.data;
+  }
+
+  async loadDictsEntity(
+    spaceId: string,
+    recursionOrg: boolean,
+    recursionSpecies: boolean,
+    page: PageRequest,
+  ): Promise<IDict[]> {
+    const res = await kernel.querySpeciesDict({
+      id: this.id,
+      spaceId: spaceId,
+      recursionOrg: recursionOrg,
+      recursionSpecies: recursionSpecies,
+      page: {
+        offset: page.offset,
+        limit: page.limit,
+        filter: '',
+      },
+    });
+    return (
+      res.data.result?.map((item: XDict) => {
+        return new Dict(item);
+      }) || []
+    );
+  }
+
+  async loadOperations(
+    id: string,
+    filterAuth: boolean,
+    recursionOrg: boolean,
+    recursionSpecies: boolean,
+    page: PageRequest,
+  ): Promise<schema.XOperationArray> {
+    const res = await kernel.querySpeciesOperation({
+      id: this.id,
+      spaceId: id,
+      filterAuth,
+      recursionOrg,
+      recursionSpecies,
+      page: {
+        offset: page.offset,
+        limit: page.limit,
+        filter: '',
+      },
+    });
+    return res.data;
+  }
+
+  async loadFlowDefines(id: string, page: PageRequest): Promise<schema.XFlowDefineArray> {
+    const res = await kernel.queryDefine({
+      speciesId: this.target.id,
       spaceId: id,
       page: {
         offset: page.offset,
@@ -69,6 +167,27 @@ export class SpeciesItem implements ISpeciesItem {
     }
     return;
   }
+
+  async createDict(data: Omit<DictModel, 'id' | 'parentId'>): Promise<INullDict> {
+    const res = await kernel.createDict({
+      ...data,
+      id: undefined,
+    });
+    if (res.success) {
+      const newItem = new Dict(res.data);
+      return newItem;
+    }
+    return;
+  }
+
+  async updateDict(data: Omit<DictModel, 'speciesId' | 'speciesCode'>): Promise<boolean> {
+    const res = await kernel.updateDict({
+      ...data,
+      speciesId: this.target.id,
+    });
+    return res.success;
+  }
+
   async update(
     data: Omit<SpeciesModel, 'id' | 'parentId' | 'code'>,
   ): Promise<ISpeciesItem> {
@@ -125,6 +244,62 @@ export class SpeciesItem implements ISpeciesItem {
       id: id,
       typeName: '',
     });
+    return res.success;
+  }
+
+  async createOperation(
+    data: Omit<OperationModel, 'id' | 'speciesId' | 'speciesCode'>,
+  ): Promise<model.ResultType<schema.XOperation>> {
+    return await kernel.createOperation({
+      id: undefined,
+      speciesId: this.id,
+      ...data,
+    });
+  }
+
+  async updateOperation(
+    data: Omit<OperationModel, 'speciesId' | 'speciesCode'>,
+  ): Promise<boolean> {
+    const res = await kernel.updateOperation({
+      ...data,
+      speciesId: this.target.id,
+    });
+    return res.success;
+  }
+
+  async deleteOperation(id: string): Promise<boolean> {
+    const res = await kernel.deleteOperation({
+      id: id,
+      typeName: '',
+    });
+    return res.success;
+  }
+
+  async deleteDict(id: string): Promise<boolean> {
+    const res = await kernel.deleteDict({
+      id: id,
+      typeName: '',
+    });
+    return res.success;
+  }
+
+  async createFlowDefine(
+    data: Omit<CreateDefineReq, 'id' | 'speciesId'>,
+  ): Promise<XFlowDefine> {
+    const res = await kernel.publishDefine({ ...data, speciesId: this.id });
+    return res.data;
+  }
+
+  async updateFlowDefine(data: CreateDefineReq): Promise<boolean> {
+    const res = await kernel.publishDefine({
+      ...data,
+      speciesId: this.target.id,
+    });
+    return res.success;
+  }
+
+  async deleteFlowDefine(id: string): Promise<boolean> {
+    const res = await kernel.deleteDefine({ id });
     return res.success;
   }
 }

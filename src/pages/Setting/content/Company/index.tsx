@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   Button,
@@ -8,13 +8,12 @@ import {
   message,
   Modal,
   Space,
+  Typography,
 } from 'antd';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import userCtrl from '@/ts/controller/setting';
 import { ICompany, TargetType } from '@/ts/core';
 import { schema } from '@/ts/base';
-import { common } from 'typings/common';
-import { useHistory } from 'react-router-dom';
 import { GroupColumn, PersonColumns } from '../../config/columns';
 import CardOrTable from '@/components/CardOrTableComp';
 import PageCard from '@/components/PageCard';
@@ -23,6 +22,7 @@ import cls from './index.module.less';
 import SearchCompany from '@/bizcomponents/SearchCompany';
 import useObjectUpdate from '@/hooks/useObjectUpdate';
 import AddPostModal from '@/bizcomponents/AddPositionModal';
+import { IsRelationAdmin, IsSuperAdmin } from '@/utils/authority';
 
 type ShowmodelType =
   | 'addOne'
@@ -41,12 +41,21 @@ interface IProps {
  * @returns
  */
 const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
-  const history = useHistory();
   const [key] = useObjectUpdate(current);
   const parentRef = useRef<any>(null);
+  const [isSuperAdmin, SetIsSuperAdmin] = useState(false);
+  const [isRelationAdmin, SetIsRelationAdmin] = useState(false);
   const [activeModal, setActiveModal] = useState<ShowmodelType>(''); // 模态框
   const [activeTab, setActiveTab] = useState<TabType>('members'); // 模态框
   const [selectPerson, setSelectPerson] = useState<schema.XTarget[]>(); // 需要邀请的部门成员
+  const [ellipsis] = useState(true);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      SetIsSuperAdmin(await IsSuperAdmin(current));
+      SetIsRelationAdmin(await IsRelationAdmin(userCtrl.company));
+    }, 10);
+  }, [current]);
 
   const menu = [
     { key: 'auth', label: '认证' },
@@ -93,33 +102,42 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
         <Button type="link" onClick={() => setActiveModal('indentity')}>
           身份设置
         </Button>
-        <Button type="link" onClick={() => setActiveModal('addOne')}>
-          邀请成员
-        </Button>
-        <Button type="link" onClick={() => setActiveModal('joinGroup')}>
-          加入集团
-        </Button>
-        <Button type="link" onClick={() => history.push('/todo/org')}>
-          查看申请
-        </Button>
+        {isRelationAdmin && (
+          <>
+            <Button type="link" onClick={() => setActiveModal('addOne')}>
+              邀请成员
+            </Button>
+            <Button type="link" onClick={() => setActiveModal('joinGroup')}>
+              加入集团
+            </Button>
+            {/* <Button type="link" onClick={() => history.push('/todo/org')}>
+              查看申请
+            </Button> */}
+          </>
+        )}
       </>
     );
   };
   // 操作内容渲染函数
-  const renderOperation = (item: schema.XTarget): common.OperationType[] => {
+  const renderOperation = (item: schema.XTarget) => {
     return [
-      {
-        key: 'remove',
-        label: '踢出',
-        onClick: async () => {
-          if (await userCtrl.space.removeMember(item)) {
-            message.success('踢出成功');
-            userCtrl.changCallback();
-          }
-        },
-      },
+      isSuperAdmin ? (
+        {
+          key: 'remove',
+          label: '踢出',
+          onClick: async () => {
+            if (await userCtrl.space.removeMember(item)) {
+              message.success('踢出成功');
+              userCtrl.changCallback();
+            }
+          },
+        }
+      ) : (
+        <></>
+      ),
     ];
   };
+
   return (
     <div key={key} className={cls.companyContainer}>
       <Card bordered={false} className={cls['company-info-content']}>
@@ -128,8 +146,7 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
           bordered
           size="middle"
           column={2}
-          labelStyle={{ textAlign: 'center' }}
-          contentStyle={{ textAlign: 'center' }}
+          labelStyle={{ textAlign: 'center', width: '200px' }}
           extra={[
             <Button type="link" key="qx" onClick={() => setActiveModal('post')}>
               职权设置
@@ -141,7 +158,7 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
               />
             </Dropdown>,
           ]}>
-          <Descriptions.Item label="单位名称">
+          <Descriptions.Item label="单位名称" contentStyle={{ textAlign: 'center' }}>
             <Space>
               {current.shareInfo.avatar && (
                 <Avatar src={current.shareInfo.avatar.thumbnail} />
@@ -149,13 +166,22 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
               <strong>{current.teamName}</strong>
             </Space>
           </Descriptions.Item>
-          <Descriptions.Item label="社会统一信用代码">
+          <Descriptions.Item
+            label="社会统一信用代码"
+            contentStyle={{ textAlign: 'center' }}>
             {current.target.code}
           </Descriptions.Item>
-          <Descriptions.Item label="团队简称">{current.name}</Descriptions.Item>
-          <Descriptions.Item label="团队代号">{current.teamName}</Descriptions.Item>
-          <Descriptions.Item label="单位简介">
-            {current.target.team?.remark}
+          <Descriptions.Item label="团队简称" contentStyle={{ textAlign: 'center' }}>
+            {current.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="团队代号" contentStyle={{ textAlign: 'center' }}>
+            {current.teamName}
+          </Descriptions.Item>
+          <Descriptions.Item label="单位简介" span={2}>
+            <Typography.Paragraph
+              ellipsis={ellipsis ? { rows: 2, expandable: true, symbol: '更多' } : false}>
+              {current.target.team?.remark}
+            </Typography.Paragraph>
           </Descriptions.Item>
         </Descriptions>
       </Card>
@@ -209,6 +235,7 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
           </div>
         </PageCard>
         <IndentityManage
+          isAdmin={isSuperAdmin}
           open={activeModal === 'indentity'}
           current={userCtrl.space}
           onCancel={() => setActiveModal('')}
@@ -218,7 +245,7 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
           title="邀请成员"
           destroyOnClose
           open={activeModal === 'addOne'}
-          width={900}
+          width={600}
           onCancel={() => setActiveModal('')}
           onOk={async () => {
             if (selectPerson && userCtrl.company) {
@@ -266,6 +293,7 @@ const CompanySetting: React.FC<IProps> = ({ current }: IProps) => {
         {/* 对象设置 */}
         <AddPostModal
           title={'职权设置'}
+          IsAdmin={isSuperAdmin}
           open={activeModal === 'post'}
           handleOk={() => setActiveModal('')}
           current={current}

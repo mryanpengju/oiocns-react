@@ -112,6 +112,20 @@ class SettingController extends Emitter {
     }
     return result;
   }
+
+  /** 组织树 */
+  public async getCompanyTeamTree(
+    company: ICompany,
+    isShare: boolean = true,
+  ): Promise<ITarget[]> {
+    const result: any[] = [];
+    result.push(company);
+    if (isShare) {
+      const groups = await company.getJoinedGroups(false);
+      result.push(...groups);
+    }
+    return result;
+  }
   /** 加载组织树 */
   public buildTargetTree(targets: ITarget[], menus?: (item: ITarget) => any[]) {
     const result: any[] = [];
@@ -191,6 +205,7 @@ class SettingController extends Emitter {
     }
   }
 
+<<<<<<< HEAD
   private _cacheSpacedata(): void {
     kernel.anystore.set(
       sessionSpaceName,
@@ -200,6 +215,13 @@ class SettingController extends Emitter {
       },
       'user',
     );
+=======
+  public getBelongName(belongId: string): any {
+    const team = this.findTeamInfoById(belongId);
+    if (team) {
+      return team.name;
+    }
+>>>>>>> origin/main
   }
 }
 

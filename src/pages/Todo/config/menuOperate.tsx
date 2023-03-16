@@ -1,24 +1,25 @@
 import React from 'react';
 import { Avatar } from 'antd';
 import * as im from 'react-icons/im';
-import { ITodoGroup } from '@/ts/core';
+import { ISpeciesItem, ITodoGroup } from '@/ts/core';
 import userCtrl from '@/ts/controller/setting/';
 import { GroupMenuType } from './menuType';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
-import { AppstoreAddOutlined, FileSyncOutlined, ToTopOutlined } from '@ant-design/icons';
+import { FileSyncOutlined, ToTopOutlined } from '@ant-design/icons';
+import { MenuItemType } from 'typings/globelType';
 
 export const loadPlatformMenu = async () => {
   return [
     {
       key: '组织审批',
-      label: '组织审批',
+      label: '组织',
       itemType: '组织审批',
       icon: <im.ImTree />,
       ...(await loadOrgChildren(todoCtrl.OrgTodo)),
     },
     {
       key: '商店审批',
-      label: '商店审批',
+      label: '商店',
       itemType: '商店审批',
       icon: <im.ImCart />,
       ...(await loadMarket()),
@@ -28,7 +29,7 @@ export const loadPlatformMenu = async () => {
         {
           children: [],
           key: '销售订单',
-          label: '销售订单',
+          label: '销售',
           itemType: GroupMenuType.Order,
           item: todoCtrl.OrderTodo,
           count: await todoCtrl.OrderTodo?.getCount(),
@@ -37,14 +38,14 @@ export const loadPlatformMenu = async () => {
         {
           children: [],
           key: '采购订单',
-          label: '采购订单',
+          label: '采购',
           itemType: GroupMenuType.Order,
           item: todoCtrl.OrderTodo,
           icon: <im.ImBarcode />,
         },
       ],
       key: '订单管理',
-      label: '订单管理',
+      label: '订单',
       itemType: GroupMenuType.Order,
       item: todoCtrl.OrderTodo,
       count: await todoCtrl.OrderTodo?.getCount(),
@@ -53,30 +54,13 @@ export const loadPlatformMenu = async () => {
   ];
 };
 
-export const loadApplicationMenu = async () => {
-  let sum = 0;
-  let children = [];
-  for (var todo of todoCtrl.AppTodo) {
-    let count = await todo.getCount();
-    children.push({
-      key: todo.id!,
-      label: todo.name,
-      itemType: GroupMenuType.Application,
-      icon: <im.ImSteam />,
-      item: todo,
-      count: count,
-      children: [],
-    });
-    sum += count;
+/** 获取事菜单 */
+export const loadThingMenus = async (prefix: string, isWork: boolean = false) => {
+  const root = await userCtrl.space.loadSpeciesTree();
+  if (root) {
+    return await buildSpeciesTree(root?.children, prefix + '事', isWork);
   }
-  return {
-    key: GroupMenuType.Application,
-    label: GroupMenuType.Application,
-    itemType: GroupMenuType.Application,
-    icon: <AppstoreAddOutlined />,
-    children: children,
-    count: sum,
-  };
+  return [];
 };
 
 const loadMarket = async () => {
@@ -156,4 +140,26 @@ const loadOrgChildren = async (todoGroups: ITodoGroup[]) => {
     children: children,
     count: sum,
   };
+};
+
+/** 编译分类树 */
+const buildSpeciesTree = async (
+  species: ISpeciesItem[],
+  itemType: string,
+  isWork: boolean,
+): Promise<MenuItemType[]> => {
+  var result: MenuItemType[] = [];
+  for (let item of species) {
+    result.push({
+      key: itemType + item.id,
+      item: item,
+      label: item.name,
+      icon: <im.ImNewspaper />,
+      itemType: itemType,
+      menuType: isWork ? 'checkbox' : undefined,
+      menus: [],
+      children: await buildSpeciesTree(item.children, itemType, isWork),
+    });
+  }
+  return result;
 };

@@ -1,12 +1,30 @@
 import React from 'react';
 import './index.less';
+import CardWidthTitle from '@/components/CardWidthTitle';
 
+<<<<<<< HEAD
 import CardWidthTitle from '@/components/CardWidthTitle';
 import { XProduct } from '@/ts/base/schema';
 import appCtrl from '@/ts/controller/store/appCtrl';
 import { useHistory } from 'react-router-dom';
 import useClcik from '@/hooks/useClcik';
 import { Skeleton } from 'antd';
+=======
+const dataSource = [
+  {
+    title: '资产监管平台',
+    url: '/img/appLogo.png',
+    desc: '这是一段',
+    key: 1,
+  },
+  {
+    title: '资产管理应用',
+    url: '/img/appLogo.png',
+    desc: '应用的说明',
+    key: 4,
+  },
+];
+>>>>>>> origin/main
 interface SelfAppComType {
   apps: XProduct[]; //入口列表
 }

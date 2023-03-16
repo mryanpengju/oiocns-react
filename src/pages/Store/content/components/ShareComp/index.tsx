@@ -25,11 +25,11 @@ const DestTypes = [
   },
   {
     value: 2,
-    label: '职权',
+    label: '权限',
   },
   {
     value: 3,
-    label: '身份',
+    label: '角色',
   },
   {
     value: 4,
@@ -180,14 +180,14 @@ const ShareRecent = (props: Iprops) => {
 
     switch (radio) {
       case 2: {
-        /** 职权 */
+        /** 权限 */
         const res = await item.loadAuthorityTree();
         let data = handleTreeData(res, info.node.id);
         setCenterTreeData([data]);
         break;
       }
       case 3: {
-        /** 身份 */
+        /** 角色 */
         setCenterTreeData(await item.getIdentitys());
         break;
       }

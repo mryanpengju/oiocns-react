@@ -1,10 +1,11 @@
 import storeCtrl from '@/ts/controller/store';
-import { IFileSystemItem } from '@/ts/core';
+import { IFileSystemItem, ISpeciesItem } from '@/ts/core';
 import React from 'react';
 import * as im from 'react-icons/im';
 import * as fa from 'react-icons/fa';
 import { MenuItemType, OperateMenuType } from 'typings/globelType';
 import { GroupMenuType } from './menuType';
+import thingCtrl from '@/ts/controller/thing';
 
 /** 编译文件系统树 */
 const buildFileSysTree = (targets: IFileSystemItem[]) => {
@@ -76,13 +77,49 @@ export const loadFileSysItemMenus = (
   return menus;
 };
 
+/** 获取数据菜单 */
+export const getDataMenus = () => {
+  return {
+    key: '数据',
+    label: '数据',
+    itemType: GroupMenuType.Data,
+    icon: <im.ImDatabase></im.ImDatabase>,
+    item: storeCtrl.root,
+    children: [],
+  };
+};
+
+/** 获取资源菜单 */
+export const getResourceMenus = () => {
+  return {
+    key: '资源',
+    label: '资源',
+    itemType: GroupMenuType.Resource,
+    icon: <im.ImCloudDownload></im.ImCloudDownload>,
+    item: storeCtrl.root,
+    children: [],
+  };
+};
+
 /** 获取应用程序菜单 */
 export const getAppliactionMenus = () => {
   return {
-    key: '应用程序',
-    label: '应用程序',
+    key: '应用',
+    label: '应用',
     itemType: GroupMenuType.Application,
     icon: <im.ImWindows8 />,
+    item: storeCtrl.root,
+    children: [],
+  };
+};
+
+/** 获取资产菜单 */
+export const getAssetMenus = () => {
+  return {
+    key: '资产',
+    label: '资产',
+    itemType: GroupMenuType.Asset,
+    icon: <im.ImCalculator />,
     item: storeCtrl.root,
     children: [],
   };
@@ -91,12 +128,64 @@ export const getAppliactionMenus = () => {
 /** 获取文件系统菜单 */
 export const getFileSystemMenus = () => {
   return {
-    key: '文件系统',
-    label: '文件系统',
+    key: '文件',
+    label: '文件',
     itemType: GroupMenuType.FileSystemItem,
     icon: <im.ImDrive />,
     item: storeCtrl.root,
     menus: loadFileSysItemMenus(storeCtrl.root),
     children: buildFileSysTree(storeCtrl.root.children),
   };
+};
+
+export const loadAnythingMenus = async () => {
+  const root = await thingCtrl.loadSpeciesTree();
+  return root
+    ? {
+        children: buildSpeciesChildrenTree(
+          root.children,
+          GroupMenuType.Thing,
+          'checkbox',
+        ),
+        key: '实体',
+        label: '实体',
+        itemType: GroupMenuType.Thing,
+        item: root,
+        icon: <im.ImCalculator />,
+      }
+    : undefined;
+};
+
+const buildSpeciesChildrenTree = (
+  parent: ISpeciesItem[],
+  itemType: string,
+  menuType?: string,
+): MenuItemType[] => {
+  if (parent.length > 0) {
+    return parent.map((species) => {
+      return {
+        key: species.id,
+        item: species,
+        label: species.name,
+        icon: <im.ImNewspaper />,
+        itemType: itemType,
+        menuType: menuType,
+        menus: loadSpeciesOperationMenus(species),
+        children: buildSpeciesChildrenTree(species.children, itemType, menuType),
+      };
+    });
+  }
+  return [];
+};
+
+/** 加载右侧菜单 */
+export const loadSpeciesOperationMenus = (_: ISpeciesItem) => {
+  const items: OperateMenuType[] = [
+    // {
+    //   key: '操作',
+    //   label: '操作',
+    //   icon: <im.ImPlus />,
+    // },
+  ];
+  return items;
 };

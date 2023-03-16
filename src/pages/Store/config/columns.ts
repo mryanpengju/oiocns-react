@@ -113,11 +113,6 @@ export const ApplicationColumns: ProColumns<IProduct>[] = [
     dataIndex: ['prod', 'name'],
   },
   {
-    title: '版本号',
-    dataIndex: ['prod', 'version'],
-    width: 100,
-  },
-  {
     title: '应用类型',
     dataIndex: ['prod', 'typeName'],
   },
@@ -149,11 +144,11 @@ export const IdentityColumn: ProColumns<schema.XIdentity>[] = [
     dataIndex: 'id',
   },
   {
-    title: '身份名称',
+    title: '角色名称',
     dataIndex: 'name',
   },
   {
-    title: '职权',
+    title: '权限',
     dataIndex: 'name',
   },
   {
@@ -213,7 +208,7 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
     width: 50,
   },
   {
-    title: '流程名称',
+    title: '办事名称',
     dataIndex: 'name',
     ellipsis: true,
   },
@@ -225,9 +220,7 @@ export const FlowColumn: ProColumns<schema.XFlowDefine>[] = [
   {
     title: '备注',
     ellipsis: true,
-    render: (_, record) => {
-      return JSON.parse(record.content || '{}').fields;
-    },
+    dataIndex: 'remark',
   },
   {
     title: '创建时间',

@@ -3,13 +3,13 @@ import { TargetType } from '@/ts/core';
 import { SettingOutlined } from '@ant-design/icons';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { ImStackoverflow } from 'react-icons/im';
-import { MenuItemType } from 'typings/globelType';
+import { ImHome } from 'react-icons/im';
+import { MenuItemType, TabItemType } from 'typings/globelType';
 import * as operate from '../config/menuOperate';
 import { GroupMenuType } from '../config/menuType';
 /**
  * 设置菜单刷新hook
- * @returns key 变更后的标识,
+ * @returns key ,变更后的标识
  * menus 新的菜单,
  * refreshMenu 强制重新加载,
  * selectMenu 选中菜单,
@@ -17,21 +17,21 @@ import { GroupMenuType } from '../config/menuType';
  */
 const useMenuUpdate = (): [
   string,
-  MenuItemType,
+  TabItemType[],
   () => void,
   MenuItemType,
   (item: MenuItemType) => void,
 ] => {
   const [key, setKey] = useState<string>('');
-  const [menus, setMenu] = useState<MenuItemType>({
-    key: 'setting',
-    label: '设置',
-    itemType: 'group',
-    icon: <SettingOutlined />,
+  const [menus, setMenu] = useState<TabItemType[]>([]);
+  const [selectMenu, setSelectMenu] = useState<MenuItemType>({
+    key: '1',
+    label: '关系',
+    itemType: '关系',
+    item: userCtrl.space,
+    icon: <ImHome />,
     children: [],
   });
-  const [selectMenu, setSelectMenu] = useState<MenuItemType>(menus);
-
   /** 查找菜单 */
   const findMenuItemByKey: any = (items: MenuItemType[], key: string) => {
     for (const item of items) {
@@ -76,14 +76,6 @@ const useMenuUpdate = (): [
           typeName: TargetType.Cohort,
           subTeam: await userCtrl.company.getCohorts(),
         }),
-        {
-          children: [],
-          key: '流程设置',
-          label: '流程设置',
-          itemType: '流程设置',
-          item: userCtrl.space,
-          icon: <ImStackoverflow />,
-        },
       );
     } else {
       children.push(
@@ -95,15 +87,35 @@ const useMenuUpdate = (): [
         }),
       );
     }
-    children.push(operate.loadUserSetting());
-    children.push(operate.loadSpaceSetting());
-    setMenu({
-      key: 'setting',
-      label: '设置',
-      itemType: 'group',
-      icon: <SettingOutlined />,
-      children: children,
-    });
+    const standrads = await operate.loadStandardSetting();
+    standrads.push(operate.loadUserSetting());
+    standrads.push(operate.loadSpaceSetting());
+    setMenu([
+      {
+        key: '1',
+        label: '关系',
+        menu: {
+          children: children,
+          key: 'setting',
+          label: '关系',
+          item: userCtrl.space,
+          itemType: 'group',
+          icon: <SettingOutlined />,
+        },
+      },
+      {
+        key: '2',
+        label: '标准',
+        menu: {
+          children: standrads,
+          key: 'setting',
+          label: '标准',
+          item: userCtrl.space,
+          itemType: 'group',
+          icon: <SettingOutlined />,
+        },
+      },
+    ]);
     const item = findMenuItemByKey(children, userCtrl.currentKey);
     if (item) {
       setSelectMenu(item);

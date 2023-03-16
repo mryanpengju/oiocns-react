@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Col, Row, Typography } from 'antd';
 import React, { useState } from 'react';
@@ -7,8 +8,18 @@ import chatCtrl from '@/ts/controller/chat';
 import useCtrlUpdate from '@/hooks/useCtrlUpdate';
 import InviteMembers from '../components/InviteMembers';
 import RemoveMember from '../components/RemoveMember';
+=======
+>>>>>>> origin/main
 import { schema } from '@/ts/base';
+import React, { useState } from 'react';
+import chatCtrl from '@/ts/controller/chat';
+import detailStyle from './index.module.less';
 import userCtrl from '@/ts/controller/setting';
+import useCtrlUpdate from '@/hooks/useCtrlUpdate';
+import TeamIcon from '@/bizcomponents/GlobalComps/teamIcon';
+import { DownOutlined, RightOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Col, Modal, Row, Typography } from 'antd';
+import AssignPosts from '@/bizcomponents/Indentity/components/AssignPosts';
 
 /**
  * @description:  个人、群聊详情
@@ -65,6 +76,21 @@ const Groupdetail = () => {
   };
 
   /**
+   * 消息免打扰
+   * @param e
+   */
+  const changeSilence = (e: any) => {};
+  /**
+   * 置顶
+   * @param e
+   */
+  const changeTop = (e: any) => {
+    if (chatCtrl.chat) {
+      chatCtrl.setToping(chatCtrl.chat);
+    }
+  };
+
+  /**
    * @description: 取消
    * @return {*}
    */
@@ -89,10 +115,8 @@ const Groupdetail = () => {
       <Col span={20}>
         <h4 className={detailStyle.title}>
           {chatCtrl.chat.target.name}
-          {chatCtrl.chat.target.typeName !== '人员' ? (
+          {chatCtrl.chat.target.typeName !== '人员' && (
             <span className={detailStyle.number}>({chatCtrl.chat.personCount})</span>
-          ) : (
-            ''
           )}
         </h4>
         <div className={detailStyle.base_info_desc}>{chatCtrl.chat.target.remark}</div>
@@ -191,13 +215,13 @@ const Groupdetail = () => {
           )}
           <div className={`${detailStyle.con} ${detailStyle.check_con}`}>
             <span>消息免打扰</span>
-            <Checkbox />
+            <Checkbox onChange={changeSilence} />
           </div>
           <div className={`${detailStyle.con} ${detailStyle.check_con}`}>
             <span>
               {chatCtrl.chat.target.typeName !== '人员' ? '置顶群聊' : '置顶聊天'}
             </span>
-            <Checkbox />
+            <Checkbox onChange={changeTop} checked={chatCtrl.chat.isToping} />
           </div>
           <div className={`${detailStyle.con} ${detailStyle.check_con}`}>
             <span>查找聊天记录</span>
@@ -236,22 +260,25 @@ const Groupdetail = () => {
         )}
       </div>
       {/* 邀请成员 */}
-      <InviteMembers
+      <Modal
+        title={'邀请成员'}
+        destroyOnClose
         open={open}
+        width={1024}
         onOk={onOk}
-        onCancel={onCancel}
-        title="邀请成员"
-        setSelectPerson={setSelectPerson}
-      />
+        onCancel={onCancel}>
+        <AssignPosts searchFn={setSelectPerson} />
+      </Modal>
       {/* 移出成员 */}
-      <RemoveMember
-        title="移出成员"
+      <Modal
+        title={'移出成员'}
+        destroyOnClose
         open={removeOpen}
-        onOk={onRemoveOk}
+        width={1024}
         onCancel={onCancel}
-        setSelectPerson={setSelectPerson}
-        personData={removePerosn}
-      />
+        onOk={onRemoveOk}>
+        <AssignPosts searchFn={setSelectPerson} personData={removePerosn} />
+      </Modal>
     </>
   );
 };

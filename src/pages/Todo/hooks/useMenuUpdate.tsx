@@ -1,10 +1,14 @@
+import { kernel } from '@/ts/base';
+import { XOperation } from '@/ts/base/schema';
+import userCtrl from '@/ts/controller/setting';
 import todoCtrl from '@/ts/controller/todo/todoCtrl';
-import { emitter } from '@/ts/core';
+import { emitter, ISpeciesItem } from '@/ts/core';
 import { SettingOutlined } from '@ant-design/icons';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { MenuItemType } from 'typings/globelType';
+import { MenuItemType, TabItemType } from 'typings/globelType';
 import * as operate from '../config/menuOperate';
+
 /**
  * 监听控制器刷新hook
  * @param ctrl 控制器
@@ -12,55 +16,103 @@ import * as operate from '../config/menuOperate';
  */
 const useMenuUpdate = (): [
   string,
-  MenuItemType,
+  TabItemType[],
   () => void,
   MenuItemType,
-  (item: MenuItemType) => void,
+  (items: MenuItemType) => void,
+  MenuItemType[],
+  XOperation[],
+  (checkedList: MenuItemType[]) => void,
 ] => {
   const [key, setKey] = useState<string>('');
-  const [menus, setMenu] = useState<MenuItemType>({
+  const [menus, setMenu] = useState<TabItemType[]>([]);
+  const [checkedList, setCheckedList] = useState<MenuItemType[]>([]);
+  const [operations, setOperations] = useState<XOperation[]>([]);
+  const [selectMenu, setSelectMenu] = useState<MenuItemType>({
     key: 'work',
     label: '办事',
     itemType: 'group',
     icon: <SettingOutlined />,
     children: [],
   });
-  const [selectMenu, setSelectMenu] = useState<MenuItemType>(menus);
 
-  /** 查找菜单 */
-  const findMenuItemByKey: any = (items: MenuItemType[], key: string) => {
-    for (const item of items) {
-      if (item.key === key) {
-        return item;
-      } else if (Array.isArray(item.children)) {
-        const find = findMenuItemByKey(item.children, key);
-        if (find) {
-          return find;
-        }
-      }
-    }
-    return undefined;
-  };
   /** 刷新菜单 */
   const refreshMenu = async () => {
-    const children: MenuItemType[] = await operate.loadPlatformMenu();
-    children.push(await operate.loadApplicationMenu());
-    setMenu({
-      key: 'work',
-      label: '办事',
-      itemType: 'group',
-      icon: <SettingOutlined />,
-      children: children,
-    });
-    const item: MenuItemType | undefined = findMenuItemByKey(
-      children,
-      todoCtrl.currentKey,
-    );
-    if (item) {
-      setSelectMenu(item);
+    const todoMenus: MenuItemType[] = await operate.loadPlatformMenu();
+    setMenu([
+      {
+        key: '1',
+        label: '待办',
+        menu: {
+          key: 'todo',
+          label: '待办',
+          itemType: 'group',
+          icon: <SettingOutlined />,
+          children: [
+            ...todoMenus,
+            {
+              key: '事项',
+              label: '事项',
+              itemType: 'group',
+              icon: <SettingOutlined />,
+              children: await operate.loadThingMenus('todo'),
+            },
+          ],
+        },
+      },
+      {
+        key: '2',
+        label: '发起',
+        menu: {
+          key: 'work',
+          label: '发起',
+          itemType: 'group',
+          icon: <SettingOutlined />,
+          children: [
+            {
+              key: '加好友',
+              label: '加好友',
+              itemType: 'group',
+              icon: <SettingOutlined />,
+              children: [],
+            },
+            {
+              key: '加单位',
+              label: '加单位',
+              itemType: 'group',
+              icon: <SettingOutlined />,
+              children: [],
+            },
+            {
+              key: '加商店',
+              label: '加商店',
+              itemType: 'group',
+              icon: <SettingOutlined />,
+              children: [],
+            },
+            {
+              key: '办事项',
+              label: '办事项',
+              itemType: 'group',
+              icon: <SettingOutlined />,
+              children: await operate.loadThingMenus('work', true),
+            },
+          ],
+        },
+      },
+    ]);
+  };
+
+  const LoadWorkOperation = async (items: MenuItemType[]) => {
+    setCheckedList(items);
+    if (items.length > 0) {
+      const res = await kernel.queryOperationBySpeciesIds({
+        ids: items.map((a) => (a.item as ISpeciesItem).id),
+        spaceId: userCtrl.space.id,
+      });
+      setOperations(res.data.result ?? []);
     } else {
-      todoCtrl.currentKey = children[0].key;
-      setSelectMenu(children[0]);
+      setOperations([]);
     }
   };
 
@@ -73,7 +125,16 @@ const useMenuUpdate = (): [
       emitter.unsubscribe(id);
     };
   }, []);
-  return [key, menus, refreshMenu, selectMenu, setSelectMenu];
+  return [
+    key,
+    menus,
+    refreshMenu,
+    selectMenu,
+    setSelectMenu,
+    checkedList,
+    operations,
+    LoadWorkOperation,
+  ];
 };
 
 export default useMenuUpdate;

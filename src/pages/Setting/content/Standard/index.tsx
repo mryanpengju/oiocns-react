@@ -1,17 +1,16 @@
+import PageCard from '@/components/PageCard';
+import { ISpeciesItem, ITarget } from '@/ts/core';
+import { Button, Segmented, Tabs } from 'antd';
 import React, { useRef, useState } from 'react';
-import thingCtrl from '@/ts/controller/thing';
-import { INullSpeciesItem, ISpeciesItem, ITarget } from '@/ts/core';
 import Description from './Description';
 import cls from './index.module.less';
-import { Button, Tabs } from 'antd';
-import { AttributeColumns } from '../../config/columns';
-import PageCard from '@/components/PageCard';
-import AttritubeModel from '../../components/attributeModal';
-import CardOrTable from '@/components/CardOrTableComp';
-import { XAttribute } from '@/ts/base/schema';
-import userCtrl from '@/ts/controller/setting';
-import { PageRequest } from '@/ts/base/model';
-import useObjectUpdate from '@/hooks/useObjectUpdate';
+import Dict from '@/pages/Setting/content/Standard/Dict';
+import SpeciesForm from './SpeciesForm';
+import Attritube from './Attritube';
+import SettingFlow from '@/pages/Setting/content/Standard/Flow';
+import { ImUndo2 } from 'react-icons/im';
+import { XFlowDefine, XOperation } from '@/ts/base/schema';
+
 interface IProps {
   target?: ITarget;
   current: ISpeciesItem;
@@ -22,122 +21,250 @@ interface IProps {
  */
 const SettingStandrad: React.FC<IProps> = ({ current, target }: IProps) => {
   const [modalType, setModalType] = useState('');
-  const [tkey, tforceUpdate] = useObjectUpdate(current);
-  const [editData, setEditData] = useState<XAttribute>();
+  const [tabKey, setTabKey] = useState('基本信息');
   const parentRef = useRef<any>(null); //父级容器Dom
 
-  // 操作内容渲染函数
-  const renderAttrItemOperate = (item: XAttribute) => {
-    return [
-      {
-        key: '修改特性',
-        label: '编辑特性',
-        onClick: () => {
-          setEditData(item);
-          setModalType('修改特性');
-        },
-      },
-      {
-        key: '删除特性',
-        label: '删除特性',
-        onClick: async () => {
-          await current?.deleteAttr(item.id);
-          tforceUpdate();
-        },
-      },
-    ];
+  const [flowTabKey, setFlowTabKey] = useState(0);
+  const [flowDesign, setFlowDesign] = useState<XFlowDefine>({
+    id: '',
+    name: '',
+    code: '',
+    belongId: '',
+    content: '',
+    remark: '',
+    status: 0,
+    createUser: '',
+    updateUser: '',
+    version: '',
+    createTime: '',
+    updateTime: '',
+    target: undefined,
+  });
+  const [showAddDict, setShowAddDict] = useState<boolean>(true);
+  const [recursionOrg, setRecursionOrg] = useState<boolean>(true);
+  const [recursionSpecies, setRecursionSpecies] = useState<boolean>(true);
+  // Tab 改变事件
+  const tabChange = (key: string) => {
+    setTabKey(key);
   };
+
+  // 跳转到流程设计
+  const toFlowDesign = (operation: XOperation) => {
+    if (operation.flow) {
+      setTabKey('流程定义');
+      setModalType('编辑流程设计');
+      setFlowTabKey(1);
+      setFlowDesign(operation.flow);
+    } else {
+      setTabKey('流程定义');
+    }
+  };
+
   /** 操作按钮 */
-  const renderButton = (operate: string, belong: boolean = false) => {
+  const renderButton = (belong: boolean = false) => {
     if (belong && !current?.target.belongId) {
       return '';
     }
+    switch (tabKey) {
+      case '分类特性':
+        return (
+          <Button
+            key="edit"
+            type="link"
+            onClick={() => {
+              setModalType('新增特性');
+            }}>
+            {'新增特性'}
+          </Button>
+        );
+      case '字典定义':
+        return (
+          <>
+            {showAddDict && (
+              <Button
+                key="edit"
+                type="link"
+                onClick={() => {
+                  setModalType('新增字典项');
+                }}>
+                {'新增字典项'}
+              </Button>
+            )}
+          </>
+        );
+      case '表单设计':
+        return (
+          <Button
+            key="edit"
+            type="link"
+            onClick={() => {
+              setModalType('新增表单');
+            }}>
+            {'新增表单'}
+          </Button>
+        );
+      case '流程定义':
+        return (
+          <>
+            {modalType == '' && (
+              <Button
+                key="edit"
+                type="link"
+                onClick={() => {
+                  setModalType('新增流程设计');
+                  setFlowDesign({
+                    id: '',
+                    name: '',
+                    code: '',
+                    belongId: '',
+                    content: '',
+                    remark: '',
+                    status: 0,
+                    createUser: '',
+                    updateUser: '',
+                    version: '',
+                    createTime: '',
+                    updateTime: '',
+                    target: undefined,
+                  });
+                }}>
+                {'新增流程'}
+              </Button>
+            )}
+            {(modalType == '新增流程设计' || modalType == '编辑流程设计') && (
+              <Button
+                key="back"
+                type="link"
+                icon={<ImUndo2 />}
+                onClick={() => {
+                  setModalType('返回');
+                }}>
+                {'返回'}
+              </Button>
+            )}
+          </>
+        );
+      default:
+        return <></>;
+    }
+  };
+
+  const items = [
+    {
+      label: `基本信息`,
+      key: '基本信息',
+      children: <Description current={current} />,
+    },
+    {
+      label: `分类特性`,
+      key: '分类特性',
+      children: (
+        <Attritube
+          current={current}
+          target={target}
+          modalType={modalType}
+          recursionOrg={recursionOrg}
+          recursionSpecies={recursionSpecies}
+          setModalType={setModalType}
+        />
+      ),
+    },
+    {
+      label: `字典定义`,
+      key: '字典定义',
+      children: (
+        <Dict
+          current={current}
+          target={target}
+          modalType={modalType}
+          setModalType={setModalType}
+          recursionOrg={recursionOrg}
+          recursionSpecies={recursionSpecies}
+          setShowAddDict={setShowAddDict}
+        />
+      ),
+    },
+    {
+      label: `表单设计`,
+      key: '表单设计',
+      children: (
+        <SpeciesForm
+          current={current}
+          target={target}
+          modalType={modalType}
+          recursionOrg={recursionOrg}
+          recursionSpecies={recursionSpecies}
+          setModalType={setModalType}
+          toFlowDesign={toFlowDesign}></SpeciesForm>
+      ),
+    },
+    {
+      label: `流程定义`,
+      key: '流程定义',
+      children: (
+        <SettingFlow
+          key={tabKey}
+          current={current}
+          target={target}
+          modalType={modalType}
+          setModalType={setModalType}
+          flowDesign={flowDesign}
+          setFlowDesign={setFlowDesign}
+          curTabKey={flowTabKey}
+        />
+      ),
+    },
+  ];
+
+  const renderTabBarExtraContent = () => {
     return (
-      <Button
-        key="edit"
-        type="link"
-        onClick={() => {
-          setModalType(operate);
-        }}>
-        {operate}
-      </Button>
+      <div>
+        {tabKey != '流程定义' && (
+          <Segmented
+            options={['全部', '本组织']}
+            onChange={(value) => {
+              if (value === '本组织') {
+                setRecursionOrg(false);
+              } else {
+                setRecursionOrg(true);
+              }
+            }}
+          />
+        )}
+        {tabKey != '流程定义' && (
+          <Segmented
+            options={['全部', '本分类']}
+            onChange={(value) => {
+              if (value === '本分类') {
+                setRecursionSpecies(false);
+              } else {
+                setRecursionSpecies(true);
+              }
+            }}
+          />
+        )}
+        {renderButton()}
+      </div>
     );
-  };
-
-  const findSpecesName = (species: INullSpeciesItem, id: string) => {
-    if (species) {
-      if (species.id == id) {
-        return species.name;
-      }
-      for (const item of species.children) {
-        if (findSpecesName(item, id) != id) {
-          return item.name;
-        }
-      }
-    }
-    return id;
-  };
-
-  const loadAttrs = async (page: PageRequest) => {
-    const res = await current!.loadAttrs(userCtrl.space.id, page);
-    if (res && res.result) {
-      for (const item of res.result) {
-        const team = userCtrl.findTeamInfoById(item.belongId);
-        if (team) {
-          item.belongId = team.name;
-        }
-        item.speciesId = findSpecesName(thingCtrl.teamSpecies, item.speciesId);
-      }
-    }
-    return res;
   };
 
   return (
     <div className={cls[`dept-content-box`]}>
       {current && (
         <>
-          {/** 分类基本信息 */}
-          <Description current={current} />
           {/** 分类特性表单 */}
           <div className={cls['pages-wrap']}>
             <PageCard bordered={false} bodyStyle={{ paddingTop: 16 }}>
               <div className={cls['page-content-table']} ref={parentRef}>
                 <Tabs
-                  items={[{ label: `全部`, key: '1' }]}
-                  tabBarExtraContent={renderButton('新增特性')}
-                />
-                <CardOrTable<XAttribute>
-                  rowKey={'id'}
-                  params={tkey}
-                  request={async (page) => {
-                    return await loadAttrs(page);
-                  }}
-                  operation={renderAttrItemOperate}
-                  columns={AttributeColumns}
-                  parentRef={parentRef}
-                  showChangeBtn={false}
-                  dataSource={[]}
+                  activeKey={tabKey}
+                  items={items}
+                  tabBarExtraContent={renderTabBarExtraContent()}
+                  onChange={tabChange}
                 />
               </div>
             </PageCard>
           </div>
-          {/** 新增/编辑特性模态框 */}
-          <AttritubeModel
-            data={editData}
-            title={modalType}
-            open={modalType.includes('特性')}
-            handleCancel={function (): void {
-              setModalType('');
-            }}
-            handleOk={function (success: boolean): void {
-              setModalType('');
-              if (success) {
-                tforceUpdate();
-              }
-            }}
-            target={target}
-            current={current}
-          />
         </>
       )}
     </div>

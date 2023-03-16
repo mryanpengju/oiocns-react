@@ -79,7 +79,7 @@ export interface ITarget {
    * 判断是否拥有该身份
    * @param id 身份id
    */
-  judgeHasIdentity(id: string): Promise<boolean>;
+  judgeHasIdentity(codes: string[]): Promise<boolean>;
   /**
    * 获取身份
    * @return {IIdentity[]} 身份数组
@@ -230,7 +230,9 @@ export interface IMTarget {
     code,
     remark,
     samrId,
-    ispublic,
+    joinPublic,
+    sellPublic,
+    buyPublic,
   }: {
     // 名称
     name: string;
@@ -240,8 +242,12 @@ export interface IMTarget {
     remark: string;
     // 监管组织/个人
     samrId: string;
-    // 产品类型名
-    ispublic: boolean;
+    // 是否公开加入权限
+    joinPublic: boolean;
+    // 是否公开售卖权限
+    sellPublic: boolean;
+    // 是否公开购买权限
+    buyPublic: boolean;
   }): Promise<IMarket | undefined>;
   /**
    * 创建应用
@@ -298,8 +304,6 @@ export interface IMTarget {
 export interface IFlow {
   /** 流程定义 */
   defines: schema.XFlowDefine[];
-  /** 流程绑定关系 */
-  defineRelations: schema.XFlowRelation[];
   /**
    * 获取流程定义列表
    * @param reload 是否强制刷新
@@ -315,7 +319,7 @@ export interface IFlow {
    * @param data
    */
   publishDefine(
-    data: Omit<model.CreateDefineReq, 'BelongId'>,
+    data: Omit<model.CreateDefineReq, 'belongId'>,
   ): Promise<schema.XFlowDefine>;
   /**
    * 删除流程定义
@@ -368,6 +372,8 @@ export interface ICohort extends ITarget {
 }
 /** 人员操作 */
 export interface IPerson extends ISpace, ITarget {
+  /** 我的好友列表 */
+  joinedFriend: schema.XTarget[];
   /** 我加入的单位 */
   joinedCompany: ICompany[];
   /**

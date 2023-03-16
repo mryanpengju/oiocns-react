@@ -15,7 +15,7 @@ const ShareShowRecent: React.FC<ShareShowRecentProps> = (props) => {
             <div
               style={{
                 background:
-                  el.type == 'del' ? '#ffb4c4' : el.type == 'add' ? '#beffd0' : '',
+                  el?.type == 'del' ? '#ffb4c4' : el?.type == 'add' ? '#beffd0' : '',
               }}
               key={el.id}
               className={cls.row}>

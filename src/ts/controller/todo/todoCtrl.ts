@@ -1,5 +1,4 @@
 import {
-  loadAppTodo,
   loadOrderTodo,
   loadMarketTodo,
   loadOrgTodo,
@@ -13,12 +12,12 @@ import userCtrl from '../setting';
 
 /** 待办控制器 */
 class TodoController extends Emitter {
+  private _tabIndex: string = '1';
   public currentKey: string = '';
   private _orgTodo: ITodoGroup[] = [];
   private _pubTodo: ITodoGroup[] = [];
   private _orderTodo: ITodoGroup | undefined;
   private _marketTodo: ITodoGroup[] = [];
-  private _appTodo: ITodoGroup[] = [];
   private _curAppTodo: ITodoGroup | undefined;
   constructor() {
     super();
@@ -31,11 +30,18 @@ class TodoController extends Emitter {
             avatar: userCtrl.user.target.avatar,
           },
         ];
-        orgTodoTypes.push(
-          ...(await userCtrl.user.getJoinedCompanys(false)).map((a) => a.target),
-        );
+        let groupIds: string[] = [];
+        let companys = await userCtrl.user.getJoinedCompanys(false);
+        companys.forEach(async (company) => {
+          (await company.getJoinedGroups(false))
+            .filter((a) => groupIds.indexOf(a.id) < 0)
+            .forEach((a) => {
+              orgTodoTypes.push(a.target);
+              groupIds.push(a.id);
+            });
+        });
+        orgTodoTypes.push(...companys.map((a) => a.target));
         this._orgTodo = await loadOrgTodo(orgTodoTypes);
-        this._appTodo = await loadAppTodo();
         this._pubTodo = await loadPublishTodo();
         this._orderTodo = await loadOrderTodo();
         this._marketTodo = await loadMarketTodo();
@@ -46,10 +52,6 @@ class TodoController extends Emitter {
   /** 组织单位审批 */
   public get OrgTodo(): ITodoGroup[] {
     return this._orgTodo!;
-  }
-  /** 第三方应用审批 */
-  public get AppTodo(): ITodoGroup[] {
-    return this._appTodo!;
   }
   /** 市场审批 */
   public get MarketTodo(): ITodoGroup[] {
@@ -67,28 +69,30 @@ class TodoController extends Emitter {
   public get CurAppTodo(): ITodoGroup | undefined {
     return this._curAppTodo;
   }
-  /** 设置选中应用待办 */
-  public setCurrentAppTodo = (id: string) => {
-    this._curAppTodo = this._appTodo.find((n: ITodoGroup) => n.id === id);
-    this.changCallbackPart('CurAppTodo');
-  };
   /** 获取总的待办数量 */
   public async getTaskCount(): Promise<number> {
     let sum = 0;
+    let marketTodos = this.MarketTodo.filter((a) => a.id != '' && a.id);
+    let publishTodos = this.PublishTodo.filter((a) => a.id != '' && a.id);
     sum += (await this._orderTodo?.getCount()) ?? 0;
-    this.OrgTodo.forEach(async (a) => {
-      sum += (await a?.getCount()) ?? 0;
-    });
-    this.MarketTodo.filter((a) => a.id != '').forEach(async (a) => {
-      sum += (await a?.getCount()) ?? 0;
-    });
-    this.PublishTodo.filter((a) => a.id != '').forEach(async (a) => {
-      sum += (await a?.getCount()) ?? 0;
-    });
-    this._appTodo.forEach(async (item) => {
-      sum += await item.getCount();
-    });
+    for (let i = 0; i < this.OrgTodo.length; i++) {
+      sum += await this.OrgTodo[i]?.getCount();
+    }
+    for (let i = 0; i < marketTodos.length; i++) {
+      sum += await marketTodos[i]?.getCount();
+    }
+    for (let i = 0; i < publishTodos.length; i++) {
+      sum += await publishTodos[i]?.getCount();
+    }
     return sum;
+  }
+  /** 页面Tab控制序列 */
+  public get tabIndex() {
+    return this._tabIndex;
+  }
+  public setTabIndex(index: string): void {
+    this._tabIndex = index;
+    this.changCallback();
   }
 }
 

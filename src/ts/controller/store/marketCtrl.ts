@@ -164,7 +164,7 @@ class MarketController extends Emitter {
   }
 
   /**
-   * @description: 添加商品进购物车
+   * @description: 添加购物车
    * @param {XMerchandise} data
    * @return {*}
    */
@@ -180,7 +180,7 @@ class MarketController extends Emitter {
   }
 
   /**
-   * @description: 删除购物车内的商品
+   * @description: 移除购物车
    * @param {any} data
    * @return {*}
    */
@@ -191,8 +191,8 @@ class MarketController extends Emitter {
   }
 
   /**
-   * 缓存 加入/删除购物车的商品
-   * @param message 新消息，无则为空
+   * 更新购物车
+   * @param message
    */
   private async updateShoppingCar(data: any) {
     this.changCallbackPart(JOIN_SHOPING_CAR);
@@ -201,7 +201,7 @@ class MarketController extends Emitter {
       {
         operation: 'replaceAll',
         data: {
-          data: data || [],
+          data: this._shopinglist,
         },
       },
       'user',

@@ -246,7 +246,7 @@ export interface IMTarget {
    * @param  {model.ProductModel} 产品基础信息
    */
   createProduct(
-    data: Omit<model.ProductModel, 'id' | 'belongId'>,
+    data: Omit<model.ProductModel, 'belongId'>,
   ): Promise<IProduct | undefined>;
   /**
    * 删除市场

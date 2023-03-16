@@ -21,6 +21,7 @@ const OrganizationalUnits = () => {
   // 选中组织单位后进行空间切换
   const handleClickMenu = async (item: SpaceType) => {
     userCtrl.setCurSpace(item.id);
+
     setShowMenu(false);
   };
 

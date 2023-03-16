@@ -171,6 +171,7 @@ export class FileSystemItem implements IFileSystemItem {
         if (end > file.size) {
           end = file.size;
         }
+
         data.fileItem = {
           index: index,
           uploadId: id,
@@ -178,6 +179,7 @@ export class FileSystemItem implements IFileSystemItem {
           data: [],
           dataUrl: await blobToDataUrl(file.slice(start, end)),
         };
+
         const res = await kernel.anystore.bucketOpreate<FileItemModel>(data);
         if (!res.success) {
           data.operate = BucketOpreates.AbortUpload;

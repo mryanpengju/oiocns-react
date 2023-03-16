@@ -119,11 +119,34 @@ const StoreApp: React.FC = () => {
       },
     ];
   };
+<<<<<<< HEAD
+  //TODO: 根据权限从已获取数据 动态产生tab
+  const getItems = () => {
+    let typeSet = new Set(['全部', '分享获得']);
+    appCtrl.products.forEach((v: any) => {
+      v.prod.source && typeSet.add(v.prod.source);
+    });
+    return Array.from(typeSet).map((k) => {
+      return { tab: k, key: k };
+    });
+  };
+  /*******
+   * @desc: 获取所选分类下的appids
+   * @param {string[]} appids
+   */
+  const handleSelectClassify = (appids: string[]) => {
+    console.log('当前分类下的appids', appids);
+    setAppShowIdlimit([...appids]);
+  };
+  let showData = appCtrl.products;
+  showData = useMemo(() => {
+=======
 
   // const handleSelectClassify = (appids: string[]) => {
   //   setAppShowIdlimit([...appids]);
   // };
   const showData = useMemo(() => {
+>>>>>>> origin/main
     if (appShowIdlimit.length > 0) {
       return appCtrl.products.filter((app) => {
         return appShowIdlimit.includes(app.prod.id);
@@ -131,7 +154,7 @@ const StoreApp: React.FC = () => {
     } else {
       return appCtrl.products;
     }
-  }, [appShowIdlimit, key]);
+  }, [appShowIdlimit, key, userCtrl.space]);
 
   // 应用首页dom
   const AppIndex = useMemo(() => {

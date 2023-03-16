@@ -19,6 +19,7 @@ class SettingController extends Emitter {
   public currentKey: string = '';
   private _user: IPerson | undefined;
   private _curSpace: ICompany | undefined;
+  private _caches: { defaultSpaceId: string } = { defaultSpaceId: '' };
   /**构造方法 */
   constructor() {
     super();
@@ -41,6 +42,10 @@ class SettingController extends Emitter {
   /** 是否已登录 */
   get logined(): boolean {
     return !!this._user?.target.id;
+  }
+
+  get caches(): {} {
+    return this._caches;
   }
   /** 是否为单位空间 */
   get isCompanySpace(): boolean {
@@ -86,6 +91,10 @@ class SettingController extends Emitter {
     kernel.genToken(id);
     this.changCallbackPart(DomainTypes.Company);
     emitter.changCallbackPart(DomainTypes.Company);
+  }
+  public setDefaultValue(id: string) {
+    this._caches = { defaultSpaceId: id };
+    this._cacheSpacedata();
   }
   /** 组织树 */
   public async getTeamTree(isShare: boolean = true): Promise<ITarget[]> {
@@ -196,11 +205,23 @@ class SettingController extends Emitter {
     }
   }
 
+<<<<<<< HEAD
+  private _cacheSpacedata(): void {
+    kernel.anystore.set(
+      sessionSpaceName,
+      {
+        operation: 'replaceAll',
+        data: this._caches,
+      },
+      'user',
+    );
+=======
   public getBelongName(belongId: string): any {
     const team = this.findTeamInfoById(belongId);
     if (team) {
       return team.name;
     }
+>>>>>>> origin/main
   }
 
   // public async getOperationName(speciesIds: string[]) {

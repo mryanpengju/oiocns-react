@@ -498,25 +498,16 @@ export default class KernelApi {
   /**
    * 查询分类树
    * @param {string} id 根分类ID
-   * @param {string} targetId 组织ID
-   * @param {string} filter 过滤内容
+   * @param {model.PageRequest} page 分页参数
    * @returns {model.ResultType<schema.XSpecies>} 请求结果
    */
   public async querySpeciesTree(
-    id: string,
-    targetId: string,
-    filter: string,
+    params: model.IDBelongReq,
   ): Promise<model.ResultType<schema.XSpecies>> {
     return await this.request({
       module: 'thing',
       action: 'QuerySpeciesTree',
-      params: {
-        id: id,
-        spaceId: targetId,
-        page: {
-          filter: filter,
-        },
-      },
+      params: params,
     });
   }
   /**
@@ -646,7 +637,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 创建职权
+   * 创建权限
    * @param {model.AuthorityModel} params 请求参数
    * @returns {model.ResultType<schema.XAuthority>} 请求结果
    */
@@ -660,7 +651,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 创建身份
+   * 创建角色
    * @param {model.IdentityModel} params 请求参数
    * @returns {model.ResultType<schema.XIdentity>} 请求结果
    */
@@ -702,7 +693,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 删除职权
+   * 删除权限
    * @param {model.IdReqModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
    */
@@ -716,7 +707,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 删除身份
+   * 删除角色
    * @param {model.IdReqModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
    */
@@ -772,7 +763,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 更新职权
+   * 更新权限
    * @param {model.AuthorityModel} params 请求参数
    * @returns {model.ResultType<schema.XAuthority>} 请求结果
    */
@@ -786,7 +777,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 更新身份
+   * 更新角色
    * @param {model.IdentityModel} params 请求参数
    * @returns {model.ResultType<schema.XIdentity>} 请求结果
    */
@@ -828,7 +819,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 分配身份
+   * 分配角色
    * @param {model.GiveIdentityModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
    */
@@ -842,7 +833,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 移除身份
+   * 移除角色
    * @param {model.GiveIdentityModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
    */
@@ -898,7 +889,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 拉身份加入组织
+   * 拉角色加入组织
    * @param {model.TeamPullModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
    */
@@ -940,7 +931,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 从组织身份集中剔除身份
+   * 从组织角色集中剔除角色
    * @param {model.GiveIdentityModel} params 请求参数
    * @returns {model.ResultType<boolean>} 请求结果
    */
@@ -1164,12 +1155,12 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询组织职权树
+   * 查询组织权限树
    * @param {model.IDBelongReq} params 请求参数
    * @returns {model.ResultType<schema.XAuthority>} 请求结果
    */
   public async queryAuthorityTree(
-    params: model.IDBelongReq,
+    params: model.IdSpaceReq,
   ): Promise<model.ResultType<schema.XAuthority>> {
     return await this.request({
       module: 'target',
@@ -1178,35 +1169,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询职权子职权
-   * @param {model.IDBelongReq} params 请求参数
-   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
-   */
-  public async querySubAuthoritys(
-    params: model.IDBelongReq,
-  ): Promise<model.ResultType<schema.XAuthorityArray>> {
-    return await this.request({
-      module: 'target',
-      action: 'QuerySubAuthoritys',
-      params: params,
-    });
-  }
-  /**
-   * 查询组织职权
-   * @param {model.IDBelongReq} params 请求参数
-   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
-   */
-  public async queryTargetAuthoritys(
-    params: model.IDBelongReq,
-  ): Promise<model.ResultType<schema.XAuthorityArray>> {
-    return await this.request({
-      module: 'target',
-      action: 'QueryTargetAuthoritys',
-      params: params,
-    });
-  }
-  /**
-   * 查询组织身份
+   * 查询组织角色
    * @param {model.IDBelongReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果
    */
@@ -1220,7 +1183,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询组织容器下的身份集
+   * 查询组织容器下的角色集
    * @param {model.IDBelongReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果
    */
@@ -1234,12 +1197,12 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询职权身份
-   * @param {model.IDBelongReq} params 请求参数
+   * 查询权限角色
+   * @param {model.IdSpaceReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果
    */
   public async queryAuthorityIdentitys(
-    params: model.IDBelongReq,
+    params: model.IdSpaceReq,
   ): Promise<model.ResultType<schema.XIdentityArray>> {
     return await this.request({
       module: 'target',
@@ -1248,7 +1211,7 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询赋予身份的组织/个人
+   * 查询赋予角色的组织/个人
    * @param {model.IDBelongTargetReq} params 请求参数
    * @returns {model.ResultType<schema.XTargetArray>} 请求结果
    */
@@ -1276,7 +1239,35 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询在当前空间拥有的身份
+   * 查询拥有的权限
+   * @param {model.PageRequest} params 请求参数
+   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
+   */
+  public async queryOwnAuthoritys(
+    params: model.PageRequest,
+  ): Promise<model.ResultType<schema.XAuthorityArray>> {
+    return await this.request({
+      module: 'target',
+      action: 'QueryOwnAuthoritys',
+      params: params,
+    });
+  }
+  /**
+   * 查询权限下的所有人员
+   * @param {model.PageRequest} params 请求参数
+   * @returns {model.ResultType<schema.XAuthorityArray>} 请求结果
+   */
+  public async QueryAuthorityPerson(
+    params: model.IDBelongReq,
+  ): Promise<model.ResultType<schema.XTargetArray>> {
+    return await this.request({
+      module: 'target',
+      action: 'QueryAuthorityPerson',
+      params: params,
+    });
+  }
+  /**
+   * 查询在当前空间拥有的角色
    * @param {model.IdReq} params 请求参数
    * @returns {model.ResultType<schema.XIdentityArray>} 请求结果
    */
@@ -2335,29 +2326,16 @@ export default class KernelApi {
     });
   }
   /**
-   * 查询待审批任务
+   * 查询待审批任务、待审阅抄送
    * @param {model.IdReq} params 查询参数
    * @returns {model.ResultType<schema.XFlowTaskArray>} 请求结果
    */
   public async queryApproveTask(
     params: model.IdReq,
-  ): Promise<model.ResultType<schema.XFlowTaskArray>> {
-    return await this.request({
-      module: 'flow',
-      action: 'QueryApproveTask',
-      params: params,
-    });
-  }
-  /**
-   * 查询待审阅抄送
-   * @returns {model.ResultType<schema.XFlowTaskHistoryArray>} 请求结果
-   */
-  public async queryNoticeTask(
-    params: model.IdReq,
   ): Promise<model.ResultType<schema.XFlowTaskHistoryArray>> {
     return await this.request({
       module: 'flow',
-      action: 'QueryNoticeTask',
+      action: 'QueryApproveTask',
       params: params,
     });
   }

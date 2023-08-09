@@ -34,19 +34,13 @@ const Home: React.FC = () => {
       {/* 顶部图片11111 */}
       {/*<BannerCom imgList={imgList} />*/}
       <div className="home-content">
-        <Tabs defaultActiveKey="1" size="large" tabBarStyle={{ alignSelf: 'center' }}>
-          <Tabs.TabPane tab="动态" key="1">
-            <Activity></Activity>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="常用" key="2">
-            {/* 快捷入口及应用 */}
-            <Shortcuts props={[]} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="应用" key="3">
-            {/* 快捷入口及应用 */}
-            <SelfAppCom props={[]} />
-          </Tabs.TabPane>
-        </Tabs>
+        <iframe
+          id="iframeContain"
+          name="iframeContain"
+          seamless
+          src="http://localhost:8081/">
+          您当前的浏览器不支持页面上的功能，请升级您当前的浏览器版本或使用谷歌浏览器访问当前页面
+        </iframe>
       </div>
 
       {/* 底部区域 //TODO:临时*/}
